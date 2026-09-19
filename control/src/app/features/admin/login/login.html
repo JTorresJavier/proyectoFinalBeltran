@@ -1,0 +1,113 @@
+<!-- ── PÁGINA DE LOGIN DE STOREHUB ────────────
+     Vista de acceso al panel de administración.
+     Contiene formulario reactivo con validaciones
+     y verificación de credenciales contra la API  -->
+
+<!-- ── CONTENEDOR PRINCIPAL ──────────────────
+     Centra el formulario en la pantalla        -->
+<div class="login-contenedor">
+
+  <!-- ── CARD DEL FORMULARIO ─────────────────
+       Card de Angular Material que contiene
+       todo el formulario de login             -->
+  <mat-card class="login-card">
+
+    <!-- ── HEADER DE LA CARD ──────────────────
+         Logo y título del sistema             -->
+    <mat-card-header>
+      <div class="login-header">
+        <mat-icon class="login-icono">store</mat-icon>
+        <h1>StoreHub</h1>
+        <p>Panel de Administración</p>
+      </div>
+    </mat-card-header>
+
+    <!-- ── CONTENIDO: FORMULARIO ──────────────
+         Formulario reactivo de login          -->
+    <mat-card-content>
+
+      <!-- [formGroup]: vincula el form con el FormGroup del componente
+           (ngSubmit): llama a onSubmit() al enviar                    -->
+      <form [formGroup]="formulario" (ngSubmit)="onSubmit()">
+
+        <!-- ── CAMPO USUARIO ──────────────────
+             Input con validación de requerido  -->
+        <mat-form-field appearance="outline" class="campo-completo">
+          <mat-label>Usuario</mat-label>
+          <input
+            matInput
+            formControlName="usuario"  
+            placeholder="Ingresá tu usuario"/>
+          <mat-icon matSuffix>person</mat-icon>
+
+          <!-- Mensajes de error de validación -->
+          @if (usuario?.invalid && usuario?.touched) {
+            <mat-error>
+              @if (usuario?.errors?.['required'])  { Usuario obligatorio. }
+              @if (usuario?.errors?.['minlength']) { Mínimo 3 caracteres. }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <!-- ── CAMPO PASSWORD ─────────────────
+             Input con toggle de visibilidad    -->
+        <mat-form-field appearance="outline" class="campo-completo">
+          <mat-label>Contraseña</mat-label>
+          <input
+            matInput
+            formControlName="password"
+            [type]="mostrarPassword ? 'text' : 'password'"
+            placeholder="Ingresá tu contraseña"/>
+
+          <!-- Botón para mostrar/ocultar contraseña -->
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePassword()">
+            <mat-icon>{{ mostrarPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+
+          <!-- Mensajes de error de validación -->
+          @if (password?.invalid && password?.touched) {
+            <mat-error>
+              @if (password?.errors?.['required'])  { Contraseña obligatoria. }
+              @if (password?.errors?.['minlength']) { Mínimo 4 caracteres. }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <!-- ── BOTÓN SUBMIT ───────────────────
+             Deshabilitado si el form es inválido
+             Muestra spinner mientras carga      -->
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="btn-login"
+          [disabled]="formulario.invalid || cargando">
+
+          <!-- @if: muestra spinner o texto según estado -->
+          @if (cargando) {
+            <mat-spinner diameter="20"></mat-spinner>
+            Verificando...
+          } @else {
+            <mat-icon>login</mat-icon>
+            Ingresar
+          }
+
+        </button>
+
+      </form>
+    </mat-card-content>
+
+    <!-- ── FOOTER DE LA CARD ──────────────────
+         Link para volver al inicio            -->
+    <mat-card-footer>
+      <div class="login-footer">
+        <a routerLink="/inicio">← Volver al inicio</a>
+      </div>
+    </mat-card-footer>
+
+  </mat-card>
+</div>

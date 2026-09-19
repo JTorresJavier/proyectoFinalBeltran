@@ -1,0 +1,122 @@
+/* ── HEADER DEL CATÁLOGO ─────────────────────
+   Título y filtros de búsqueda                */
+.catalogo-header {
+  padding: 2rem 1rem 1rem; /* Espaciado interno */
+}
+
+.catalogo-header h1 {
+  font-size: 1.8rem;    /* Tamaño del título */
+  margin-bottom: 0.3rem; /* Espacio abajo */
+}
+
+/* ── SUBTÍTULO ───────────────────────────────
+   Muestra cantidad de productos encontrados   */
+.subtitulo {
+  color: #666;         /* Gris */
+  margin-bottom: 1.5rem; /* Espacio abajo */
+}
+
+/* ── FILTROS ─────────────────────────────────
+   Contenedor del buscador y select            */
+.filtros {
+  display: flex;      /* En fila */
+  flex-wrap: wrap;    /* Salta línea si no caben */
+  gap: 1rem;          /* Espacio entre elementos */
+  align-items: center; /* Centrado vertical */
+}
+
+/* ── BUSCADOR ────────────────────────────────
+   Input de búsqueda de productos              */
+.buscador {
+  flex: 2;            /* Ocupa más espacio */
+  min-width: 200px;   /* Ancho mínimo */
+}
+
+/* ── SELECTOR DE CATEGORÍA ───────────────────
+   Select de filtro por categoría              */
+.selector {
+  flex: 1;            /* Ocupa menos espacio */
+  min-width: 150px;   /* Ancho mínimo */
+}
+
+/* ── GRID DE PRODUCTOS ───────────────────────
+   Distribuye las cards en columnas            */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Columnas responsivas */
+  gap: 1.5rem;         /* Espacio entre cards */
+  padding: 1rem;       /* Espaciado interno */
+}
+
+/* ── CARD DE PRODUCTO ────────────────────────
+   Estilos de cada card                        */
+.producto-card {
+  transition: transform 0.2s ease; /* Animación suave */
+}
+
+.producto-card:hover {
+  transform: translateY(-4px); /* Sube al hacer hover */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* Sombra */
+}
+
+/* ── DESCRIPCIÓN DEL PRODUCTO ────────────────
+   Texto descriptivo del producto              */
+.producto-descripcion {
+  color: #666;       /* Gris */
+  font-size: 0.9rem; /* Pequeño */
+  margin-bottom: 0.5rem; /* Espacio abajo */
+}
+
+/* ── PRECIO DEL PRODUCTO ─────────────────────
+   Precio destacado en azul                    */
+.producto-precio {
+  font-size: 1.5rem;  /* Grande */
+  font-weight: bold;  /* Negrita */
+  color: #1976d2;     /* Color primario */
+  margin-bottom: 0.5rem; /* Espacio abajo */
+}
+
+/* ── STOCK DISPONIBLE ────────────────────────
+   Muestra el stock en verde                   */
+.stock-disponible {
+  display: flex;      /* Ícono y texto en línea */
+  align-items: center; /* Centrado vertical */
+  gap: 0.3rem;        /* Espacio entre ícono y texto */
+  color: #388e3c;     /* Verde */
+  font-size: 0.85rem; /* Pequeño */
+}
+
+/* ── STOCK AGOTADO ───────────────────────────
+   Muestra "Sin stock" en rojo                 */
+.stock-agotado {
+  display: flex;      /* Ícono y texto en línea */
+  align-items: center; /* Centrado vertical */
+  gap: 0.3rem;        /* Espacio entre ícono y texto */
+  color: #e53935;     /* Rojo */
+  font-size: 0.85rem; /* Pequeño */
+}
+
+/* ── SIN RESULTADOS ──────────────────────────
+   Mensaje cuando no hay productos             */
+.sin-resultados {
+  grid-column: 1 / -1;  /* Ocupa todas las columnas */
+  text-align: center;   /* Centrado */
+  padding: 3rem;        /* Espaciado interno */
+  color: #666;          /* Gris */
+}
+
+.sin-resultados mat-icon {
+  font-size: 3rem; /* Ícono grande */
+  width: 3rem;     /* Ancho */
+  height: 3rem;    /* Alto */
+}
+
+/* ── FOOTER ──────────────────────────────────
+   Pie de página                               */
+.footer {
+  background: #333;   /* Fondo oscuro */
+  color: #fff;        /* Texto blanco */
+  text-align: center; /* Centrado */
+  padding: 1.5rem;    /* Espaciado interno */
+  margin-top: 3rem;   /* Espacio arriba */
+}

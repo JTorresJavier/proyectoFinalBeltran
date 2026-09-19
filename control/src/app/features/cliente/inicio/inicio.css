@@ -1,0 +1,123 @@
+/* ── BANNER PRINCIPAL ────────────────────────
+   Sección de bienvenida con fondo de color    */
+.banner {
+  background: linear-gradient(135deg, #1976d2, #42a5f5); /* Degradado azul */
+  color: white;              /* Texto blanco */
+  padding: 4rem 2rem;        /* Espaciado interno */
+  text-align: center;        /* Centrado */
+}
+
+/* ── CONTENIDO DEL BANNER ────────────────────
+   Limita el ancho y centra el contenido       */
+.banner-contenido {
+  max-width: 700px;  /* Ancho máximo */
+  margin: 0 auto;    /* Centrado horizontal */
+}
+
+/* ── TÍTULO DEL BANNER ───────────────────────
+   Nombre de la tienda en grande               */
+.banner-titulo {
+  font-size: 3rem;     /* Tamaño grande */
+  font-weight: bold;   /* Negrita */
+  margin-bottom: 1rem; /* Espacio abajo */
+  display: flex;       /* Ícono y texto en línea */
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  gap: 0.5rem;         /* Espacio entre ícono y texto */
+}
+
+/* ── ÍCONO DEL BANNER ────────────────────────
+   Tamaño del ícono en el título               */
+.banner-icono {
+  font-size: 3rem;  /* Mismo tamaño que el título */
+  width: 3rem;      /* Ancho del ícono */
+  height: 3rem;     /* Alto del ícono */
+}
+
+/* ── SLOGAN ──────────────────────────────────
+   Texto secundario del banner                 */
+.banner-slogan {
+  font-size: 1.2rem;   /* Tamaño mediano */
+  margin-bottom: 2rem; /* Espacio abajo */
+  opacity: 0.9;        /* Ligeramente transparente */
+}
+
+/* ── SECCIÓN CATEGORÍAS ──────────────────────
+   Chips de acceso rápido por categoría        */
+.categorias {
+  padding: 2rem 1rem; /* Espaciado interno */
+}
+
+.categorias h2 {
+  font-size: 1.5rem;   /* Tamaño del título */
+  margin-bottom: 1rem; /* Espacio abajo */
+  color: #1976d2;      /* Color primario */
+}
+
+/* ── CHIPS CONTENEDOR ────────────────────────
+   Alinea los chips en fila con wrap           */
+.chips-contenedor {
+  display: flex;    /* En fila */
+  flex-wrap: wrap;  /* Salta a la siguiente línea si no caben */
+  gap: 0.5rem;      /* Espacio entre chips */
+}
+
+/* ── SECCIÓN OFERTAS ─────────────────────────
+   Grid de cards de productos en descuento     */
+.ofertas {
+  padding: 2rem 1rem; /* Espaciado interno */
+}
+
+.ofertas h2 {
+  font-size: 1.5rem;   /* Tamaño del título */
+  margin-bottom: 1.5rem; /* Espacio abajo */
+}
+
+/* ── GRID DE OFERTAS ─────────────────────────
+   Distribuye las cards en columnas            */
+.ofertas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Columnas responsivas */
+  gap: 1.5rem; /* Espacio entre cards */
+}
+
+/* ── CARD DE OFERTA ──────────────────────────
+   Estilos de cada card de producto            */
+.oferta-card {
+  transition: transform 0.2s ease; /* Animación suave al hover */
+}
+
+.oferta-card:hover {
+  transform: translateY(-4px); /* Sube la card al hacer hover */
+}
+
+/* ── BADGE DE DESCUENTO ──────────────────────
+   Muestra el porcentaje de descuento          */
+.descuento-badge {
+  color: #e53935 !important; /* Rojo para destacar */
+  font-weight: bold !important; /* Negrita */
+}
+
+/* ── PRECIOS ─────────────────────────────────
+   Estilos del precio original y final         */
+.precio-original {
+  text-decoration: line-through; /* Precio tachado */
+  color: #999;                   /* Gris */
+  font-size: 0.9rem;             /* Más pequeño */
+}
+
+.precio-final {
+  font-size: 1.4rem;  /* Grande */
+  font-weight: bold;  /* Negrita */
+  color: #1976d2;     /* Color primario */
+}
+
+/* ── FOOTER ──────────────────────────────────
+   Pie de página simple                        */
+.footer {
+  background: #333;    /* Fondo oscuro */
+  color: #fff;         /* Texto blanco */
+  text-align: center;  /* Centrado */
+  padding: 1.5rem;     /* Espaciado interno */
+  margin-top: 3rem;    /* Espacio arriba */
+}

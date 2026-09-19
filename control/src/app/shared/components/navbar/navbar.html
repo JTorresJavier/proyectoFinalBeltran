@@ -1,0 +1,40 @@
+<!-- ── NAVBAR DE STOREHUB ─────────────────────
+     Barra de navegación principal.
+     Se muestra en todas las páginas públicas.
+     Contiene: logo, links del menú y botón admin  -->
+
+<!-- ── TOOLBAR MATERIAL ───────────────────────
+     mat-toolbar: componente de Angular Material
+     color="primary": usa el color primario del tema -->
+<mat-toolbar color="primary">
+
+  <!-- ── LOGO / NOMBRE ──────────────────────────
+       Click en el logo lleva al inicio           -->
+  <a routerLink="/inicio" class="navbar-logo">
+    <mat-icon>store</mat-icon> <!-- Ícono de tienda -->
+    <span>StoreHub</span>      <!-- Nombre de la app -->
+  </a>
+
+  <!-- ── SEPARADOR ──────────────────────────────
+       Empuja los links hacia la derecha          -->
+  <span class="spacer"></span>
+
+  <!-- ── LINKS DE NAVEGACIÓN ────────────────────
+       @for: genera un botón por cada link del array "linksCliente"
+       routerLinkActive: agrega clase "activo" al link de la página actual -->
+  @for (link of linksCliente; track link.ruta) {
+    <button
+      mat-button
+      [routerLink]="link.ruta"
+      routerLinkActive="link-activo">
+      {{ link.label }} <!-- Interpolación: muestra el nombre del link -->
+    </button>
+  }
+
+  <!-- ── BOTÓN ADMIN ─────────────────────────────
+       Lleva al login del administrador           -->
+  <a mat-icon-button routerLink="/login" title="Administrador">
+    <mat-icon>admin_panel_settings</mat-icon> <!-- Ícono de admin -->
+  </a>
+
+</mat-toolbar>

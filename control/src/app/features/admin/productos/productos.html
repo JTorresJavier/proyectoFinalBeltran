@@ -1,0 +1,260 @@
+<!-- ── GESTIÓN DE PRODUCTOS DE STOREHUB ───────
+     Panel de administración de productos.
+     Implementa CRUD completo contra la API REST.
+     Solo accesible con login (authGuard)         -->
+
+<!-- ── HEADER ────────────────────────────────
+     Barra superior con título y botón nuevo    -->
+<header class="productos-header">
+  <div class="header-izquierda">
+    <mat-icon>store</mat-icon>
+    <span class="header-titulo">StoreHub</span>
+    <span class="header-seccion">/ Productos</span>
+  </div>
+  <div class="header-derecha">
+    <a mat-button routerLink="/admin/dashboard">
+      <mat-icon>dashboard</mat-icon>
+      Dashboard
+    </a>
+  </div>
+</header>
+
+<!-- ── CONTENIDO PRINCIPAL ───────────────────
+     Tabla de productos y formulario           -->
+<main class="productos-contenido contenedor">
+
+  <!-- ── TÍTULO Y BOTÓN NUEVO ──────────────
+       Encabezado de la sección               -->
+  <div class="seccion-header">
+    <h1>📦 Gestión de Productos</h1>
+    <!-- EVENT BINDING: muestra el formulario al hacer click -->
+    <button mat-raised-button color="primary" (click)="nuevoProducto()">
+      <mat-icon>add</mat-icon>
+      Nuevo Producto
+    </button>
+  </div>
+
+  <!-- ── FORMULARIO ────────────────────────
+       @if: muestra el formulario solo cuando
+       mostrarFormulario es true              -->
+  @if (mostrarFormulario) {
+    <mat-card class="formulario-card">
+
+      <!-- Título dinámico según modo edición o creación -->
+      <mat-card-header>
+        <mat-card-title>
+          {{ modoEdicion ? '✏️ Editar Producto' : '➕ Nuevo Producto' }}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <!-- [formGroup]: vincula el form con el FormGroup
+             (ngSubmit): llama a guardarProducto() al enviar -->
+        <form [formGroup]="formulario" (ngSubmit)="guardarProducto()">
+
+          <!-- ── FILA 1: NOMBRE Y CATEGORÍA ──────── -->
+          <div class="form-fila">
+
+            <!-- Campo nombre -->
+            <mat-form-field appearance="outline" class="campo-flex">
+              <mat-label>Nombre</mat-label>
+              <input matInput formControlName="nombre" placeholder="Ej: Coca Cola 2.25L"/>
+              @if (nombre?.invalid && nombre?.touched) {
+                <mat-error>
+                  @if (nombre?.errors?.['required'])  { Nombre obligatorio. }
+                  @if (nombre?.errors?.['minlength']) { Mínimo 3 caracteres. }
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Select de categoría -->
+            <mat-form-field appearance="outline" class="campo-flex">
+              <mat-label>Categoría</mat-label>
+              <mat-select formControlName="categoria">
+                @for (cat of categorias; track cat) {
+                  <mat-option [value]="cat">{{ cat }}</mat-option>
+                }
+              </mat-select>
+              @if (categoria?.invalid && categoria?.touched) {
+                <mat-error>Seleccioná una categoría.</mat-error>
+              }
+            </mat-form-field>
+
+          </div>
+
+          <!-- ── FILA 2: PRECIO Y STOCK ───────────── -->
+          <div class="form-fila">
+
+            <!-- Campo precio -->
+            <mat-form-field appearance="outline" class="campo-flex">
+              <mat-label>Precio</mat-label>
+              <input matInput type="number" formControlName="precio"/>
+              <span matPrefix>$&nbsp;</span>
+              @if (precio?.invalid && precio?.touched) {
+                <mat-error>Precio obligatorio y mayor a 0.</mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Campo stock -->
+            <mat-form-field appearance="outline" class="campo-flex">
+              <mat-label>Stock</mat-label>
+              <input matInput type="number" formControlName="stock"/>
+              @if (stock?.invalid && stock?.touched) {
+                <mat-error>Stock obligatorio y mayor a 0.</mat-error>
+              }
+            </mat-form-field>
+
+          </div>
+
+          <!-- ── CAMPO DESCRIPCIÓN ─────────────────── -->
+          <mat-form-field appearance="outline" class="campo-completo">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput formControlName="descripcion" rows="2"></textarea>
+            @if (descripcion?.invalid && descripcion?.touched) {
+              <mat-error>Descripción obligatoria.</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- ── FILA 3: OFERTA Y DESCUENTO ──────── -->
+          <div class="form-fila form-fila-toggle">
+
+            <!-- Toggle de oferta -->
+            <mat-slide-toggle formControlName="oferta" color="primary">
+              ¿En oferta?
+            </mat-slide-toggle>
+
+            <!-- Campo descuento -->
+            <mat-form-field appearance="outline" class="campo-flex">
+              <mat-label>Descuento (%)</mat-label>
+              <input matInput type="number" formControlName="descuento"/>
+            </mat-form-field>
+
+          </div>
+
+          <!-- ── BOTONES ──────────────────────────── -->
+          <div class="form-botones">
+            <!-- Botón guardar -->
+            <button mat-raised-button color="primary" type="submit">
+              <mat-icon>save</mat-icon>
+              {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+            </button>
+            <!-- Botón cancelar — EVENT BINDING -->
+            <button mat-stroked-button type="button" (click)="cancelar()">
+              <mat-icon>cancel</mat-icon>
+              Cancelar
+            </button>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- ── TABLA DE PRODUCTOS ────────────────
+       Muestra todos los productos de la API  -->
+  @if (cargando) {
+    <!-- Spinner mientras carga -->
+    <div class="spinner-contenedor">
+      <mat-spinner></mat-spinner>
+      <p>Cargando productos...</p>
+    </div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <!-- mat-table: tabla de Angular Material
+             [dataSource]: array de productos     -->
+        <table mat-table [dataSource]="productos" class="tabla-completa">
+
+          <!-- ── COLUMNA NOMBRE ─────────────────── -->
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let p">{{ p.nombre }}</td>
+          </ng-container>
+
+          <!-- ── COLUMNA CATEGORÍA ──────────────── -->
+          <ng-container matColumnDef="categoria">
+            <th mat-header-cell *matHeaderCellDef>Categoría</th>
+            <td mat-cell *matCellDef="let p">
+              <mat-chip>{{ p.categoria }}</mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- ── COLUMNA PRECIO ─────────────────── -->
+          <ng-container matColumnDef="precio">
+            <th mat-header-cell *matHeaderCellDef>Precio</th>
+            <!-- PIPE currency: formatea el precio como moneda -->
+            <td mat-cell *matCellDef="let p" class="precio">
+              {{ p.precio | currency:'ARS':'symbol':'1.0-0' }}
+            </td>
+          </ng-container>
+
+          <!-- ── COLUMNA STOCK ──────────────────── -->
+          <ng-container matColumnDef="stock">
+            <th mat-header-cell *matHeaderCellDef>Stock</th>
+            <td mat-cell *matCellDef="let p">
+              <!-- @if: color distinto según el stock -->
+              @if (p.stock === 0) {
+                <span class="stock-rojo">Sin stock</span>
+              } @else if (p.stock < 5) {
+                <span class="stock-naranja">{{ p.stock }} ⚠️</span>
+              } @else {
+                <span class="stock-verde">{{ p.stock }}</span>
+              }
+            </td>
+          </ng-container>
+
+          <!-- ── COLUMNA OFERTA ─────────────────── -->
+          <ng-container matColumnDef="oferta">
+            <th mat-header-cell *matHeaderCellDef>Oferta</th>
+            <td mat-cell *matCellDef="let p">
+              @if (p.oferta) {
+                <mat-chip color="warn">-{{ p.descuento }}% OFF</mat-chip>
+              } @else {
+                <span class="sin-oferta">—</span>
+              }
+            </td>
+          </ng-container>
+
+          <!-- ── COLUMNA ACCIONES ───────────────── -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let p">
+              <div class="acciones-fila">
+                <!-- Botón editar — EVENT BINDING -->
+                <button mat-icon-button color="primary"
+                  (click)="editarProducto(p)"
+                  title="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <!-- Botón eliminar — EVENT BINDING -->
+                <button mat-icon-button color="warn"
+                  (click)="eliminarProducto(p)"
+                  title="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- ── FILAS DE LA TABLA ──────────────── -->
+          <tr mat-header-row *matHeaderRowDef="columnasTabla"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnasTabla;"></tr>
+
+        </table>
+
+        <!-- @empty equivalente: sin productos -->
+        @if (productos.length === 0) {
+          <div class="sin-productos">
+            <mat-icon>inventory_2</mat-icon>
+            <p>No hay productos cargados.</p>
+            <button mat-raised-button color="primary" (click)="nuevoProducto()">
+              Agregar primer producto
+            </button>
+          </div>
+        }
+
+      </mat-card-content>
+    </mat-card>
+  }
+
+</main>

@@ -1,0 +1,159 @@
+/* ── HEADER DE PRODUCTOS ─────────────────────
+   Barra superior con título y navegación      */
+.productos-header {
+  display: flex;                  /* En fila */
+  justify-content: space-between; /* Espaciado entre izquierda y derecha */
+  align-items: center;            /* Centrado vertical */
+  padding: 1rem 2rem;             /* Espaciado interno */
+  background: #1976d2;            /* Color primario azul */
+  color: white;                   /* Texto blanco */
+  position: sticky;               /* Fijo arriba */
+  top: 0;                         /* Pegado al tope */
+  z-index: 100;                   /* Por encima del contenido */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Sombra */
+}
+
+/* ── LADO IZQUIERDO DEL HEADER ───────────────
+   Logo y título                               */
+.header-izquierda {
+  display: flex;       /* En fila */
+  align-items: center; /* Centrado vertical */
+  gap: 0.5rem;         /* Espacio entre elementos */
+}
+
+.header-titulo {
+  font-weight: bold; /* Negrita */
+  font-size: 1.2rem; /* Grande */
+  color: white;      /* Blanco */
+}
+
+.header-seccion {
+  opacity: 0.7;  /* Semitransparente */
+  color: white;  /* Blanco */
+}
+
+/* ── LADO DERECHO DEL HEADER ─────────────────
+   Botón de navegación al dashboard            */
+.header-derecha a {
+  color: white; /* Texto blanco */
+}
+
+/* ── CONTENIDO PRINCIPAL ─────────────────────
+   Área principal de la página                 */
+.productos-contenido {
+  padding: 2rem 1rem; /* Espaciado interno */
+}
+
+/* ── HEADER DE LA SECCIÓN ────────────────────
+   Título y botón "Nuevo Producto"             */
+.seccion-header {
+  display: flex;                  /* En fila */
+  justify-content: space-between; /* Espaciado */
+  align-items: center;            /* Centrado vertical */
+  margin-bottom: 1.5rem;          /* Espacio abajo */
+}
+
+.seccion-header h1 {
+  font-size: 1.8rem; /* Grande */
+  color: #333;       /* Gris oscuro */
+}
+
+/* ── CARD DEL FORMULARIO ─────────────────────
+   Formulario de creación y edición            */
+.formulario-card {
+  margin-bottom: 1.5rem; /* Espacio abajo */
+  padding: 0.5rem;       /* Espaciado interno */
+}
+
+/* ── FILAS DEL FORMULARIO ────────────────────
+   Agrupa campos en fila                       */
+.form-fila {
+  display: flex;  /* En fila */
+  gap: 1rem;      /* Espacio entre campos */
+  flex-wrap: wrap; /* Salta línea en mobile */
+}
+
+/* ── FILA CON TOGGLE ─────────────────────────
+   Fila que contiene el toggle de oferta       */
+.form-fila-toggle {
+  align-items: center; /* Centrado vertical */
+  margin-bottom: 1rem; /* Espacio abajo */
+}
+
+/* ── CAMPO FLEX ──────────────────────────────
+   Campo que ocupa el espacio disponible       */
+.campo-flex {
+  flex: 1;          /* Ocupa espacio disponible */
+  min-width: 180px; /* Ancho mínimo */
+}
+
+/* ── CAMPO COMPLETO ──────────────────────────
+   Campo que ocupa todo el ancho               */
+.campo-completo {
+  width: 100%; /* Ancho completo */
+}
+
+/* ── BOTONES DEL FORMULARIO ──────────────────
+   Fila de botones guardar y cancelar          */
+.form-botones {
+  display: flex;  /* En fila */
+  gap: 1rem;      /* Espacio entre botones */
+  margin-top: 1rem; /* Espacio arriba */
+}
+
+/* ── SPINNER ─────────────────────────────────
+   Contenedor del spinner de carga             */
+.spinner-contenedor {
+  display: flex;           /* En fila */
+  flex-direction: column;  /* En columna */
+  align-items: center;     /* Centrado */
+  padding: 3rem;           /* Espaciado */
+  gap: 1rem;               /* Espacio entre spinner y texto */
+}
+
+/* ── TABLA ───────────────────────────────────
+   Tabla de productos que ocupa todo el ancho  */
+.tabla-completa {
+  width: 100%; /* Ancho completo */
+}
+
+/* ── PRECIO EN LA TABLA ──────────────────────
+   Precio formateado en azul                   */
+.precio {
+  color: #1976d2;    /* Azul */
+  font-weight: bold; /* Negrita */
+}
+
+/* ── COLORES DE STOCK ────────────────────────
+   Verde, naranja y rojo según el stock        */
+.stock-verde   { color: #388e3c; font-weight: bold; } /* Stock normal */
+.stock-naranja { color: #f57c00; font-weight: bold; } /* Stock bajo */
+.stock-rojo    { color: #e53935; font-weight: bold; } /* Sin stock */
+
+/* ── SIN OFERTA ──────────────────────────────
+   Guión cuando no hay oferta                  */
+.sin-oferta {
+  color: #ccc; /* Gris claro */
+}
+
+/* ── ACCIONES DE LA FILA ─────────────────────
+   Botones de editar y eliminar en línea       */
+.acciones-fila {
+  display: flex;  /* En fila */
+  gap: 0.3rem;    /* Espacio entre botones */
+}
+
+/* ── SIN PRODUCTOS ───────────────────────────
+   Mensaje cuando no hay productos             */
+.sin-productos {
+  text-align: center; /* Centrado */
+  padding: 3rem;      /* Espaciado */
+  color: #666;        /* Gris */
+}
+
+.sin-productos mat-icon {
+  font-size: 3rem; /* Ícono grande */
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}

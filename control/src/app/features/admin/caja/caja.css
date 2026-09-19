@@ -1,0 +1,574 @@
+/* ── HEADER ──────────────────────────────────
+   Barra superior azul con info del cajero     */
+.caja-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.5rem;
+  background: #1976d2;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.header-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-titulo  { font-weight: bold; font-size: 1.1rem; }
+.header-seccion { opacity: 0.7; }
+
+.header-derecha {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: white;
+  flex-wrap: wrap;
+}
+
+.header-derecha a,
+.header-derecha button { color: white; }
+
+/* ── CHIP DE ACUMULADO ───────────────────────
+   Muestra el acumulado del día en el header   */
+.acumulado-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border: 2px solid rgba(255,255,255,0.5);
+}
+
+/* ── ESTADOS DEL ACUMULADO ───────────────────
+   Verde, naranja y rojo según diferencia      */
+.acumulado-ok      { background: rgba(56,142,60,0.3);  color: #c8e6c9; }
+.acumulado-warning { background: rgba(245,124,0,0.3);  color: #ffe0b2; }
+.acumulado-danger  { background: rgba(229,57,53,0.3);  color: #ffcdd2; }
+
+/* ── OVERLAY DE PANTALLAS ────────────────────
+   Fondo oscuro para apertura, cobro y cierre  */
+.pantalla-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+}
+
+/* ── CARDS DE OVERLAY ────────────────────────
+   Cards centradas para apertura, cobro, cierre */
+.apertura-card,
+.cobro-card,
+.cierre-card {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1rem;
+  border-radius: 12px !important;
+}
+
+/* ── APERTURA DE CAJA ────────────────────────
+   Descripción en la pantalla de apertura      */
+.apertura-desc {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+/* ── TOTALES EN PANTALLA DE COBRO ────────────
+   Muestra total real y redondeado             */
+.totales-cobro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.total-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.total-label-small {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* ── TOTAL REAL ──────────────────────────────
+   Total sin redondear                         */
+.total-real {
+  font-size: 1.5rem;
+  color: #666;
+  text-decoration: line-through; /* Tachado — no es lo que se cobra */
+}
+
+/* ── TOTAL GRANDE ────────────────────────────
+   Total redondeado a $50 — lo que se cobra    */
+.total-grande {
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+/* ── DIFERENCIA DE VENTA ─────────────────────
+   Muestra la diferencia de esta venta         */
+.diferencia-venta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* ── ACUMULADO PROYECTADO ────────────────────
+   Muestra cómo quedará el acumulado           */
+.acumulado-proyectado {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: #f5f5f5;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ── COLORES POSITIVO/NEGATIVO ───────────────
+   Verde para positivo, rojo para negativo     */
+.positivo { background: #e8f5e9; color: #388e3c; }
+.negativo { background: #ffebee; color: #e53935; }
+
+/* ── SECCIÓN EFECTIVO ────────────────────────
+   Calculadora de efectivo y vuelto            */
+.seccion-efectivo {
+  margin-top: 0.5rem;
+}
+
+.label-montos {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+/* ── MONTOS RÁPIDOS ──────────────────────────
+   Botones de $500, $1000, etc.               */
+.montos-rapidos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.montos-rapidos button {
+  font-weight: bold;
+  min-width: 70px;
+}
+
+/* Botón seleccionado en montos rápidos */
+.montos-rapidos button.seleccionado {
+  background: #1976d2;
+  color: white;
+}
+
+/* ── VUELTO ──────────────────────────────────
+   Sección del vuelto al cliente              */
+.vuelto-seccion {
+  margin-top: 0.5rem;
+}
+
+.vuelto-monto {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+}
+
+.vuelto-ok    { background: #e8f5e9; }
+.vuelto-error { background: #ffebee; }
+
+.vuelto-label { font-weight: bold; font-size: 1rem; }
+
+.vuelto-valor {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+/* ── BILLETES SUGERIDOS ──────────────────────
+   Muestra los billetes para dar de vuelto    */
+.billetes-sugeridos {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 0.8rem;
+}
+
+.billetes-titulo {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.billetes-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.billete-item {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.billete-cantidad { color: #1976d2; font-weight: bold; }
+.billete-monto    { color: #333; font-size: 0.9rem; }
+
+/* ── RESUMEN DE ITEMS ────────────────────────
+   Cantidad de items en el cobro              */
+.resumen-items {
+  color: #888;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* ── BOTONES COMPLETOS ───────────────────────
+   Botones que ocupan todo el ancho           */
+.btn-completo,
+.btn-confirmar {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+/* ── CIERRE DE CAJA ──────────────────────────
+   Resumen del día al cerrar                  */
+.cierre-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cierre-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 0;
+}
+
+.cierre-subtitulo {
+  font-weight: bold;
+  color: #555;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Fila del acumulado en el cierre */
+.acumulado-cierre {
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+/* Diferencia real al cierre */
+.diferencia-cierre {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+/* ── HISTORIAL PANEL ─────────────────────────
+   Panel lateral deslizable con ventas del día */
+.historial-panel {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  width: 320px;
+  height: calc(100vh - 64px);
+  background: white;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.15);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+.historial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  background: #f5f5f5;
+}
+
+.historial-header h3 { margin: 0; font-size: 1rem; }
+
+.historial-lista {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+/* Item de venta en el historial */
+.historial-item {
+  padding: 0.7rem;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+}
+
+.historial-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.2rem;
+}
+
+.historial-hora    { color: #888; font-size: 0.85rem; }
+.historial-metodo  { color: #555; font-size: 0.85rem; text-transform: capitalize; }
+.historial-total   { font-weight: bold; color: #1976d2; }
+
+.historial-diferencia {
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.historial-vacio {
+  text-align: center;
+  color: #ccc;
+  padding: 2rem;
+}
+
+.historial-total-dia {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-top: 2px solid #1976d2;
+  font-size: 1rem;
+  background: #f5f5f5;
+}
+
+.historial-total-dia strong { color: #1976d2; }
+
+/* ── CONTENIDO PRINCIPAL ─────────────────────
+   Grid de dos paneles: productos y carrito    */
+.caja-contenido {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+  transition: grid-template-columns 0.2s;
+}
+
+/* Cuando el historial está abierto */
+.caja-contenido.con-historial {
+  grid-template-columns: 1fr 380px;
+  padding-right: 320px; /* Espacio para el historial */
+}
+
+/* ── PANEL PRODUCTOS ─────────────────────────
+   Izquierda: buscador y grilla               */
+.panel-productos {
+  padding: 1.2rem;
+  overflow-y: auto;
+  background: #f5f5f5;
+  border-right: 1px solid #ddd;
+}
+
+.panel-productos h2 { font-size: 1.2rem; margin-bottom: 0.8rem; color: #333; }
+
+.buscador { width: 100%; margin-bottom: 0.8rem; }
+
+/* ── GRILLA DE PRODUCTOS ─────────────────────
+   Cards clickeables de productos             */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.7rem;
+}
+
+.producto-item {
+  background: white;
+  border-radius: 8px;
+  padding: 0.7rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 2px solid transparent;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.producto-item:hover  { border-color: #1976d2; transform: translateY(-2px); }
+.producto-item:active { transform: scale(0.97); }
+
+.producto-icono  { font-size: 1.8rem; width: 1.8rem; height: 1.8rem; color: #1976d2; }
+.producto-nombre { font-size: 0.8rem; font-weight: 600; color: #333; margin: 0.2rem 0; line-height: 1.2; }
+.producto-precio { font-size: 0.95rem; font-weight: bold; color: #1976d2; }
+.producto-stock  { font-size: 0.7rem; color: #999; }
+
+.oferta-badge {
+  position: absolute; top: 4px; right: 4px;
+  background: #e53935; color: white;
+  font-size: 0.65rem; font-weight: bold;
+  padding: 2px 5px; border-radius: 8px;
+}
+
+.sin-productos { grid-column: 1/-1; text-align: center; padding: 2rem; color: #bbb; }
+
+/* ── PANEL CARRITO ───────────────────────────
+   Derecha: items y total                     */
+.panel-carrito {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem;
+  overflow-y: auto;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.08);
+}
+
+.carrito-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.carrito-header h2 {
+  font-size: 1.2rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.carrito-badge {
+  background: #1976d2; color: white;
+  border-radius: 50%;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: bold;
+}
+
+.carrito-vacio {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: #ccc; gap: 0.4rem;
+}
+
+.carrito-vacio mat-icon { font-size: 3.5rem; width: 3.5rem; height: 3.5rem; }
+.carrito-vacio-sub { font-size: 0.8rem; color: #bbb; }
+
+.carrito-items { flex: 1; overflow-y: auto; margin-bottom: 0.8rem; }
+
+.carrito-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.item-info {
+  display: flex; align-items: center;
+  gap: 0.3rem; flex: 1; min-width: 0;
+}
+
+.item-nombre {
+  font-size: 0.8rem; font-weight: 500;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.item-cantidad {
+  display: flex; align-items: center; gap: 0.1rem;
+}
+
+.cantidad-numero {
+  font-weight: bold; min-width: 20px; text-align: center; font-size: 0.9rem;
+}
+
+.item-subtotal {
+  font-weight: bold; color: #1976d2;
+  font-size: 0.85rem; min-width: 65px; text-align: right;
+}
+
+/* ── TOTALES DEL CARRITO ─────────────────────
+   Subtotal, redondeado y diferencia          */
+.carrito-totales {
+  padding: 0.8rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.carrito-total-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.carrito-total-fila.redondeado {
+  font-size: 1rem;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Diferencia proyectada en el carrito */
+.diferencia-proyectada {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+}
+
+.btn-cobrar {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.campo-completo { width: 100%; }
+.mt-1 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 1rem; }

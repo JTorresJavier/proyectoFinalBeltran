@@ -1,0 +1,452 @@
+<!-- ── PÁGINA DE CAJA INTELIGENTE ─────────────
+     Maneja apertura, ventas, cobros con redondeo
+     a $50, acumulado de diferencias y cierre    -->
+
+<!-- ── HEADER ────────────────────────────────-->
+<header class="caja-header">
+  <div class="header-izquierda">
+    <mat-icon>store</mat-icon>
+    <span class="header-titulo">StoreHub</span>
+    <span class="header-seccion">/ Caja</span>
+  </div>
+  <div class="header-derecha">
+    @if (usuarioLogueado) {
+      <mat-icon>account_circle</mat-icon>
+      <span>{{ usuarioLogueado.nombre }}</span>
+    }
+    <!-- Acumulado del día visible siempre -->
+    @if (cajaAbierta) {
+      <div class="acumulado-chip" [class]="'acumulado-' + estadoAcumulado">
+        <mat-icon>balance</mat-icon>
+        Acumulado: {{ acumulado >= 0 ? '+' : '' }}{{ acumulado | currency:'ARS':'symbol':'1.0-0' }}
+      </div>
+      <button mat-button (click)="mostrarHistorial = !mostrarHistorial">
+        <mat-icon>history</mat-icon>
+        Historial
+      </button>
+      <button mat-button color="warn" (click)="cerrarCaja()">
+        <mat-icon>lock</mat-icon>
+        Cerrar Caja
+      </button>
+    }
+    <a mat-button routerLink="/admin/dashboard">
+      <mat-icon>dashboard</mat-icon>
+    </a>
+  </div>
+</header>
+
+<!-- ── PANTALLA DE APERTURA DE CAJA ──────────
+     Se muestra cuando la caja está cerrada     -->
+@if (mostrarApertura) {
+  <div class="pantalla-overlay">
+    <mat-card class="apertura-card">
+      <mat-card-header>
+        <mat-card-title>🏪 Apertura de Caja</mat-card-title>
+        <mat-card-subtitle>
+          {{ usuarioLogueado?.nombre }} — {{ usuarioLogueado?.rol }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="apertura-desc">
+          Ingresá el monto inicial en efectivo para abrir la caja.
+        </p>
+        <mat-form-field appearance="outline" class="campo-completo">
+          <mat-label>Monto inicial en caja</mat-label>
+          <span matPrefix>$ </span>
+          <!-- TWO-WAY BINDING: monto inicial -->
+          <input matInput type="number" [(ngModel)]="montoInicial" min="0"/>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" class="btn-completo" (click)="abrirCaja()">
+          <mat-icon>lock_open</mat-icon>
+          Abrir Caja
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+}
+
+<!-- ── PANTALLA DE COBRO ─────────────────────
+     Se muestra al confirmar el carrito         -->
+@if (cobrando) {
+  <div class="pantalla-overlay">
+    <mat-card class="cobro-card">
+      <mat-card-header>
+        <mat-card-title>💰 Confirmar Cobro</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+
+        <!-- Total real y redondeado -->
+        <div class="totales-cobro">
+          <div class="total-item">
+            <span class="total-label-small">Total real</span>
+            <span class="total-real">{{ total | currency:'ARS':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="total-item">
+            <span class="total-label-small">Total a cobrar (redondeado a $50)</span>
+            <span class="total-grande">{{ totalRedondeado | currency:'ARS':'symbol':'1.0-0' }}</span>
+          </div>
+          <!-- Diferencia de esta venta -->
+          <div class="diferencia-venta" [class.positivo]="diferenciaVenta >= 0" [class.negativo]="diferenciaVenta < 0">
+            <mat-icon>{{ diferenciaVenta >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+            <span>
+              Diferencia esta venta:
+              {{ diferenciaVenta >= 0 ? '+' : '' }}{{ diferenciaVenta | currency:'ARS':'symbol':'1.0-0' }}
+            </span>
+          </div>
+          <!-- Acumulado proyectado -->
+          <div class="acumulado-proyectado">
+            <mat-icon>account_balance</mat-icon>
+            <span>
+              Acumulado tras esta venta:
+              <strong>{{ (acumulado + diferenciaVenta) >= 0 ? '+' : '' }}{{ (acumulado + diferenciaVenta) | currency:'ARS':'symbol':'1.0-0' }}</strong>
+            </span>
+          </div>
+        </div>
+
+        <mat-divider class="mt-1 mb-1"></mat-divider>
+
+        <!-- Select método de pago -->
+        <mat-form-field appearance="outline" class="campo-completo">
+          <mat-label>Método de pago</mat-label>
+          <mat-select [(ngModel)]="metodoPago">
+            <mat-option value="efectivo">💵 Efectivo</mat-option>
+            <mat-option value="debito">💳 Débito</mat-option>
+            <mat-option value="credito">💳 Crédito</mat-option>
+            <mat-option value="transferencia">📱 Transferencia</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Sección efectivo -->
+        @if (metodoPago === 'efectivo') {
+          <div class="seccion-efectivo">
+
+            <!-- Botones de monto rápido -->
+            <p class="label-montos">Monto recibido rápido:</p>
+            <div class="montos-rapidos">
+              @for (monto of [500, 1000, 2000, 5000, 10000]; track monto) {
+                <button
+                  mat-stroked-button
+                  [class.seleccionado]="montoPagado === monto"
+                  (click)="montoPagado = monto">
+                  ${{ monto | number }}
+                </button>
+              }
+            </div>
+
+            <!-- Input monto recibido -->
+            <mat-form-field appearance="outline" class="campo-completo">
+              <mat-label>Monto recibido</mat-label>
+              <span matPrefix>$ </span>
+              <input matInput type="number" [(ngModel)]="montoPagado"/>
+            </mat-form-field>
+
+            <!-- Vuelto y billetes -->
+            @if (montoPagado > 0) {
+              <div class="vuelto-seccion">
+
+                <!-- Monto del vuelto -->
+                <div class="vuelto-monto" [class.vuelto-ok]="vuelto >= 0" [class.vuelto-error]="vuelto < 0">
+                  <span class="vuelto-label">Vuelto:</span>
+                  <span class="vuelto-valor">
+                    {{ vuelto >= 0 ? (vuelto | currency:'ARS':'symbol':'1.0-0') : '⚠️ Monto insuficiente' }}
+                  </span>
+                </div>
+
+                <!-- Billetes sugeridos para el vuelto -->
+                @if (vuelto > 0 && billetesVuelto.length > 0) {
+                  <div class="billetes-sugeridos">
+                    <p class="billetes-titulo">💵 Dar de vuelto:</p>
+                    <div class="billetes-grid">
+                      @for (b of billetesVuelto; track b.billete) {
+                        <div class="billete-item">
+                          <span class="billete-cantidad">{{ b.cantidad }}x</span>
+                          <span class="billete-monto">${{ b.billete | number }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+              </div>
+            }
+
+          </div>
+        }
+
+        <!-- Resumen de items -->
+        <p class="resumen-items">
+          {{ cantidadItems }} items — {{ carrito.length }} productos distintos
+        </p>
+
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button
+          mat-raised-button color="primary" class="btn-confirmar"
+          [disabled]="metodoPago === 'efectivo' && vuelto < 0"
+          (click)="confirmarCobro()">
+          <mat-icon>check_circle</mat-icon>
+          Confirmar Cobro
+        </button>
+        <button mat-stroked-button (click)="cancelarCobro()">
+          <mat-icon>arrow_back</mat-icon>
+          Volver
+        </button>
+      </mat-card-actions>
+
+    </mat-card>
+  </div>
+}
+
+<!-- ── PANTALLA DE CIERRE DE CAJA ─────────────
+     Resumen del día y conteo de efectivo       -->
+@if (mostrarCierre) {
+  <div class="pantalla-overlay">
+    <mat-card class="cierre-card">
+      <mat-card-header>
+        <mat-card-title>🔒 Cierre de Caja</mat-card-title>
+        <mat-card-subtitle>Resumen del día</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+
+        <!-- Resumen de ventas -->
+        <div class="cierre-resumen">
+
+          <div class="cierre-fila">
+            <span>Total de ventas:</span>
+            <strong>{{ ventasHoy.length }}</strong>
+          </div>
+          <div class="cierre-fila">
+            <span>Total vendido:</span>
+            <strong>{{ totalHoy | currency:'ARS':'symbol':'1.0-0' }}</strong>
+          </div>
+
+          <mat-divider class="mt-1 mb-1"></mat-divider>
+
+          <!-- Desglose por método de pago -->
+          <p class="cierre-subtitulo">Por método de pago:</p>
+          <div class="cierre-fila">
+            <span>💵 Efectivo:</span>
+            <strong>{{ totalesPorMetodo.efectivo | currency:'ARS':'symbol':'1.0-0' }}</strong>
+          </div>
+          <div class="cierre-fila">
+            <span>💳 Débito:</span>
+            <strong>{{ totalesPorMetodo.debito | currency:'ARS':'symbol':'1.0-0' }}</strong>
+          </div>
+          <div class="cierre-fila">
+            <span>💳 Crédito:</span>
+            <strong>{{ totalesPorMetodo.credito | currency:'ARS':'symbol':'1.0-0' }}</strong>
+          </div>
+          <div class="cierre-fila">
+            <span>📱 Transferencia:</span>
+            <strong>{{ totalesPorMetodo.transferencia | currency:'ARS':'symbol':'1.0-0' }}</strong>
+          </div>
+
+          <mat-divider class="mt-1 mb-1"></mat-divider>
+
+          <!-- Acumulado del día -->
+          <div class="cierre-fila acumulado-cierre" [class]="'acumulado-' + estadoAcumulado">
+            <span>Diferencia acumulada (efectivo):</span>
+            <strong>{{ acumulado >= 0 ? '+' : '' }}{{ acumulado | currency:'ARS':'symbol':'1.0-0' }}</strong>
+          </div>
+
+          <mat-divider class="mt-1 mb-1"></mat-divider>
+
+          <!-- Conteo de efectivo real -->
+          <p class="cierre-subtitulo">Conteo de efectivo real:</p>
+          <mat-form-field appearance="outline" class="campo-completo">
+            <mat-label>Efectivo contado en caja</mat-label>
+            <span matPrefix>$ </span>
+            <input matInput type="number" [(ngModel)]="efectivoContado"/>
+          </mat-form-field>
+
+          <!-- Diferencia real -->
+          @if (efectivoContado > 0) {
+            <div class="diferencia-cierre"
+              [class.positivo]="diferenciaCierre >= 0"
+              [class.negativo]="diferenciaCierre < 0">
+              <mat-icon>{{ diferenciaCierre >= 0 ? 'check_circle' : 'warning' }}</mat-icon>
+              <span>
+                Diferencia real:
+                {{ diferenciaCierre >= 0 ? '+' : '' }}{{ diferenciaCierre | currency:'ARS':'symbol':'1.0-0' }}
+                {{ Math.abs(diferenciaCierre) <= 100 ? '✅ Aceptable' : '⚠️ Revisar' }}
+              </span>
+            </div>
+          }
+
+        </div>
+
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="warn" class="btn-confirmar" (click)="confirmarCierre()">
+          <mat-icon>lock</mat-icon>
+          Confirmar Cierre
+        </button>
+        <button mat-stroked-button (click)="mostrarCierre = false">
+          <mat-icon>arrow_back</mat-icon>
+          Cancelar
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+}
+
+<!-- ── HISTORIAL DE VENTAS ────────────────────
+     Panel lateral con ventas del día           -->
+@if (mostrarHistorial) {
+  <div class="historial-panel">
+    <div class="historial-header">
+      <h3>📋 Ventas de hoy ({{ ventasHoy.length }})</h3>
+      <button mat-icon-button (click)="mostrarHistorial = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="historial-lista">
+      @for (venta of ventasHoy; track venta.id) {
+        <div class="historial-item">
+          <div class="historial-fila">
+            <span class="historial-hora">
+              {{ venta.fecha | date:'HH:mm' }}
+            </span>
+            <span class="historial-metodo">{{ venta.metodoPago }}</span>
+            <span class="historial-total">
+              {{ venta.totalCobrado | currency:'ARS':'symbol':'1.0-0' }}
+            </span>
+          </div>
+          <div class="historial-diferencia"
+            [class.positivo]="venta.diferencia >= 0"
+            [class.negativo]="venta.diferencia < 0">
+            Dif: {{ venta.diferencia >= 0 ? '+' : '' }}{{ venta.diferencia | currency:'ARS':'symbol':'1.0-0' }}
+          </div>
+        </div>
+      }
+      @empty {
+        <p class="historial-vacio">Sin ventas registradas hoy.</p>
+      }
+    </div>
+    <!-- Total del día -->
+    <div class="historial-total-dia">
+      <span>Total del día:</span>
+      <strong>{{ totalHoy | currency:'ARS':'symbol':'1.0-0' }}</strong>
+    </div>
+  </div>
+}
+
+<!-- ── CONTENIDO PRINCIPAL DE LA CAJA ─────────
+     Solo visible cuando la caja está abierta   -->
+@if (cajaAbierta && !cobrando && !mostrarCierre) {
+  <div class="caja-contenido" [class.con-historial]="mostrarHistorial">
+
+    <!-- ── PANEL IZQUIERDO: PRODUCTOS ─────────-->
+    <div class="panel-productos">
+      <h2>🔍 Productos</h2>
+      <mat-form-field appearance="outline" class="buscador">
+        <mat-label>Buscar producto</mat-label>
+        <input matInput [(ngModel)]="textoBusqueda" (input)="filtrar()" placeholder="Nombre..."/>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <div class="productos-grid">
+        @for (producto of productosFiltrados; track producto.id) {
+          <div class="producto-item" (click)="agregarAlCarrito(producto)">
+            <mat-icon class="producto-icono">{{ producto.icono || 'shopping_bag' }}</mat-icon>
+            <p class="producto-nombre">{{ producto.nombre }}</p>
+            <p class="producto-precio">{{ producto.precio | currency:'ARS':'symbol':'1.0-0' }}</p>
+            <p class="producto-stock">Stock: {{ producto.stock }}</p>
+            @if (producto.oferta) {
+              <span class="oferta-badge">-{{ producto.descuento }}%</span>
+            }
+          </div>
+        }
+        @empty {
+          <div class="sin-productos">
+            <mat-icon>search_off</mat-icon>
+            <p>Sin resultados</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ── PANEL DERECHO: CARRITO ─────────────-->
+    <div class="panel-carrito">
+      <div class="carrito-header">
+        <h2>
+          🛒 Carrito
+          @if (cantidadItems > 0) {
+            <span class="carrito-badge">{{ cantidadItems }}</span>
+          }
+        </h2>
+        @if (carrito.length > 0) {
+          <button mat-icon-button color="warn" (click)="limpiarCarrito()">
+            <mat-icon>delete_sweep</mat-icon>
+          </button>
+        }
+      </div>
+
+      @if (carrito.length === 0) {
+        <div class="carrito-vacio">
+          <mat-icon>shopping_cart</mat-icon>
+          <p>Carrito vacío</p>
+          <p class="carrito-vacio-sub">Tocá un producto para agregarlo</p>
+        </div>
+      }
+
+      @if (carrito.length > 0) {
+        <div class="carrito-items">
+          @for (item of carrito; track item.producto.id) {
+            <div class="carrito-item">
+              <div class="item-info">
+                <mat-icon>{{ item.producto.icono || 'shopping_bag' }}</mat-icon>
+                <span class="item-nombre">{{ item.producto.nombre }}</span>
+              </div>
+              <div class="item-cantidad">
+                <button mat-icon-button (click)="cambiarCantidad(item, -1)">
+                  <mat-icon>remove</mat-icon>
+                </button>
+                <span class="cantidad-numero">{{ item.cantidad }}</span>
+                <button mat-icon-button (click)="cambiarCantidad(item, 1)">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              <div class="item-subtotal">
+                {{ item.subtotal | currency:'ARS':'symbol':'1.0-0' }}
+              </div>
+              <button mat-icon-button color="warn" (click)="quitarDelCarrito(item)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Total real y redondeado -->
+        <div class="carrito-totales">
+          <div class="carrito-total-fila">
+            <span>Subtotal:</span>
+            <span>{{ total | currency:'ARS':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="carrito-total-fila redondeado">
+            <span>A cobrar (redondeado):</span>
+            <strong>{{ totalRedondeado | currency:'ARS':'symbol':'1.0-0' }}</strong>
+          </div>
+          <!-- Diferencia proyectada de esta venta -->
+          <div class="diferencia-proyectada"
+            [class.positivo]="diferenciaVenta >= 0"
+            [class.negativo]="diferenciaVenta < 0">
+            <mat-icon>{{ diferenciaVenta >= 0 ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+            Dif. esta venta: {{ diferenciaVenta >= 0 ? '+' : '' }}{{ diferenciaVenta | currency:'ARS':'symbol':'1.0-0' }}
+          </div>
+        </div>
+
+        <button mat-raised-button color="primary" class="btn-cobrar" (click)="cobrar()">
+          <mat-icon>point_of_sale</mat-icon>
+          Cobrar {{ totalRedondeado | currency:'ARS':'symbol':'1.0-0' }}
+        </button>
+      }
+    </div>
+
+  </div>
+}

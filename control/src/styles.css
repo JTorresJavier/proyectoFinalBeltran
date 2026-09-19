@@ -1,0 +1,40 @@
+/* You can add global styles to this file, and also import other style files */
+/* ── IMPORTACIÓN DE MATERIAL THEME ───────────────
+   Tema base de Angular Material (se instaló con ng add)
+   Define colores primarios, secundarios y de advertencia */
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+
+/* ── RESET GENERAL ───────────────────────────────
+   Elimina estilos por defecto del navegador
+   para tener control total del diseño             */
+* {
+  box-sizing: border-box; /* Incluye border y padding en el tamaño total */
+  margin: 0;              /* Sin margen por defecto */
+  padding: 0;             /* Sin padding por defecto */
+}
+
+/* ── ESTILOS BASE ────────────────────────────────
+   Fuente y color de fondo global de StoreHub      */
+body {
+  font-family: 'Roboto', sans-serif; /* Fuente de Material Design */
+  background-color: #f5f5f5;         /* Fondo gris claro */
+  color: #333;                       /* Color de texto principal */
+}
+
+/* ── UTILIDADES GLOBALES ─────────────────────────
+   Clases reutilizables en toda la aplicación      */
+a {
+  text-decoration: none; /* Sin subrayado en links */
+  color: inherit;        /* Hereda el color del padre */
+}
+
+.contenedor {
+  max-width: 1200px;  /* Ancho máximo del contenido */
+  margin: 0 auto;     /* Centrado horizontal */
+  padding: 0 1rem;    /* Padding lateral */
+}
+
+.mt-1 { margin-top: 1rem; }   /* Margen superior pequeño */
+.mt-2 { margin-top: 2rem; }   /* Margen superior mediano */
+.mb-1 { margin-bottom: 1rem; } /* Margen inferior pequeño */
+.mb-2 { margin-bottom: 2rem; } /* Margen inferior mediano */

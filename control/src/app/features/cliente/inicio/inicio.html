@@ -1,0 +1,87 @@
+<!-- ── PÁGINA DE INICIO DE STOREHUB ───────────
+     Vista pública del cliente.
+     Contiene: navbar, banner, categorías y ofertas -->
+
+<!-- ── NAVBAR ────────────────────────────────
+     Componente compartido de navegación        -->
+<app-navbar></app-navbar>
+
+<!-- ── BANNER PRINCIPAL ──────────────────────
+     Sección de bienvenida con nombre y slogan  -->
+<section class="banner">
+  <div class="banner-contenido">
+
+    <!-- INTERPOLACIÓN: muestra nombre y slogan del componente -->
+    <h1 class="banner-titulo">
+      <mat-icon class="banner-icono">store</mat-icon>
+      {{ nombreTienda }}
+    </h1>
+    <p class="banner-slogan">{{ slogan }}</p>
+
+    <!-- Botón que lleva al catálogo completo -->
+    <button mat-raised-button color="primary" routerLink="/catalogo">
+      <mat-icon>shopping_cart</mat-icon>
+      Ver Catálogo Completo
+    </button>
+
+  </div>
+</section>
+
+<!-- ── CATEGORÍAS ────────────────────────────
+     Chips de categorías para acceso rápido    -->
+<section class="categorias contenedor">
+  <h2>Categorías</h2>
+  <div class="chips-contenedor">
+
+    <!-- @for: genera un chip por cada categoría del array -->
+    @for (cat of categorias; track cat) {
+      <mat-chip-row>{{ cat }}</mat-chip-row>
+    }
+
+  </div>
+</section>
+
+<!-- ── OFERTAS DEL DÍA ───────────────────────
+     Cards con productos en descuento          -->
+<section class="ofertas contenedor">
+  <h2>🔥 Ofertas del día</h2>
+  <div class="ofertas-grid">
+
+    <!-- @for: genera una card por cada oferta del array -->
+    @for (oferta of ofertas; track oferta.nombre) {
+      <mat-card class="oferta-card">
+
+        <!-- Ícono del producto -->
+        <mat-card-header>
+          <mat-icon mat-card-avatar>{{ oferta.icono }}</mat-icon>
+          <mat-card-title>{{ oferta.nombre }}</mat-card-title>
+          <!-- Badge de descuento -->
+          <mat-card-subtitle class="descuento-badge">
+            -{{ oferta.descuento }}% OFF
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <!-- Precio original tachado -->
+          <p class="precio-original">${{ oferta.precio }}</p>
+          <!-- Precio final calculado con el método precioFinal() -->
+          <p class="precio-final">${{ precioFinal(oferta.precio, oferta.descuento) }}</p>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-button color="primary" routerLink="/catalogo">
+            Ver más
+          </button>
+        </mat-card-actions>
+
+      </mat-card>
+    }
+
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────
+     Pie de página con info básica            -->
+<footer class="footer">
+  <p>© 2025 {{ nombreTienda }} — Todos los derechos reservados.</p>
+</footer>

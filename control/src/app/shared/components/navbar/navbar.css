@@ -1,0 +1,32 @@
+/* ── TOOLBAR ─────────────────────────────────
+   Estilos del contenedor principal del navbar  */
+mat-toolbar {
+  position: sticky;  /* Se queda fijo arriba al hacer scroll */
+  top: 0;            /* Pegado al tope de la pantalla */
+  z-index: 100;      /* Por encima de todo el contenido */
+}
+
+/* ── LOGO ────────────────────────────────────
+   Contenedor del ícono y nombre de la app     */
+.navbar-logo {
+  display: flex;       /* Ícono y texto en línea */
+  align-items: center; /* Centrado vertical */
+  gap: 0.5rem;         /* Espacio entre ícono y texto */
+  color: white;        /* Color blanco */
+  text-decoration: none; /* Sin subrayado */
+  font-size: 1.2rem;   /* Tamaño del texto */
+  font-weight: bold;   /* Negrita */
+}
+
+/* ── SPACER ──────────────────────────────────
+   Empuja los links hacia la derecha           */
+.spacer {
+  flex: 1; /* Ocupa todo el espacio disponible */
+}
+
+/* ── LINK ACTIVO ─────────────────────────────
+   Estilo del link de la página actual         */
+.link-activo {
+  background: rgba(255, 255, 255, 0.2); /* Fondo semitransparente */
+  border-radius: 4px;                   /* Bordes redondeados */
+}

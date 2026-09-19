@@ -1,0 +1,89 @@
+/* ── CONTENEDOR PRINCIPAL ────────────────────
+   Centra la card en toda la pantalla          */
+.login-contenedor {
+  min-height: 100vh;       /* Ocupa toda la altura de la pantalla */
+  display: flex;           /* Flexbox para centrar */
+  align-items: center;     /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  background: linear-gradient(135deg, #1976d2, #42a5f5); /* Fondo degradado azul */
+  padding: 1rem;           /* Espaciado en mobile */
+}
+
+/* ── CARD DEL FORMULARIO ─────────────────────
+   Tarjeta blanca que contiene el formulario   */
+.login-card {
+  width: 100%;        /* Ancho completo */
+  max-width: 420px;   /* Ancho máximo */
+  padding: 1rem;      /* Espaciado interno */
+  border-radius: 12px !important; /* Bordes redondeados */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2) !important; /* Sombra */
+}
+
+/* ── HEADER DEL LOGIN ────────────────────────
+   Logo, título y subtítulo centrados          */
+.login-header {
+  text-align: center;  /* Centrado */
+  width: 100%;         /* Ancho completo */
+  padding: 1rem 0;     /* Espaciado vertical */
+}
+
+/* ── ÍCONO DEL LOGIN ─────────────────────────
+   Ícono de tienda grande y azul               */
+.login-icono {
+  font-size: 4rem;   /* Tamaño grande */
+  width: 4rem;       /* Ancho */
+  height: 4rem;      /* Alto */
+  color: #1976d2;    /* Color primario */
+}
+
+/* ── TÍTULO ──────────────────────────────────
+   Nombre de la app en el login                */
+.login-header h1 {
+  font-size: 2rem;     /* Grande */
+  color: #1976d2;      /* Color primario */
+  margin: 0.5rem 0;   /* Espaciado vertical */
+}
+
+/* ── SUBTÍTULO ───────────────────────────────
+   "Panel de Administración"                   */
+.login-header p {
+  color: #666;        /* Gris */
+  font-size: 0.9rem;  /* Pequeño */
+}
+
+/* ── CAMPOS DEL FORMULARIO ───────────────────
+   Inputs que ocupan todo el ancho             */
+.campo-completo {
+  width: 100%;         /* Ancho completo */
+  margin-bottom: 0.5rem; /* Espacio entre campos */
+}
+
+/* ── BOTÓN DE LOGIN ──────────────────────────
+   Botón que ocupa todo el ancho               */
+.btn-login {
+  width: 100%;       /* Ancho completo */
+  padding: 0.8rem;   /* Espaciado interno */
+  font-size: 1rem;   /* Tamaño de texto */
+  margin-top: 0.5rem; /* Espacio arriba */
+  display: flex;      /* Ícono y texto en línea */
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  gap: 0.5rem;        /* Espacio entre ícono y texto */
+}
+
+/* ── FOOTER DEL LOGIN ────────────────────────
+   Link para volver al inicio                  */
+.login-footer {
+  text-align: center; /* Centrado */
+  padding: 1rem;      /* Espaciado interno */
+}
+
+.login-footer a {
+  color: #1976d2;     /* Color primario */
+  text-decoration: none; /* Sin subrayado */
+  font-size: 0.9rem;  /* Pequeño */
+}
+
+.login-footer a:hover {
+  text-decoration: underline; /* Subrayado al hover */
+}

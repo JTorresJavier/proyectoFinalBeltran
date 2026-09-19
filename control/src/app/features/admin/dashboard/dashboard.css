@@ -1,0 +1,169 @@
+/* ── HEADER DEL DASHBOARD ────────────────────
+   Barra superior fija con info del usuario    */
+.dashboard-header {
+  display: flex;            /* En fila */
+  justify-content: space-between; /* Espaciado entre izquierda y derecha */
+  align-items: center;      /* Centrado vertical */
+  padding: 1rem 2rem;       /* Espaciado interno */
+  background: #1976d2;      /* Color primario azul */
+  color: white;             /* Texto blanco */
+  position: sticky;         /* Fijo arriba */
+  top: 0;                   /* Pegado al tope */
+  z-index: 100;             /* Por encima del contenido */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Sombra */
+}
+
+/* ── LADO IZQUIERDO DEL HEADER ───────────────
+   Logo y título                               */
+.header-izquierda {
+  display: flex;       /* En fila */
+  align-items: center; /* Centrado vertical */
+  gap: 0.5rem;         /* Espacio entre elementos */
+  font-size: 1.1rem;   /* Tamaño de texto */
+}
+
+/* ── TÍTULO DEL HEADER ───────────────────────
+   Nombre de la app en negrita                 */
+.header-titulo {
+  font-weight: bold; /* Negrita */
+  font-size: 1.2rem; /* Grande */
+}
+
+/* ── SECCIÓN ACTUAL ──────────────────────────
+   "/ Dashboard" en gris claro                 */
+.header-seccion {
+  opacity: 0.7; /* Semitransparente */
+}
+
+/* ── LADO DERECHO DEL HEADER ─────────────────
+   Info del usuario y botón logout             */
+.header-derecha {
+  display: flex;       /* En fila */
+  align-items: center; /* Centrado vertical */
+  gap: 0.8rem;         /* Espacio entre elementos */
+}
+
+/* ── NOMBRE DEL USUARIO ──────────────────────
+   Nombre del usuario logueado                 */
+.usuario-nombre {
+  font-weight: 500; /* Semi negrita */
+}
+
+/* ── CONTENIDO PRINCIPAL ─────────────────────
+   Área principal del dashboard                */
+.dashboard-contenido {
+  padding: 2rem 1rem; /* Espaciado interno */
+}
+
+/* ── BIENVENIDA ──────────────────────────────
+   Saludo personalizado                        */
+.bienvenida {
+  margin-bottom: 2rem; /* Espacio abajo */
+}
+
+.bienvenida h1 {
+  font-size: 1.8rem;   /* Grande */
+  color: #1976d2;      /* Color primario */
+  margin-bottom: 0.3rem; /* Espacio abajo */
+}
+
+.bienvenida p {
+  color: #666; /* Gris */
+}
+
+/* ── SECCIONES ───────────────────────────────
+   Estadísticas y accesos rápidos              */
+.estadisticas,
+.accesos {
+  margin-bottom: 2.5rem; /* Espacio entre secciones */
+}
+
+.estadisticas h2,
+.accesos h2 {
+  font-size: 1.3rem;    /* Tamaño del título */
+  margin-bottom: 1rem;  /* Espacio abajo */
+  color: #333;          /* Gris oscuro */
+}
+
+/* ── GRID DE ESTADÍSTICAS ────────────────────
+   4 cards de números clave                    */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Columnas responsivas */
+  gap: 1rem; /* Espacio entre cards */
+}
+
+/* ── CARD DE ESTADÍSTICA ─────────────────────
+   Card individual con número y label          */
+.stat-card {
+  text-align: center; /* Centrado */
+  padding: 0.5rem;    /* Espaciado interno */
+  transition: transform 0.2s; /* Animación suave */
+}
+
+.stat-card:hover {
+  transform: translateY(-3px); /* Sube al hover */
+}
+
+/* ── ÍCONO DE ESTADÍSTICA ────────────────────
+   Ícono grande de cada stat                   */
+.stat-icono {
+  font-size: 2.5rem; /* Grande */
+  width: 2.5rem;     /* Ancho */
+  height: 2.5rem;    /* Alto */
+  margin-bottom: 0.5rem; /* Espacio abajo */
+}
+
+/* ── COLORES DE ÍCONOS ───────────────────────
+   Cada stat tiene su color                    */
+.azul    { color: #1976d2; } /* Azul — total productos */
+.naranja { color: #f57c00; } /* Naranja — stock bajo */
+.verde   { color: #388e3c; } /* Verde — en oferta */
+.rojo    { color: #e53935; } /* Rojo — sin stock */
+
+/* ── NÚMERO DE ESTADÍSTICA ───────────────────
+   Número grande y en negrita                  */
+.stat-numero {
+  font-size: 2rem;   /* Grande */
+  font-weight: bold; /* Negrita */
+  color: #333;       /* Gris oscuro */
+}
+
+/* ── LABEL DE ESTADÍSTICA ────────────────────
+   Descripción debajo del número               */
+.stat-label {
+  color: #666;       /* Gris */
+  font-size: 0.85rem; /* Pequeño */
+}
+
+/* ── GRID DE ACCESOS RÁPIDOS ─────────────────
+   Cards de navegación                         */
+.accesos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Columnas responsivas */
+  gap: 1rem; /* Espacio entre cards */
+}
+
+/* ── CARD DE ACCESO RÁPIDO ───────────────────
+   Card clickeable que navega a una sección    */
+.acceso-card {
+  text-align: center;  /* Centrado */
+  cursor: pointer;     /* Cursor de mano */
+  transition: all 0.2s ease; /* Animación suave */
+  padding: 1rem;       /* Espaciado interno */
+}
+
+.acceso-card:hover {
+  transform: translateY(-4px); /* Sube al hover */
+  box-shadow: 0 4px 20px rgba(25, 118, 210, 0.3); /* Sombra azul */
+}
+
+/* ── ÍCONO DE ACCESO ─────────────────────────
+   Ícono grande de cada acceso rápido          */
+.acceso-icono {
+  font-size: 3rem;   /* Grande */
+  width: 3rem;       /* Ancho */
+  height: 3rem;      /* Alto */
+  color: #1976d2;    /* Color primario */
+  margin-bottom: 0.5rem; /* Espacio abajo */
+}

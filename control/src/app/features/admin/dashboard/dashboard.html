@@ -1,0 +1,123 @@
+<!-- ── DASHBOARD DE STOREHUB ──────────────────
+     Panel principal del administrador.
+     Muestra: header con usuario, estadísticas
+     y accesos rápidos según el rol            -->
+
+<!-- ── HEADER DEL DASHBOARD ─────────────────
+     Barra superior con info del usuario       -->
+<header class="dashboard-header">
+
+  <!-- ── LOGO Y TÍTULO ──────────────────────
+       Nombre de la app y sección actual       -->
+  <div class="header-izquierda">
+    <mat-icon>store</mat-icon>
+    <span class="header-titulo">StoreHub</span>
+    <span class="header-seccion">/ Dashboard</span>
+  </div>
+
+  <!-- ── INFO DEL USUARIO ───────────────────
+       Nombre, rol y botón de logout           -->
+  <div class="header-derecha">
+
+    <!-- @if: muestra info solo si hay usuario logueado -->
+    @if (usuarioLogueado) {
+      <mat-icon>account_circle</mat-icon>
+      <!-- INTERPOLACIÓN: nombre del usuario logueado -->
+      <span class="usuario-nombre">{{ usuarioLogueado.nombre }}</span>
+      <!-- Chip con el rol del usuario -->
+      <mat-chip>{{ usuarioLogueado.rol | uppercase }}</mat-chip>
+    }
+
+    <!-- Botón de logout con EVENT BINDING -->
+    <button mat-icon-button (click)="logout()" title="Cerrar sesión">
+      <mat-icon>logout</mat-icon>
+    </button>
+
+  </div>
+</header>
+
+<!-- ── CONTENIDO PRINCIPAL ───────────────────
+     Estadísticas y accesos rápidos            -->
+<main class="dashboard-contenido contenedor">
+
+  <!-- ── BIENVENIDA ────────────────────────
+       Saludo personalizado con el nombre     -->
+  <div class="bienvenida">
+    <h1>
+      ¡Bienvenido, {{ usuarioLogueado?.nombre }}! 👋
+    </h1>
+    <p>Aquí tenés un resumen del estado del negocio.</p>
+  </div>
+
+  <!-- ── ESTADÍSTICAS ──────────────────────
+       Cards con números clave del negocio   -->
+  <section class="estadisticas">
+    <h2>📊 Resumen</h2>
+    <div class="stats-grid">
+
+      <!-- Card: Total productos -->
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icono azul">inventory_2</mat-icon>
+          <p class="stat-numero">{{ totalProductos }}</p>
+          <p class="stat-label">Productos totales</p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Card: Stock bajo -->
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icono naranja">warning</mat-icon>
+          <p class="stat-numero">{{ stockBajo }}</p>
+          <p class="stat-label">Stock bajo</p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Card: En oferta -->
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icono verde">local_offer</mat-icon>
+          <p class="stat-numero">{{ enOferta }}</p>
+          <p class="stat-label">En oferta</p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Card: Sin stock -->
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <mat-icon class="stat-icono rojo">remove_shopping_cart</mat-icon>
+          <p class="stat-numero">{{ sinStock }}</p>
+          <p class="stat-label">Sin stock</p>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+  </section>
+
+  <!-- ── ACCESOS RÁPIDOS ───────────────────
+       Cards de navegación según el rol      -->
+  <section class="accesos">
+    <h2>⚡ Accesos rápidos</h2>
+    <div class="accesos-grid">
+
+      <!-- @for: genera una card por cada acceso -->
+      @for (acceso of accesos; track acceso.ruta) {
+
+        <!-- @if: solo muestra el acceso si el usuario tiene el rol -->
+        @if (puedeAcceder(acceso.roles)) {
+          <mat-card
+            class="acceso-card"
+            [routerLink]="acceso.ruta">
+            <mat-card-content>
+              <mat-icon class="acceso-icono">{{ acceso.icono }}</mat-icon>
+              <p>{{ acceso.label }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+
+      }
+
+    </div>
+  </section>
+
+</main>
