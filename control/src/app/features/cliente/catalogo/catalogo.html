@@ -69,7 +69,7 @@
            Precio, stock y descripción          -->
       <mat-card-content>
         <p class="producto-descripcion">{{ producto.descripcion }}</p>
-        <p class="producto-precio">${{ producto.precio }}</p>
+        <p class="producto-precio">{{ producto.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}</p>
 
         <!-- @if: muestra stock disponible o agotado -->
         @if (producto.stock > 0) {
