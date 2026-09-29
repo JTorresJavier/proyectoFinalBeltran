@@ -1,7 +1,7 @@
 <!-- ── NAVBAR DE STOREHUB ─────────────────────
      Barra de navegación principal.
      Se muestra en todas las páginas públicas.
-     Contiene: logo, links del menú y botón admin  -->
+     Contiene: logo, links del menú y estado de sesión -->
 
 <!-- ── TOOLBAR MATERIAL ───────────────────────
      mat-toolbar: componente de Angular Material
@@ -31,10 +31,30 @@
     </button>
   }
 
-  <!-- ── BOTÓN ADMIN ─────────────────────────────
-       Lleva al login del administrador           -->
-  <a mat-icon-button routerLink="/login" title="Administrador">
-    <mat-icon>admin_panel_settings</mat-icon> <!-- Ícono de admin -->
-  </a>
+  <!-- ── ESTADO DE SESIÓN ────────────────────────
+       async pipe: se suscribe solo al observable y
+       se desuscribe solo al destruir el componente.
+       "usuario" queda disponible dentro del bloque @if -->
+  @if (usuarioActual$ | async; as usuario) {
+
+    <!-- Hay sesión activa: nombre + acceso al panel + logout -->
+    <span class="navbar-usuario">{{ usuario.nombre }}</span>
+
+    <a mat-icon-button routerLink="/admin/dashboard" title="Ir al panel">
+      <mat-icon>dashboard</mat-icon>
+    </a>
+
+    <button mat-icon-button (click)="logout()" title="Cerrar sesión">
+      <mat-icon>logout</mat-icon>
+    </button>
+
+  } @else {
+
+    <!-- No hay sesión: botón para ir al login -->
+    <a mat-icon-button routerLink="/login" title="Administrador">
+      <mat-icon>admin_panel_settings</mat-icon>
+    </a>
+
+  }
 
 </mat-toolbar>
