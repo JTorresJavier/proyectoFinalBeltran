@@ -25,7 +25,7 @@ export class AuthService {
 
   // ── CONFIGURACIÓN ─────────────────────────
   private http = inject(HttpClient);   // Inyectamos HttpClient
-  private apiUrl = 'https://6a9c3e100ad174e139e91cb8.mockapi.io/api/v1/usuarios'; // URL base
+  private apiUrl = 'http://localhost:3000/api/usuarios'; // URL base
   private claveStorage = 'storehub_usuario'; // Clave en LocalStorage
 
   // ── MÉTODOS DE SESIÓN ─────────────────────
@@ -90,6 +90,6 @@ export class AuthService {
   // Retorna el usuario si las credenciales son correctas, null si no
   login(usuarioInput: string, passwordInput: string): Observable<Usuario[]> {
     // Buscamos por nombre de usuario en la API
-    return this.http.get<Usuario[]>(`${this.apiUrl}?usuario=${usuarioInput}`);
+    return this.http.get<Usuario[]>(`${this.apiUrl}/login?usuario=${usuarioInput}`);
   }
 }

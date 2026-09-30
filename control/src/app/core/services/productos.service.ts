@@ -6,7 +6,8 @@ import { Observable } from 'rxjs';                  // Para manejar respuestas a
 // ── INTERFACE ────────────────────────────────
 // Define la forma de un Producto — contrato de datos
 export interface Producto {
-  id?: string;         // Opcional — lo asigna MockAPI
+  _id?: string;        // ← MongoDB usa _id
+  id?: string;         // ← compatibilidad
   nombre: string;      // Nombre del producto
   categoria: string;   // Categoría
   precio: number;      // Precio en ARS
@@ -27,7 +28,7 @@ export class ProductosService {
 
   // ── CONFIGURACIÓN ─────────────────────────
   private http = inject(HttpClient); // Inyectamos HttpClient
-  private apiUrl = 'https://6a9c3e100ad174e139e91cb8.mockapi.io/api/v1/productos'; // URL base
+  private apiUrl = 'http://localhost:3000/api/productos'; // URL base
 
   // ── MÉTODOS CRUD ──────────────────────────
 

@@ -136,7 +136,7 @@ export class ProductosComponent implements OnInit {
   // ── MÉTODO: EDITAR PRODUCTO ───────────────
   editarProducto(producto: Producto): void {
     this.modoEdicion        = true;
-    this.productoEditandoId = producto.id!;
+    this.productoEditandoId = producto._id || producto.id!; // ← CAMBIO
     this.formulario.patchValue(producto);
     this.mostrarFormulario  = true;
   }
@@ -178,8 +178,7 @@ export class ProductosComponent implements OnInit {
   // DELETE — Elimina un producto de la API
   eliminarProducto(producto: Producto): void {
     if (!confirm(`¿Eliminár "${producto.nombre}"?`)) return;
-
-    this.productosService.delete(producto.id!).subscribe({
+    this.productosService.delete(producto._id || producto.id!).subscribe({ // ← CAMBIO
       next: () => {
         this.snackBar.open('Producto eliminado 🗑️', 'Cerrar', { duration: 3000 });
         this.cargarProductos();

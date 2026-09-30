@@ -260,8 +260,10 @@ export class CajaComponent implements OnInit {
     const vueltoReal = this.montoPagado - this.totalRedondeado;
 
     // ── DESCONTAMOS STOCK EN LA API ───────────
+    // MongoDB usa _id, no id — usamos _id primero
     this.carrito.forEach(item => {
-      this.productosService.update(item.producto.id!, {
+      const id = (item.producto as any)._id || item.producto.id!;
+      this.productosService.update(id, {
         ...item.producto,
         stock: item.producto.stock! - item.cantidad
       }).subscribe();
