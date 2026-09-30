@@ -64,6 +64,14 @@ export const routes: Routes = [
     canActivate: [authGuard] // Solo si está logueado
   },
 
+  {
+    path: 'admin/usuarios',
+    loadComponent: () =>
+      import('./features/admin/usuarios/usuarios')
+        .then(m => m.UsuariosComponent),
+    canActivate: [authGuard, adminGuard] // Logueado Y además admin
+  },
+
   // ── RUTA COMODÍN ─────────────────────────────
   // Cualquier URL no definida redirige al inicio
   {

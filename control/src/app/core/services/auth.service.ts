@@ -1,7 +1,7 @@
 // ── IMPORTS ──────────────────────────────────
 import { Injectable, inject } from '@angular/core'; // Decorador e inyección
 import { HttpClient } from '@angular/common/http';  // Para llamadas HTTP
-import { Observable } from 'rxjs';                  // Para manejar respuestas asíncronas
+import { Observable, BehaviorSubject } from 'rxjs'; // Para manejar respuestas asíncronas
 
 // ── INTERFACE ────────────────────────────────
 // Define la forma de un Usuario
@@ -27,13 +27,31 @@ export class AuthService {
   private http = inject(HttpClient);   // Inyectamos HttpClient
   private apiUrl = 'http://localhost:3000/api/usuarios'; // URL base
   private claveStorage = 'storehub_usuario'; // Clave en LocalStorage
+  
+  // ── ESTADO REACTIVO DE SESIÓN ─────────────
+  // BehaviorSubject: guarda el último valor y avisa a quien esté suscripto
+  // cuando cambia. Arranca con lo que haya en LocalStorage al cargar la app.
+  private usuarioActualSubject = new BehaviorSubject<Usuario | null>(
+    this.leerUsuarioDeStorage()
+  );
+
+  // Observable público — los componentes se suscriben a esto, nunca al Subject directo
+  usuarioActual$ = this.usuarioActualSubject.asObservable();
+
+  // Lee el usuario del LocalStorage (uso interno, para inicializar el Subject)
+  private leerUsuarioDeStorage(): Usuario | null {
+    const datos = localStorage.getItem(this.claveStorage);
+    return datos ? JSON.parse(datos) : null;
+  }
 
   // ── MÉTODOS DE SESIÓN ─────────────────────
 
   // Guarda el usuario en LocalStorage al hacer login
   // JSON.stringify convierte el objeto a string para guardarlo
+  
   guardarSesion(usuario: Usuario): void {
     localStorage.setItem(this.claveStorage, JSON.stringify(usuario));
+    this.usuarioActualSubject.next(usuario); // Avisamos del cambio
   }
 
   // Recupera el usuario guardado en LocalStorage
@@ -62,6 +80,7 @@ export class AuthService {
   // Cierra la sesión eliminando el usuario de LocalStorage
   logout(): void {
     localStorage.removeItem(this.claveStorage);
+    this.usuarioActualSubject.next(null); // Avisamos del cambio
   }
 
   // ── MÉTODOS HTTP ──────────────────────────

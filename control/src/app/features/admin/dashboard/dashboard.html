@@ -93,6 +93,50 @@
 
     </div>
   </section>
+  
+  <!-- ── COTIZACIÓN DEL DÓLAR ──────────────
+       Fuente de datos externa (DolarAPI)    -->
+  <section class="dolar">
+    <h2>💵 Cotización del Dólar</h2>
+
+    @if (cargandoDolar) {
+      <mat-card class="dolar-card">
+        <mat-card-content class="dolar-cargando">
+          <mat-spinner diameter="32"></mat-spinner>
+          <span>Consultando cotización...</span>
+        </mat-card-content>
+      </mat-card>
+    } @else if (errorDolar) {
+      <mat-card class="dolar-card">
+        <mat-card-content class="dolar-error">
+          <mat-icon>error_outline</mat-icon>
+          <span>No se pudo obtener la cotización del dólar.</span>
+        </mat-card-content>
+      </mat-card>
+    } @else if (dolarOficial) {
+      <mat-card class="dolar-card">
+        <mat-card-content>
+          <div class="dolar-encabezado">
+            <mat-icon class="dolar-icono">attach_money</mat-icon>
+            <span class="dolar-nombre">Dólar {{ dolarOficial.nombre }}</span>
+          </div>
+          <div class="dolar-valores">
+            <div class="dolar-valor">
+              <span class="dolar-label">Compra</span>
+              <span class="dolar-monto">${{ dolarOficial.compra }}</span>
+            </div>
+            <div class="dolar-valor">
+              <span class="dolar-label">Venta</span>
+              <span class="dolar-monto">${{ dolarOficial.venta }}</span>
+            </div>
+          </div>
+          <p class="dolar-fecha">
+            Actualizado: {{ dolarOficial.fechaActualizacion | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+    }
+  </section>
 
   <!-- ── ACCESOS RÁPIDOS ───────────────────
        Cards de navegación según el rol      -->

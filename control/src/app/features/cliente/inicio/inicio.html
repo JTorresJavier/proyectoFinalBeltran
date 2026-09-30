@@ -63,9 +63,9 @@
 
         <mat-card-content>
           <!-- Precio original tachado -->
-          <p class="precio-original">${{ oferta.precio }}</p>
+          <p class="precio-original">{{ oferta.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}</p>
           <!-- Precio final calculado con el método precioFinal() -->
-          <p class="precio-final">${{ precioFinal(oferta.precio, oferta.descuento) }}</p>
+          <p class="precio-final">{{ precioFinal(oferta.precio, oferta.descuento) | currency:'ARS':'symbol-narrow':'1.0-0' }}</p>
         </mat-card-content>
 
         <mat-card-actions>

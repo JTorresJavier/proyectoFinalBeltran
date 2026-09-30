@@ -89,11 +89,15 @@
 
           <!-- @if: muestra spinner o texto según estado -->
           @if (cargando) {
-            <mat-spinner diameter="20"></mat-spinner>
-            Verificando...
+            <ng-container>
+              <mat-spinner diameter="20"></mat-spinner>
+              Verificando...
+            </ng-container>
           } @else {
-            <mat-icon>login</mat-icon>
-            Ingresar
+            <ng-container>
+              <mat-icon>login</mat-icon>
+              Ingresar
+            </ng-container>
           }
 
         </button>
