@@ -2,6 +2,8 @@
 import { Component } from '@angular/core';     // Decorador principal de Angular
 import { RouterOutlet } from '@angular/router'; // Permite insertar páginas según la URL
 
+import { routeAnimations } from './route-animations'; // Animación de transición entre páginas
+
 // ── DECORADOR ────────────────────────────────
 // Componente RAÍZ de StoreHub.
 // Es el primero en cargar. Solo contiene el router-outlet
@@ -10,7 +12,8 @@ import { RouterOutlet } from '@angular/router'; // Permite insertar páginas seg
   selector: 'app-root',                // Etiqueta usada en index.html
   imports: [RouterOutlet],             // Habilitamos el router
   templateUrl: './app.html',           // Vista del componente
-  styleUrl: './app.css'                // Estilos del componente
+  styleUrl: './app.css',               // Estilos del componente
+  animations: [routeAnimations]        // Transición entre páginas al navegar
 })
 
 // ── CLASE ────────────────────────────────────

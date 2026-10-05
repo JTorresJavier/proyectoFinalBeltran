@@ -1,8 +1,9 @@
 <!-- ── ROUTER OUTLET ───────────────────────────
      Contenedor principal de StoreHub.
      Angular inserta aquí el componente según la URL activa.
-     Ej: /inicio    → InicioComponent
-         /admin     → AdminComponent
-         /productos → ProductosComponent          -->
+     [@routeAnimations]: dispara la transición al cambiar de página,
+     usando la URL como dato que identifica cada estado.           -->
 
-<router-outlet></router-outlet>
+<div [@routeAnimations]="outlet.isActivated ? outlet.activatedRouteData['animation'] ?? outlet.activatedRoute : ''">
+  <router-outlet #outlet="outlet"></router-outlet>
+</div>
