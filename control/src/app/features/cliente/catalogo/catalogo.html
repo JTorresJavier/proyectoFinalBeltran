@@ -1,119 +1,210 @@
-<!-- ── PÁGINA DE CATÁLOGO DE STOREHUB ─────────
-     Vista pública del cliente.
-     Muestra todos los productos con buscador
-     y filtro por categoría                      -->
+<!-- ── CATÁLOGO DE STOREHUB ───────────────────
+     Vista pública de todos los productos.
+     Secciones:
+     1. Navbar
+     2. Header con buscador
+     3. Chips de categoría
+     4. Grid de productos
+     5. Footer                                  -->
 
-<!-- ── NAVBAR ────────────────────────────────
-     Componente compartido de navegación        -->
 <app-navbar></app-navbar>
 
-<!-- ── HEADER DEL CATÁLOGO ───────────────────
-     Título y filtros de búsqueda               -->
-<section class="catalogo-header contenedor">
-  <h1>🛒 Catálogo de Productos</h1>
-  <p class="subtitulo">{{ productosFiltrados.length }} productos encontrados</p>
+<!-- ── 1. HEADER DEL CATÁLOGO ────────────────
+     Banda azul con título y buscador principal -->
+<section class="catalogo-hero">
+  <div class="catalogo-hero-contenido contenedor">
 
-  <!-- ── FILTROS ──────────────────────────────
-       Buscador y select de categoría           -->
-  <div class="filtros">
-
-    <!-- BUSCADOR: Two-way binding con [(ngModel)]
-         Al escribir filtra los productos en tiempo real -->
-    <mat-form-field appearance="outline" class="buscador">
-      <mat-label>Buscar producto</mat-label>
-      <input
-        matInput
-        [(ngModel)]="textoBusqueda"
-        placeholder="Ej: Coca Cola..."/>
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
-
-    <!-- SELECT DE CATEGORÍA: filtra por categoría -->
-    <mat-form-field appearance="outline" class="selector">
-      <mat-label>Categoría</mat-label>
-      <mat-select [(ngModel)]="categoriaSeleccionada">
-        <mat-option value="">Todas</mat-option>
-        <!-- @for: genera una opción por cada categoría -->
-        @for (cat of categorias; track cat) {
-          <mat-option [value]="cat">{{ cat }}</mat-option>
+    <!-- Título e información de resultados -->
+    <div class="catalogo-hero-texto">
+      <h1 class="catalogo-titulo">
+        <mat-icon class="catalogo-titulo-icono">storefront</mat-icon>
+        Catálogo de productos
+      </h1>
+      <p class="catalogo-subtitulo">
+        {{ productosFiltrados.length }} producto{{ productosFiltrados.length !== 1 ? 's' : '' }} encontrado{{ productosFiltrados.length !== 1 ? 's' : '' }}
+        @if (categoriaSeleccionada) {
+          <span class="catalogo-filtro-activo"> en {{ categoriaSeleccionada }}</span>
         }
-      </mat-select>
-    </mat-form-field>
+      </p>
+    </div>
 
-    <!-- BOTÓN LIMPIAR FILTROS -->
-    <button mat-stroked-button (click)="limpiarFiltros()">
-      <mat-icon>clear</mat-icon>
-      Limpiar
-    </button>
+    <!-- Buscador y filtro de ofertas -->
+    <div class="catalogo-hero-filtros">
+      <mat-form-field appearance="outline" class="buscador">
+        <mat-label>Buscar producto</mat-label>
+        <input matInput [(ngModel)]="textoBusqueda" placeholder="Ej: Coca Cola, leche..."/>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- Toggle para mostrar solo ofertas -->
+      <button class="btn-filtro-oferta"
+              [class.activo]="soloOfertas"
+              (click)="soloOfertas = !soloOfertas">
+        <mat-icon>local_fire_department</mat-icon>
+        Ofertas
+        @if (cantidadOfertas > 0) {
+          <span class="oferta-count">{{ cantidadOfertas }}</span>
+        }
+      </button>
+
+      <!-- Botón limpiar filtros (aparece solo si hay algo activo) -->
+      @if (textoBusqueda || categoriaSeleccionada || soloOfertas) {
+        <button mat-stroked-button class="btn-limpiar" (click)="limpiarFiltros()">
+          <mat-icon>close</mat-icon>
+          Limpiar
+        </button>
+      }
+    </div>
 
   </div>
 </section>
 
-<!-- ── GRID DE PRODUCTOS ──────────────────────
-     Cards de productos filtrados               -->
-<section class="productos-grid contenedor">
 
-  <!-- @for: genera una card por cada producto filtrado -->
-  @for (producto of productosFiltrados; track producto.id) {
-    <mat-card class="producto-card">
+<!-- ── 2. CHIPS DE CATEGORÍA ─────────────────
+     Fila horizontal de chips clicables, uno
+     por categoría + "Todas".                  -->
+<section class="categorias-chips-seccion">
+  <div class="contenedor">
+    <div class="categorias-chips-scroll">
 
-      <!-- ── HEADER DE LA CARD ────────────────
-           Ícono y nombre del producto          -->
-      <mat-card-header>
-        <mat-icon mat-card-avatar color="primary">{{ producto.icono }}</mat-icon>
-        <mat-card-title>{{ producto.nombre }}</mat-card-title>
-        <mat-card-subtitle>{{ producto.categoria }}</mat-card-subtitle>
-      </mat-card-header>
+      <!-- Chip "Todas" -->
+      <button class="chip-cat"
+              [class.chip-activo]="categoriaSeleccionada === ''"
+              (click)="seleccionarCategoria('')">
+        <mat-icon class="chip-icono">apps</mat-icon>
+        Todas
+        <span class="chip-count">{{ productos.length }}</span>
+      </button>
 
-      <!-- ── CONTENIDO DE LA CARD ─────────────
-           Precio, stock y descripción          -->
-      <mat-card-content>
-        <p class="producto-descripcion">{{ producto.descripcion }}</p>
-        <p class="producto-precio">{{ producto.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}</p>
-
-        <!-- @if: muestra stock disponible o agotado -->
-        @if (producto.stock > 0) {
-          <p class="stock-disponible">
-            <mat-icon>check_circle</mat-icon>
-            Stock: {{ producto.stock }} unidades
-          </p>
-        } @else {
-          <p class="stock-agotado">
-            <mat-icon>cancel</mat-icon>
-            Sin stock
-          </p>
-        }
-
-      </mat-card-content>
-
-      <!-- ── ACCIONES DE LA CARD ──────────────
-           Botón para agregar al carrito        -->
-      <mat-card-actions>
-        <button
-          mat-raised-button
-          color="primary"
-          [disabled]="producto.stock === 0">
-          <mat-icon>add_shopping_cart</mat-icon>
-          Agregar
+      <!-- Chip por categoría con ícono y cantidad -->
+      @for (cat of categorias; track cat.nombre) {
+        <button class="chip-cat"
+                [class.chip-activo]="categoriaSeleccionada === cat.nombre"
+                (click)="seleccionarCategoria(cat.nombre)">
+          <mat-icon class="chip-icono">{{ cat.icono }}</mat-icon>
+          {{ cat.nombre }}
+          @if (cantidadEnCategoria(cat.nombre) > 0) {
+            <span class="chip-count">{{ cantidadEnCategoria(cat.nombre) }}</span>
+          }
         </button>
-      </mat-card-actions>
+      }
 
-    </mat-card>
-  }
-
-  <!-- @empty: mensaje cuando no hay productos -->
-  @empty {
-    <div class="sin-resultados">
-      <mat-icon>search_off</mat-icon>
-      <p>No se encontraron productos.</p>
-      <button mat-button (click)="limpiarFiltros()">Limpiar filtros</button>
     </div>
-  }
-
+  </div>
 </section>
 
-<!-- ── FOOTER ────────────────────────────────
-     Pie de página                             -->
+
+<!-- ── 3. SPINNER DE CARGA ────────────────────
+     Visible mientras se obtienen los productos -->
+@if (cargando) {
+  <div class="spinner-contenedor">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Cargando productos...</p>
+  </div>
+}
+
+
+<!-- ── 4. GRID DE PRODUCTOS ──────────────────
+     Cards de productos en grilla responsive.
+     Muestra precio con descuento si está en oferta.
+     Botón deshabilitado si no hay stock.       -->
+<section class="productos-seccion contenedor">
+  <div class="productos-grid">
+
+    @for (producto of productosFiltrados; track producto._id) {
+      <mat-card class="producto-card">
+
+        <!-- Badge de descuento flotante (solo si tiene oferta) -->
+        @if (producto.oferta && producto.descuento) {
+          <div class="producto-badge-oferta">-{{ producto.descuento }}% OFF</div>
+        }
+
+        <!-- Ícono del producto sobre fondo degradado -->
+        <div class="producto-icono-wrap">
+          <mat-icon class="producto-icono">{{ producto.icono }}</mat-icon>
+        </div>
+
+        <mat-card-content class="producto-body">
+
+          <!-- Categoría pequeña -->
+          <p class="producto-categoria">{{ producto.categoria }}</p>
+
+          <!-- Nombre del producto -->
+          <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+
+          <!-- Descripción corta (2 líneas máx) -->
+          <p class="producto-descripcion">{{ producto.descripcion }}</p>
+
+          <!-- Precios: con o sin descuento según oferta -->
+          @if (producto.oferta && producto.descuento) {
+            <div class="producto-precios">
+              <span class="precio-tachado">{{ producto.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}</span>
+              <span class="precio-oferta">{{ precioFinal(producto.precio, producto.descuento) | currency:'ARS':'symbol-narrow':'1.0-0' }}</span>
+            </div>
+            <!-- Ahorro en verde -->
+            <p class="producto-ahorro">
+              <mat-icon>savings</mat-icon>
+              Ahorrás {{ producto.precio - precioFinal(producto.precio, producto.descuento) | currency:'ARS':'symbol-narrow':'1.0-0' }}
+            </p>
+          } @else {
+            <div class="producto-precios">
+              <span class="precio-normal">{{ producto.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}</span>
+            </div>
+          }
+
+          <!-- Indicador de stock -->
+          @if (producto.stock > 0) {
+            <p class="stock-ok">
+              <mat-icon>check_circle</mat-icon>
+              {{ producto.stock }} en stock
+            </p>
+          } @else {
+            <p class="stock-agotado">
+              <mat-icon>cancel</mat-icon>
+              Sin stock
+            </p>
+          }
+
+        </mat-card-content>
+
+        <!-- Botón de acción -->
+        <mat-card-actions class="producto-acciones">
+          <button mat-raised-button
+                  class="btn-agregar"
+                  [disabled]="producto.stock === 0">
+            <mat-icon>add_shopping_cart</mat-icon>
+            {{ producto.stock === 0 ? 'Sin stock' : 'Agregar' }}
+          </button>
+        </mat-card-actions>
+
+      </mat-card>
+    }
+
+    <!-- Estado vacío cuando no hay resultados -->
+    @if (!cargando && productosFiltrados.length === 0) {
+      <div class="sin-resultados">
+        <mat-icon>search_off</mat-icon>
+        <h3>No se encontraron productos</h3>
+        <p>Intentá con otro término o cambiá los filtros.</p>
+        <button mat-stroked-button (click)="limpiarFiltros()">
+          <mat-icon>refresh</mat-icon>
+          Ver todos los productos
+        </button>
+      </div>
+    }
+
+  </div>
+</section>
+
+
+<!-- ── 5. FOOTER ───────────────────────────────
+     Pie de página simple                       -->
 <footer class="footer">
-  <p>© 2025 StoreHub — Todos los derechos reservados.</p>
+  <div class="footer-contenido contenedor">
+    <div class="footer-marca">
+      <mat-icon>store</mat-icon>
+      <span>StoreHub</span>
+    </div>
+    <p class="footer-copy">© 2025 StoreHub — Todos los derechos reservados.</p>
+  </div>
 </footer>

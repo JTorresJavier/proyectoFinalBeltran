@@ -1,42 +1,34 @@
-// ── IMPORTS ──────────────────────────────────
-import { Component, OnInit, inject } from '@angular/core'; // Component, lifecycle hook e inject
-import { CommonModule } from '@angular/common';             // Directivas ngIf, ngFor
-import { FormsModule } from '@angular/forms';              // Para ngModel en el buscador
+// ── IMPORTS BASE ──────────────────────────────
+import { ChangeDetectorRef, Component, NgZone, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common'; // Pipes y directivas comunes
+import { FormsModule  } from '@angular/forms';  // ngModel para búsqueda y filtros
 
 // ── ANGULAR MATERIAL ──────────────────────────
-import { MatCardModule } from '@angular/material/card';           // Cards de productos
-import { MatButtonModule } from '@angular/material/button';       // Botones Material
-import { MatIconModule } from '@angular/material/icon';           // Íconos Material
-import { MatInputModule } from '@angular/material/input';         // Input del buscador
-import { MatFormFieldModule } from '@angular/material/form-field';// Campo de formulario
-import { MatSelectModule } from '@angular/material/select';       // Select de categorías
-import { MatChipsModule } from '@angular/material/chips';         // Chips de filtros
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Loading
+import { MatCardModule            } from '@angular/material/card';
+import { MatButtonModule          } from '@angular/material/button';
+import { MatIconModule            } from '@angular/material/icon';
+import { MatInputModule           } from '@angular/material/input';
+import { MatFormFieldModule       } from '@angular/material/form-field';
+import { MatSelectModule          } from '@angular/material/select';
+import { MatChipsModule           } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatBadgeModule           } from '@angular/material/badge';
 
-// ── COMPONENTES COMPARTIDOS ───────────────────
-import { NavbarComponent } from '../../../shared/components/navbar/navbar'; // Navbar
+// ── COMPONENTES PROPIOS ───────────────────────
+import { NavbarComponent } from '../../../shared/components/navbar/navbar';
 
-// ── INTERFACE ────────────────────────────────
-// Define la forma de un producto
-interface Producto {
-  id: number;          // Identificador único
-  nombre: string;      // Nombre del producto
-  categoria: string;   // Categoría del producto
-  precio: number;      // Precio en ARS
-  stock: number;       // Cantidad disponible
-  descripcion: string; // Descripción breve
-  icono: string;       // Ícono de Material Icons
-}
+// ── SERVICIOS ─────────────────────────────────
+import { ProductosService, Producto } from '../../../core/services/productos.service';
 
 // ── DECORADOR ────────────────────────────────
-// Página de catálogo — vista del CLIENTE.
-// Muestra todos los productos con buscador y filtro por categoría.
+// Página de catálogo del cliente.
+// Muestra todos los productos con búsqueda, chips de categoría y filtro de oferta.
 @Component({
   selector: 'app-catalogo',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,              // Para [(ngModel)] en el buscador
+    FormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -45,6 +37,7 @@ interface Producto {
     MatSelectModule,
     MatChipsModule,
     MatProgressSpinnerModule,
+    MatBadgeModule,
     NavbarComponent,
   ],
   templateUrl: './catalogo.html',
@@ -52,57 +45,128 @@ interface Producto {
 })
 
 // ── CLASE ────────────────────────────────────
-// Lógica de la página de catálogo
 export class CatalogoComponent implements OnInit {
 
-  // ── DATOS DE PRODUCTOS ────────────────────
-  // Lista completa de productos (luego vendrá de la API)
-  productos: Producto[] = [
-    { id: 1, nombre: 'Coca Cola 2.25L',    categoria: 'Bebidas',   precio: 1500, stock: 20, descripcion: 'Bebida gaseosa',        icono: 'local_drink'       },
-    { id: 2, nombre: 'Pepsi 2.25L',        categoria: 'Bebidas',   precio: 1400, stock: 15, descripcion: 'Bebida gaseosa',        icono: 'local_drink'       },
-    { id: 3, nombre: 'Papas Fritas 100g',  categoria: 'Snacks',    precio: 800,  stock: 30, descripcion: 'Snack salado',          icono: 'fastfood'          },
-    { id: 4, nombre: 'Yogur x4',           categoria: 'Lácteos',   precio: 1200, stock: 10, descripcion: 'Yogur frutado',         icono: 'icecream'          },
-    { id: 5, nombre: 'Detergente 750ml',   categoria: 'Limpieza',  precio: 950,  stock: 25, descripcion: 'Detergente líquido',    icono: 'cleaning_services' },
-    { id: 6, nombre: 'Alfajor Doble',      categoria: 'Golosinas', precio: 450,  stock: 50, descripcion: 'Alfajor de chocolate',  icono: 'cake'              },
-    { id: 7, nombre: 'Jamón Cocido 200g',  categoria: 'Fiambres',  precio: 1800, stock: 8,  descripcion: 'Jamón cocido feteado',  icono: 'lunch_dining'      },
-    { id: 8, nombre: 'Agua Mineral 1.5L',  categoria: 'Bebidas',   precio: 600,  stock: 40, descripcion: 'Agua sin gas',          icono: 'water_drop'        },
-  ];
+  // ── SERVICIOS INYECTADOS ──────────────────
+  private productosService = inject(ProductosService);  // API REST de productos
+  private cdr              = inject(ChangeDetectorRef); // Fuerza actualización de la vista
+  private ngZone           = inject(NgZone);            // Zona Angular para detectar cambios HTTP
+
+  // ── ESTADO ────────────────────────────────
+  productos: Producto[]         = [];  // Lista completa de productos (original, sin filtrar)
+  productosFiltrados: Producto[] = []; // Lista visible con filtros aplicados (array real, no getter)
+  cargando: boolean             = false; // Spinner mientras carga la API
 
   // ── FILTROS ───────────────────────────────
-  textoBusqueda: string = '';    // Texto del buscador — vinculado con [(ngModel)]
-  categoriaSeleccionada: string = ''; // Categoría seleccionada en el select
+  // Se actualizan desde el template con ngModel
+  private _textoBusqueda: string = '';
+  private _categoriaSeleccionada: string = '';
+  private _soloOfertas: boolean = false;
 
-  // ── CATEGORÍAS ────────────────────────────
-  // Lista de categorías para el filtro
-  categorias: string[] = ['Bebidas', 'Snacks', 'Lácteos', 'Limpieza', 'Golosinas', 'Fiambres'];
+  // ── GETTERS/SETTERS DE FILTROS ────────────
+  // Cada setter aplica los filtros automáticamente al cambiar el valor
 
-  // ── LIFECYCLE HOOK ────────────────────────
-  // Se ejecuta al inicializar el componente
-  ngOnInit(): void {
-    // Aquí luego cargaremos los productos desde la API
-    console.log('Catálogo iniciado');
+  get textoBusqueda(): string { return this._textoBusqueda; }
+  set textoBusqueda(v: string) {
+    this._textoBusqueda = v;
+    this.aplicarFiltros(); // Re-filtra al cambiar el texto
   }
 
-  // ── GETTER: PRODUCTOS FILTRADOS ───────────
-  // Filtra los productos según el texto de búsqueda y la categoría
-  // Se recalcula automáticamente cuando cambian los filtros
-  get productosFiltrados(): Producto[] {
-    return this.productos.filter(p => {
-      // Filtra por texto — sin distinguir mayúsculas
-      const coincideTexto = p.nombre.toLowerCase()
-        .includes(this.textoBusqueda.toLowerCase());
-      // Filtra por categoría — si no hay categoría seleccionada muestra todos
-      const coincideCategoria = this.categoriaSeleccionada
-        ? p.categoria === this.categoriaSeleccionada
-        : true;
-      return coincideTexto && coincideCategoria; // Ambos filtros deben cumplirse
+  get categoriaSeleccionada(): string { return this._categoriaSeleccionada; }
+  set categoriaSeleccionada(v: string) {
+    this._categoriaSeleccionada = v;
+    this.aplicarFiltros(); // Re-filtra al cambiar la categoría
+  }
+
+  get soloOfertas(): boolean { return this._soloOfertas; }
+  set soloOfertas(v: boolean) {
+    this._soloOfertas = v;
+    this.aplicarFiltros(); // Re-filtra al togglear ofertas
+  }
+
+  // ── CATEGORÍAS CON ÍCONO ─────────────────
+  // Lista de categorías con su ícono de Material Icons para los chips
+  categorias = [
+    { nombre: 'Bebidas',    icono: 'local_bar'         },
+    { nombre: 'Snacks',     icono: 'fastfood'          },
+    { nombre: 'Lácteos',    icono: 'egg'               },
+    { nombre: 'Limpieza',   icono: 'cleaning_services' },
+    { nombre: 'Golosinas',  icono: 'cake'              },
+    { nombre: 'Fiambres',   icono: 'lunch_dining'      },
+    { nombre: 'Carnes',     icono: 'kebab_dining'      },
+  ];
+
+  // ── LIFECYCLE: ngOnInit ───────────────────
+  // Carga todos los productos al inicializar.
+  // Usa NgZone.run() + detectChanges() para que Angular
+  // detecte los cambios que llegan desde HTTP
+  ngOnInit(): void {
+    this.cargando = true;
+    this.productosService.getAll().subscribe({
+      next: (productos) => {
+        this.ngZone.run(() => {
+          this.productos = productos;       // Guarda la lista completa
+          this.aplicarFiltros();            // Llena productosFiltrados (= todos al inicio)
+          this.cargando  = false;           // Oculta el spinner
+          this.cdr.detectChanges();         // Fuerza la actualización de la vista
+        });
+      },
+      error: (err) => {
+        this.ngZone.run(() => {
+          console.error('Error cargando productos:', err);
+          this.cargando = false;
+          this.cdr.detectChanges();
+        });
+      }
     });
   }
 
+  // ── MÉTODO: APLICAR FILTROS ───────────────
+  // Recalcula productosFiltrados según los filtros activos.
+  // Se llama desde los setters y desde ngOnInit cuando llegan los datos.
+  aplicarFiltros(): void {
+    this.productosFiltrados = this.productos.filter(p => {
+      const coincideTexto     = p.nombre.toLowerCase()
+                                  .includes(this._textoBusqueda.toLowerCase());
+      const coincideCategoria = this._categoriaSeleccionada
+                                  ? p.categoria === this._categoriaSeleccionada
+                                  : true;
+      const coincideOferta    = this._soloOfertas ? p.oferta : true;
+      return coincideTexto && coincideCategoria && coincideOferta;
+    });
+    this.cdr.detectChanges(); // Actualiza la vista tras cada filtrado
+  }
+
+  // ── MÉTODO: CANTIDAD POR CATEGORÍA ────────
+  // Devuelve cuántos productos hay en una categoría (para el badge del chip)
+  cantidadEnCategoria(nombre: string): number {
+    return this.productos.filter(p => p.categoria === nombre).length;
+  }
+
+  // ── GETTER: CANTIDAD DE OFERTAS ───────────
+  // Devuelve cuántos productos tienen oferta activa
+  get cantidadOfertas(): number {
+    return this.productos.filter(p => p.oferta).length;
+  }
+
+  // ── MÉTODO: SELECCIONAR CATEGORÍA ────────
+  // Alterna la categoría activa; si ya está activa, la deselecciona
+  seleccionarCategoria(nombre: string): void {
+    this.categoriaSeleccionada = this._categoriaSeleccionada === nombre ? '' : nombre;
+  }
+
+  // ── MÉTODO: PRECIO FINAL ─────────────────
+  // Calcula el precio con el descuento aplicado — ej: 1000 con 40% → 600
+  precioFinal(precio: number, descuento: number): number {
+    return precio - (precio * descuento / 100);
+  }
+
   // ── MÉTODO: LIMPIAR FILTROS ───────────────
-  // Resetea el buscador y la categoría seleccionada
+  // Resetea búsqueda, categoría y flag de oferta
   limpiarFiltros(): void {
-    this.textoBusqueda = '';
-    this.categoriaSeleccionada = '';
+    this._textoBusqueda         = '';
+    this._categoriaSeleccionada = '';
+    this._soloOfertas           = false;
+    this.aplicarFiltros();
   }
 }
