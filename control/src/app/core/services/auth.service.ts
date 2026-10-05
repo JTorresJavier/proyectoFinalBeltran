@@ -6,7 +6,8 @@ import { Observable, BehaviorSubject } from 'rxjs'; // Para manejar respuestas a
 // ── INTERFACE ────────────────────────────────
 // Define la forma de un Usuario
 export interface Usuario {
-  id?: string;       // Opcional — lo asigna MockAPI
+  _id?: string;       // ← MongoDB usa _id
+  id?: string;         // ← compatibilidad
   nombre: string;    // Nombre completo
   usuario: string;   // Nombre de usuario para login
   password: string;  // Contraseña
