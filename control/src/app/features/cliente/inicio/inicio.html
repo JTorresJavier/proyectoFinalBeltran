@@ -1,87 +1,326 @@
-<!-- ── PÁGINA DE INICIO DE STOREHUB ───────────
-     Vista pública del cliente.
-     Contiene: navbar, banner, categorías y ofertas -->
+<!-- ── PÁGINA DE INICIO DE STOREHUB ─────────────
+     Vista pública del cliente. Estructura:
+     1. Hero Carrusel (banner deslizante principal)
+     2. Barra de estadísticas
+     3. Categorías clicables
+     4. Ofertas del día (grid)
+     5. Banner CTA hacia el catálogo
+     6. Por qué elegirnos
+     7. Footer                                    -->
 
-<!-- ── NAVBAR ────────────────────────────────
-     Componente compartido de navegación        -->
 <app-navbar></app-navbar>
 
-<!-- ── BANNER PRINCIPAL ──────────────────────
-     Sección de bienvenida con nombre y slogan  -->
-<section class="banner">
-  <div class="banner-contenido">
+<!-- ── 1. HERO CARRUSEL ────────────────────────
+     Banner deslizante a pantalla completa.
+     Cada slide tiene fondo degradado, texto
+     y botones CTA. Diseñado para luego recibir
+     imágenes de productos o promos estacionales.  -->
+<section class="hero-carrusel">
 
-    <!-- INTERPOLACIÓN: muestra nombre y slogan del componente -->
-    <h1 class="banner-titulo">
-      <mat-icon class="banner-icono">store</mat-icon>
-      {{ nombreTienda }}
-    </h1>
-    <p class="banner-slogan">{{ slogan }}</p>
+  <!-- Track deslizante: se mueve con translateX.
+       Como el track mide 300% del viewport, cada slide
+       ocupa 33.333%, por eso multiplicamos por 33.333. -->
+  <div class="hc-track"
+       [style.transform]="'translateX(-' + (heroActivo * 33.3333) + '%)'">
 
-    <!-- Botón que lleva al catálogo completo -->
-    <button mat-raised-button color="primary" routerLink="/catalogo">
-      <mat-icon>shopping_cart</mat-icon>
-      Ver Catálogo Completo
-    </button>
-
-  </div>
-</section>
-
-<!-- ── CATEGORÍAS ────────────────────────────
-     Chips de categorías para acceso rápido    -->
-<section class="categorias contenedor">
-  <h2>Categorías</h2>
-  <div class="chips-contenedor">
-
-    <!-- @for: genera un chip por cada categoría del array -->
-    @for (cat of categorias; track cat) {
-      <mat-chip-row>{{ cat }}</mat-chip-row>
-    }
-
-  </div>
-</section>
-
-<!-- ── OFERTAS DEL DÍA ───────────────────────
-     Cards con productos en descuento          -->
-<section class="ofertas contenedor">
-  <h2>🔥 Ofertas del día</h2>
-  <div class="ofertas-grid">
-
-    <!-- @for: genera una card por cada oferta del array -->
-    @for (oferta of ofertas; track oferta.nombre) {
-      <mat-card class="oferta-card">
-
-        <!-- Ícono del producto -->
-        <mat-card-header>
-          <mat-icon mat-card-avatar>{{ oferta.icono }}</mat-icon>
-          <mat-card-title>{{ oferta.nombre }}</mat-card-title>
-          <!-- Badge de descuento -->
-          <mat-card-subtitle class="descuento-badge">
-            -{{ oferta.descuento }}% OFF
-          </mat-card-subtitle>
-        </mat-card-header>
-
-        <mat-card-content>
-          <!-- Precio original tachado -->
-          <p class="precio-original">{{ oferta.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}</p>
-          <!-- Precio final calculado con el método precioFinal() -->
-          <p class="precio-final">{{ precioFinal(oferta.precio, oferta.descuento) | currency:'ARS':'symbol-narrow':'1.0-0' }}</p>
-        </mat-card-content>
-
-        <mat-card-actions>
-          <button mat-button color="primary" routerLink="/catalogo">
-            Ver más
+    <!-- ── SLIDE 1: Bienvenida principal ──────── -->
+    <div class="hc-slide hc-slide-1">
+      <div class="hc-slide-fondo"></div>
+      <div class="hc-contenido">
+        <div class="hc-badge">
+          <span class="hc-badge-punto"></span>
+          Tienda online abierta
+        </div>
+        <h1 class="hc-titulo">
+          Bienvenido a <span class="hc-marca">{{ nombreTienda }}</span>
+        </h1>
+        <p class="hc-subtitulo">{{ slogan }}</p>
+        <div class="hc-botones">
+          <button mat-raised-button class="btn-hc-primary" routerLink="/catalogo">
+            <mat-icon>shopping_cart</mat-icon>
+            Ver Catálogo
           </button>
-        </mat-card-actions>
+          <button mat-stroked-button class="btn-hc-secondary" (click)="scrollOfertas()">
+            <mat-icon>local_fire_department</mat-icon>
+            Ver Ofertas
+          </button>
+        </div>
+      </div>
+      <!-- Espacio reservado para imagen de producto futura -->
+      <div class="hc-imagen-placeholder">
+        <mat-icon class="hc-icono-placeholder">storefront</mat-icon>
+      </div>
+    </div>
 
-      </mat-card>
+    <!-- ── SLIDE 2: Ofertas especiales ───────── -->
+    <div class="hc-slide hc-slide-2">
+      <div class="hc-slide-fondo"></div>
+      <div class="hc-contenido">
+        <div class="hc-badge hc-badge-rojo">
+          <mat-icon style="font-size:14px;width:14px;height:14px">local_fire_department</mat-icon>
+          Ofertas del día
+        </div>
+        <h1 class="hc-titulo">Descuentos de hasta <span class="hc-marca-naranja">40% OFF</span></h1>
+        <p class="hc-subtitulo">Productos seleccionados con descuentos exclusivos cada día</p>
+        <div class="hc-botones">
+          <button mat-raised-button class="btn-hc-naranja" (click)="scrollOfertas()">
+            <mat-icon>local_offer</mat-icon>
+            Ver Ofertas
+          </button>
+        </div>
+      </div>
+      <div class="hc-imagen-placeholder hc-imagen-2">
+        <mat-icon class="hc-icono-placeholder">local_offer</mat-icon>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 3: Catálogo completo ─────────── -->
+    <div class="hc-slide hc-slide-3">
+      <div class="hc-slide-fondo"></div>
+      <div class="hc-contenido">
+        <div class="hc-badge hc-badge-verde">
+          <mat-icon style="font-size:14px;width:14px;height:14px">inventory_2</mat-icon>
+          Stock actualizado
+        </div>
+        <h1 class="hc-titulo">Más de <span class="hc-marca-verde">{{ totalProductos }}</span> productos</h1>
+        <p class="hc-subtitulo">Stock actualizado en tiempo real. Todo lo que necesitás en un solo lugar.</p>
+        <div class="hc-botones">
+          <button mat-raised-button class="btn-hc-verde" routerLink="/catalogo">
+            <mat-icon>search</mat-icon>
+            Explorar Catálogo
+          </button>
+        </div>
+      </div>
+      <div class="hc-imagen-placeholder hc-imagen-3">
+        <mat-icon class="hc-icono-placeholder">inventory_2</mat-icon>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Flechas de navegación izquierda y derecha -->
+  <button class="hc-btn hc-prev"
+          [disabled]="heroActivo === 0"
+          (click)="moverHero(-1)"
+          aria-label="Slide anterior">
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+  <button class="hc-btn hc-next"
+          [disabled]="heroActivo === 2"
+          (click)="moverHero(1)"
+          aria-label="Slide siguiente">
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+
+  <!-- Dots indicadores de posición -->
+  <div class="hc-dots">
+    @for (n of [0,1,2]; track n) {
+      <button class="hc-dot"
+              [class.hc-dot-activo]="n === heroActivo"
+              (click)="irAHeroSlide(n)"
+              [attr.aria-label]="'Ir al slide ' + (n+1)">
+      </button>
     }
+  </div>
+
+  <!-- Ola SVG al pie que conecta con el fondo blanco -->
+  <div class="hc-ola">
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,30 C480,60 960,0 1440,30 L1440,60 L0,60 Z" fill="white"/>
+    </svg>
+  </div>
+
+</section>
+
+
+<!-- ── 2. BARRA DE ESTADÍSTICAS ───────────────
+     Fila de números clave debajo del hero:
+     total de productos, ofertas y categorías    -->
+<section class="stats-bar contenedor">
+  <div class="stats-bar-inner">
+    <div class="sbar-item">
+      <span class="sbar-numero">{{ totalProductos }}</span>
+      <span class="sbar-label">Productos</span>
+    </div>
+    <div class="sbar-divider"></div>
+    <div class="sbar-item">
+      <span class="sbar-numero">{{ ofertas.length }}</span>
+      <span class="sbar-label">Ofertas hoy</span>
+    </div>
+    <div class="sbar-divider"></div>
+    <div class="sbar-item">
+      <span class="sbar-numero">{{ categorias.length }}</span>
+      <span class="sbar-label">Categorías</span>
+    </div>
+    <div class="sbar-divider"></div>
+    <div class="sbar-item">
+      <span class="sbar-numero">24/7</span>
+      <span class="sbar-label">Disponible</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 3. CATEGORÍAS ──────────────────────────
+     Grilla de 6 botones con ícono y nombre
+     que llevan al catálogo filtrado             -->
+<section class="categorias-seccion">
+  <div class="contenedor">
+
+    <div class="seccion-header">
+      <div class="seccion-titulo-grupo">
+        <mat-icon class="seccion-icono">category</mat-icon>
+        <h2 class="seccion-titulo">Explorá por categoría</h2>
+      </div>
+      <a mat-button routerLink="/catalogo" class="ver-todos-link">
+        Ver catálogo <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+
+    <!-- Grid de categorías con ícono Material -->
+    <div class="categorias-grid">
+      @for (cat of categoriasConIcono; track cat.nombre) {
+        <button class="categoria-card" routerLink="/catalogo">
+          <div class="cat-icono-wrap">
+            <mat-icon class="cat-icono">{{ cat.icono }}</mat-icon>
+          </div>
+          <span class="cat-nombre">{{ cat.nombre }}</span>
+        </button>
+      }
+    </div>
 
   </div>
 </section>
 
-<!-- ── FOOTER ────────────────────────────────
-     Pie de página con info básica            -->
+
+<!-- ── 4. OFERTAS DEL DÍA (GRID) ──────────────
+     Grid de cards con los productos en oferta.
+     No usa carrusel: se muestran como grilla
+     estilo marketplace                          -->
+<section class="ofertas-seccion contenedor" id="ofertas">
+
+  <div class="seccion-header">
+    <div class="seccion-titulo-grupo">
+      <mat-icon class="seccion-icono fuego">local_fire_department</mat-icon>
+      <h2 class="seccion-titulo">Ofertas del día</h2>
+    </div>
+    <a mat-button routerLink="/catalogo" class="ver-todos-link">
+      Ver todos <mat-icon>arrow_forward</mat-icon>
+    </a>
+  </div>
+
+  @if (ofertas.length > 0) {
+
+    <!-- Grid de hasta 6 tarjetas de oferta -->
+    <div class="ofertas-grid">
+      @for (oferta of ofertas; track oferta._id) {
+        <mat-card class="oferta-card">
+
+          <!-- Badge flotante con el porcentaje de descuento -->
+          <div class="oferta-badge-flotante">-{{ oferta.descuento }}% OFF</div>
+
+          <!-- Ícono grande del producto sobre fondo degradado -->
+          <div class="oferta-icono-contenedor">
+            <mat-icon class="oferta-icono-grande">{{ oferta.icono }}</mat-icon>
+          </div>
+
+          <mat-card-content class="oferta-card-body">
+            <!-- Etiqueta de categoría -->
+            <p class="oferta-categoria">{{ oferta.categoria }}</p>
+            <h3 class="oferta-nombre">{{ oferta.nombre }}</h3>
+            <p class="oferta-descripcion">{{ oferta.descripcion }}</p>
+
+            <!-- Precio original tachado + precio con descuento -->
+            <div class="oferta-precios">
+              <span class="precio-tachado">{{ oferta.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}</span>
+              <span class="precio-oferta">{{ precioFinal(oferta.precio, oferta.descuento) | currency:'ARS':'symbol-narrow':'1.0-0' }}</span>
+            </div>
+
+            <!-- Monto ahorrado en verde -->
+            <div class="oferta-ahorro">
+              <mat-icon>savings</mat-icon>
+              Ahorrás {{ oferta.precio - precioFinal(oferta.precio, oferta.descuento) | currency:'ARS':'symbol-narrow':'1.0-0' }}
+            </div>
+          </mat-card-content>
+
+          <!-- Botón al pie de la card -->
+          <mat-card-actions class="oferta-acciones">
+            <button mat-raised-button class="btn-ver-producto" routerLink="/catalogo">
+              <mat-icon>visibility</mat-icon>
+              Ver en catálogo
+            </button>
+          </mat-card-actions>
+
+        </mat-card>
+      }
+    </div>
+
+  } @else {
+
+    <!-- Estado vacío cuando no hay ofertas activas -->
+    <div class="ofertas-vacias">
+      <mat-icon>local_offer</mat-icon>
+      <p>No hay ofertas activas en este momento.</p>
+      <button mat-stroked-button routerLink="/catalogo">Ver todos los productos</button>
+    </div>
+
+  }
+
+</section>
+
+
+<!-- ── 5. BANNER CTA ──────────────────────────
+     Franja con degradado y botón al catálogo   -->
+<section class="banner-cta contenedor">
+  <div class="cta-contenido">
+    <mat-icon class="cta-icono">storefront</mat-icon>
+    <div class="cta-texto">
+      <h3>¿Buscás algo en particular?</h3>
+      <p>Tenemos más de {{ totalProductos }} productos disponibles con stock actualizado.</p>
+    </div>
+    <button mat-raised-button class="btn-cta" routerLink="/catalogo">
+      <mat-icon>search</mat-icon>
+      Explorar catálogo completo
+    </button>
+  </div>
+</section>
+
+
+<!-- ── 6. POR QUÉ ELEGIRNOS ──────────────────
+     4 cards con ícono de color, título y texto -->
+<section class="beneficios-seccion contenedor">
+  <h2 class="seccion-titulo centrado">¿Por qué elegirnos?</h2>
+  <div class="beneficios-grid">
+    @for (b of beneficios; track b.titulo) {
+      <div class="beneficio-card">
+        <!-- Círculo coloreado con el ícono -->
+        <div class="beneficio-icono-wrap" [style.background]="b.color + '22'">
+          <mat-icon [style.color]="b.color">{{ b.icono }}</mat-icon>
+        </div>
+        <h4 class="beneficio-titulo">{{ b.titulo }}</h4>
+        <p class="beneficio-desc">{{ b.descripcion }}</p>
+      </div>
+    }
+  </div>
+</section>
+
+
+<!-- ── 7. FOOTER ───────────────────────────────
+     Pie de página oscuro con logo, slogan,
+     links de navegación y copyright            -->
 <footer class="footer">
-  <p>© 2025 {{ nombreTienda }} — Todos los derechos reservados.</p>
+  <div class="footer-contenido contenedor">
+    <!-- Logo y nombre de la tienda -->
+    <div class="footer-marca">
+      <mat-icon>store</mat-icon>
+      <span>{{ nombreTienda }}</span>
+    </div>
+    <p class="footer-slogan">{{ slogan }}</p>
+    <!-- Links de navegación rápida -->
+    <div class="footer-links">
+      <a mat-button routerLink="/inicio">Inicio</a>
+      <a mat-button routerLink="/catalogo">Catálogo</a>
+    </div>
+    <p class="footer-copy">© 2025 {{ nombreTienda }} — Todos los derechos reservados.</p>
+  </div>
 </footer>
