@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit {
   // Consume la API externa DolarAPI (fuente de datos externa
   // relacionada a la temática del negocio).
     cargarCotizacionDolar(): void {
-    this.cargandoDolar = true;
+    this.cargandoDolar = false;
     this.dolarService.getDolarOficial().subscribe({
       next: (cotizacion) => {
         this.ngZone.run(() => {
@@ -117,7 +117,7 @@ export class DashboardComponent implements OnInit {
         this.ngZone.run(() => {
           console.error('Error cargando cotización del dólar:', err);
           this.errorDolar    = true;
-          this.cargandoDolar = false;
+          this.cargandoDolar = false;1.
           this.cdr.detectChanges();
         });
       }

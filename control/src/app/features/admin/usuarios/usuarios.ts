@@ -119,9 +119,9 @@ export class UsuariosComponent implements OnInit {
   }
 
   // ── MÉTODO: EDITAR USUARIO ────────────────
-  editarUsuario(usuario: Usuario): void {
+    editarUsuario(usuario: Usuario): void {
     this.modoEdicion       = true;
-    this.usuarioEditandoId = usuario.id!;
+    this.usuarioEditandoId = usuario._id || usuario.id!;
     this.mostrarPassword   = false;
     this.formulario.patchValue(usuario);
     this.mostrarFormulario = true;
@@ -190,7 +190,7 @@ export class UsuariosComponent implements OnInit {
     }
     if (!confirm(`¿Eliminar al usuario "${usuario.usuario}"?`)) return;
 
-    this.authService.deleteUsuario(usuario.id!).subscribe({
+      this.authService.deleteUsuario(usuario._id || usuario.id!).subscribe({
       next: () => {
         this.snackBar.open('Usuario eliminado 🗑️', 'Cerrar', { duration: 3000 });
         this.cargarUsuarios();
@@ -216,6 +216,8 @@ export class UsuariosComponent implements OnInit {
   // ── MÉTODO: ES EL USUARIO ACTUAL ──────────
   // Lo usa el template para deshabilitar el botón de eliminar
   esUsuarioActual(usuario: Usuario): boolean {
-    return usuario.id === this.usuarioLogueado?.id;
+    const idUsuario = usuario._id || usuario.id;
+    const idLogueado = this.usuarioLogueado?._id || this.usuarioLogueado?.id;
+    return idUsuario === idLogueado;
   }
 }
