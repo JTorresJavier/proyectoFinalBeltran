@@ -27,12 +27,14 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // ── RUTAS ─────────────────────────────────────
 // Importamos y registramos las rutas de la API
-const productosRoutes = require('./src/routes/productos.routes');
-const usuariosRoutes  = require('./src/routes/usuarios.routes');
+const productosRoutes  = require('./src/routes/productos.routes');
+const usuariosRoutes   = require('./src/routes/usuarios.routes');
+const recepcionesRoutes = require('./src/routes/recepciones.routes');
 
 // Registramos las rutas con su prefijo
-app.use('/api/productos', productosRoutes); // /api/productos
-app.use('/api/usuarios',  usuariosRoutes);  // /api/usuarios
+app.use('/api/productos',   productosRoutes);   // /api/productos
+app.use('/api/usuarios',    usuariosRoutes);     // /api/usuarios
+app.use('/api/recepciones', recepcionesRoutes);  // /api/recepciones
 
 // ── RUTA DE PRUEBA ────────────────────────────
 // Para verificar que la API está funcionando
