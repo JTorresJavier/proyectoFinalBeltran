@@ -111,7 +111,7 @@ html.theme-dark body :is(
   .mat-mdc-paginator, .login-card, .tarjeta-formulario, .tarjeta-tabla,
   .formulario-card, .dolar-card, .estadisticas-card, .resumen-item,
   .grafico-card, .categoria-card, .beneficio-card, .producto-card,
-  .oferta-card, .catalogo-hero-filtros, .categoria-chip
+  .oferta-card, .categoria-chip
 ) {
   color: var(--app-text) !important;
   background: var(--app-surface) !important;
@@ -176,6 +176,47 @@ html.theme-dark body :is(.mdc-text-field--filled, .mdc-text-field--outlined) {
 
 html.theme-dark body :is(.mat-mdc-form-field, .mat-mdc-select-arrow, .mat-mdc-form-field-icon-suffix) {
   color: var(--app-muted) !important;
+}
+
+html.theme-dark body .buscador .mat-mdc-text-field-wrapper {
+  background: rgba(17, 28, 46, 0.82) !important;
+}
+
+html.theme-dark body .buscador .mat-mdc-input-element {
+  background: transparent !important;
+}
+
+html.theme-dark body .catalogo-hero::after {
+  background: var(--app-bg) !important;
+}
+
+html.theme-dark body .buscador .mdc-notched-outline__leading,
+html.theme-dark body .buscador .mdc-notched-outline__notch,
+html.theme-dark body .buscador .mdc-notched-outline__trailing {
+  border-color: #8293aa !important;
+}
+
+html.theme-dark body .buscador .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+html.theme-dark body .buscador .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+html.theme-dark body .buscador .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: var(--app-accent) !important;
+}
+
+html.theme-dark body .btn-filtro-oferta {
+  background: rgba(9, 17, 30, 0.46) !important;
+  border-color: rgba(195, 211, 234, 0.64) !important;
+  color: #f3f6fc !important;
+}
+
+html.theme-dark body .btn-filtro-oferta:hover {
+  background: rgba(145, 189, 255, 0.16) !important;
+  border-color: #d5e3f8 !important;
+}
+
+html.theme-dark body .btn-filtro-oferta.activo {
+  background: #b93236 !important;
+  border-color: #ff777b !important;
+  color: #fff !important;
 }
 
 html.theme-dark body .login-card .btn-login:disabled {
