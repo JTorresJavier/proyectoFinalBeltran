@@ -1,0 +1,64 @@
+.pagina {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.titulo h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.tarjeta-formulario,
+.tarjeta-tabla {
+  margin-bottom: 24px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+}
+
+.acciones-formulario {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.contenedor-tabla {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.cargando {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.vacio {
+  text-align: center;
+  padding: 32px;
+  color: #666;
+}

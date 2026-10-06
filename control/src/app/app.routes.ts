@@ -71,6 +71,14 @@ export const routes: Routes = [
         .then(m => m.UsuariosComponent),
     canActivate: [authGuard, adminGuard] // Logueado Y además admin
   },
+  
+  {
+    path: 'admin/recepciones',
+    loadComponent: () =>
+      import('./features/admin/recepciones/recepciones')
+        .then(m => m.RecepcionesComponent),
+    canActivate: [authGuard] // Logueado — cualquier rol puede recepcionar mercadería
+  },
 
   // ── RUTA COMODÍN ─────────────────────────────
   // Cualquier URL no definida redirige al inicio

@@ -67,9 +67,10 @@ export class DashboardComponent implements OnInit {
 
   // ── ACCESOS RÁPIDOS ───────────────────────
   accesos = [
-    { label: 'Gestión de Productos', icono: 'inventory_2',     ruta: '/admin/productos', roles: ['admin', 'repositor'] },
-    { label: 'Caja',                 icono: 'point_of_sale',   ruta: '/admin/caja',      roles: ['admin', 'empleado']  },
-    { label: 'Usuarios',             icono: 'manage_accounts', ruta: '/admin/usuarios',  roles: ['admin']              },
+    { label: 'Gestión de Productos', icono: 'inventory_2',     ruta: '/admin/productos',   roles: ['admin', 'repositor'] },
+    { label: 'Caja',                 icono: 'point_of_sale',   ruta: '/admin/caja',        roles: ['admin', 'empleado']  },
+    { label: 'Usuarios',             icono: 'manage_accounts', ruta: '/admin/usuarios',    roles: ['admin']              },
+    { label: 'Recepciones',          icono: 'inventory',       ruta: '/admin/recepciones', roles: ['admin', 'repositor'] },
   ];
 
   // ── LIFECYCLE HOOK ────────────────────────
