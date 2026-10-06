@@ -1,5 +1,5 @@
 // ── IMPORTS BASE ──────────────────────────────
-import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Pipes y directivas comunes
 
 // ── ROUTER ────────────────────────────────────
@@ -37,12 +37,13 @@ import { ProductosService, Producto } from '../../../core/services/productos.ser
 })
 
 // ── CLASE ────────────────────────────────────
-export class InicioComponent implements OnInit, OnDestroy {
+export class InicioComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // ── SERVICIOS INYECTADOS ──────────────────
   private productosService = inject(ProductosService);  // API REST de productos
   private cdr              = inject(ChangeDetectorRef); // Fuerza actualización de la vista
   private ngZone           = inject(NgZone);            // Zona Angular para detectar cambios de HTTP
+  private host             = inject(ElementRef<HTMLElement>);
 
   // ── ESTADO GENERAL ────────────────────────
   nombreTienda: string   = 'StoreHub';                           // Nombre de la tienda
@@ -54,6 +55,7 @@ export class InicioComponent implements OnInit, OnDestroy {
   heroActivo: number  = 0;        // Índice del slide del hero visible actualmente
   heroTotal:  number  = 3;        // Total de slides del hero (fijo)
   private heroTimer:  any;        // Timer del auto-avance del hero carrusel
+  private scrollObserver: IntersectionObserver | undefined;
 
   // ── CATEGORÍAS CON ÍCONO ─────────────────
   // Lista de categorías con su ícono de Material Icons
@@ -105,10 +107,38 @@ export class InicioComponent implements OnInit, OnDestroy {
     this.iniciarHeroTimer();
   }
 
+  // ── LIFECYCLE: ngAfterViewInit ────────────
+  // Activa la animación al entrar las secciones en pantalla.
+  ngAfterViewInit(): void {
+    if (
+      typeof window === 'undefined' ||
+      !('IntersectionObserver' in window) ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) return;
+
+    const elementos: NodeListOf<HTMLElement> = this.host.nativeElement.querySelectorAll('[data-scroll-reveal]');
+    if (!elementos.length) return;
+
+    this.scrollObserver = new IntersectionObserver((entradas, observer) => {
+      entradas.forEach((entrada) => {
+        if (entrada.isIntersecting) {
+          entrada.target.classList.add('scroll-reveal-visible');
+          observer.unobserve(entrada.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    elementos.forEach((elemento: HTMLElement) => {
+      elemento.classList.add('scroll-reveal-pending');
+      this.scrollObserver?.observe(elemento);
+    });
+  }
+
   // ── LIFECYCLE: ngOnDestroy ────────────────
   // Limpia el timer del hero para evitar memory leaks
   ngOnDestroy(): void {
     if (this.heroTimer) clearInterval(this.heroTimer);
+    this.scrollObserver?.disconnect();
   }
 
   // ── MÉTODO: CARGAR OFERTAS ────────────────

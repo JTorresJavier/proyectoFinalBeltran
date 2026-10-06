@@ -136,7 +136,7 @@
 <!-- ── 2. BARRA DE ESTADÍSTICAS ───────────────
      Fila de números clave debajo del hero:
      total de productos, ofertas y categorías    -->
-<section class="stats-bar contenedor">
+<section class="stats-bar contenedor" data-scroll-reveal>
   <div class="stats-bar-inner">
     <div class="sbar-item">
       <span class="sbar-numero">{{ totalProductos }}</span>
@@ -164,7 +164,7 @@
 <!-- ── 3. CATEGORÍAS ──────────────────────────
      Grilla de 6 botones con ícono y nombre
      que llevan al catálogo filtrado             -->
-<section class="categorias-seccion">
+<section class="categorias-seccion" data-scroll-reveal>
   <div class="contenedor">
 
     <div class="seccion-header">
@@ -197,7 +197,7 @@
      Grid de cards con los productos en oferta.
      No usa carrusel: se muestran como grilla
      estilo marketplace                          -->
-<section class="ofertas-seccion contenedor" id="ofertas">
+<section class="ofertas-seccion contenedor" id="ofertas" data-scroll-reveal>
 
   <div class="seccion-header">
     <div class="seccion-titulo-grupo">
@@ -271,7 +271,7 @@
 
 <!-- ── 5. BANNER CTA ──────────────────────────
      Franja con degradado y botón al catálogo   -->
-<section class="banner-cta contenedor">
+<section class="banner-cta contenedor" data-scroll-reveal>
   <div class="cta-contenido">
     <mat-icon class="cta-icono">storefront</mat-icon>
     <div class="cta-texto">
@@ -288,7 +288,7 @@
 
 <!-- ── 6. POR QUÉ ELEGIRNOS ──────────────────
      4 cards con ícono de color, título y texto -->
-<section class="beneficios-seccion contenedor">
+<section class="beneficios-seccion contenedor" data-scroll-reveal>
   <h2 class="seccion-titulo centrado">¿Por qué elegirnos?</h2>
   <div class="beneficios-grid">
     @for (b of beneficios; track b.titulo) {
@@ -308,7 +308,7 @@
 <!-- ── 7. FOOTER ───────────────────────────────
      Pie de página oscuro con logo, slogan,
      links de navegación y copyright            -->
-<footer class="footer">
+<footer class="footer" data-scroll-reveal>
   <div class="footer-contenido contenedor">
     <!-- Logo y nombre de la tienda -->
     <div class="footer-marca">
