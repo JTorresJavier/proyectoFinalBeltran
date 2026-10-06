@@ -22,6 +22,7 @@ import { AuthService, Usuario } from '../../../core/services/auth.service';
 import { formAnimation } from '../../../form-animations';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmacionDialogComponent } from '../../../shared/components/confirmacion-dialog/confirmacion-dialog';
+import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 // ── DECORADOR ────────────────────────────────
 // Página de gestión de usuarios (solo administrador).
@@ -42,6 +43,7 @@ import { ConfirmacionDialogComponent } from '../../../shared/components/confirma
     MatSlideToggleModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    ThemeToggleComponent,
     MatTableModule,
     MatChipsModule,
     MatDialogModule,

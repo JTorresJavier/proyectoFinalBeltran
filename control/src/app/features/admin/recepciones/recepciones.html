@@ -8,12 +8,15 @@
       <h1>Recepcion de Mercaderia</h1>
     </div>
 
-    @if (!mostrarFormulario) {
-      <button mat-flat-button color="primary" (click)="nuevaRecepcion()">
-        <mat-icon>add_box</mat-icon>
-        Registrar recepcion
-      </button>
-    }
+    <div class="encabezado-acciones">
+      <app-theme-toggle></app-theme-toggle>
+      @if (!mostrarFormulario) {
+        <button mat-flat-button color="primary" (click)="nuevaRecepcion()">
+          <mat-icon>add_box</mat-icon>
+          Registrar recepcion
+        </button>
+      }
+    </div>
   </div>
 
   @if (mostrarFormulario) {

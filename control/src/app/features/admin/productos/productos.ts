@@ -22,6 +22,7 @@ import { ProductosService, Producto } from '../../../core/services/productos.ser
 import { RouterLink } from '@angular/router';
 import { formAnimation } from '../../../form-animations';
 import { ConfirmacionDialogComponent } from '../../../shared/components/confirmacion-dialog/confirmacion-dialog';
+import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 // ── DECORADOR ────────────────────────────────
 // Página de gestión de productos del administrador.
@@ -45,6 +46,7 @@ import { ConfirmacionDialogComponent } from '../../../shared/components/confirma
     MatProgressSpinnerModule,
     MatTableModule,
     MatChipsModule,
+    ThemeToggleComponent,
   ],
   templateUrl: './productos.html',
   styleUrl: './productos.css',

@@ -21,6 +21,7 @@ import { ProductosService, Producto } from '../../../core/services/productos.ser
 import { AuthService, Usuario } from '../../../core/services/auth.service';
 import { CajaService, Venta } from '../../../core/services/caja.service';
 import { RouterLink } from '@angular/router';
+import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 // ── INTERFACE ────────────────────────────────
 // Define la estructura de cada item en el carrito de compras
@@ -52,6 +53,7 @@ interface ItemCarrito {
     MatChipsModule,
     MatTableModule,
     MatBadgeModule,
+    ThemeToggleComponent,
   ],
   templateUrl: './caja.html',
   styleUrl: './caja.css'

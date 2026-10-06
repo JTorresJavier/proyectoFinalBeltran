@@ -28,6 +28,8 @@
       <mat-chip>{{ usuarioLogueado.rol | uppercase }}</mat-chip>
     }
 
+    <app-theme-toggle></app-theme-toggle>
+
     <!-- Botón de logout con EVENT BINDING -->
     <button mat-icon-button (click)="logout()" title="Cerrar sesión">
       <mat-icon>logout</mat-icon>

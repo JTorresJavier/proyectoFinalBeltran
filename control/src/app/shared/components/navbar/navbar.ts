@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';       // Íconos Materia
 
 // ── SERVICIOS ─────────────────────────────────
 import { AuthService, Usuario } from '../../../core/services/auth.service';
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle';
 
 // ── DECORADOR ────────────────────────────────
 // Componente compartido — se usa en todas las páginas.
@@ -25,6 +26,7 @@ import { AuthService, Usuario } from '../../../core/services/auth.service';
     MatToolbarModule,   // Toolbar de Material
     MatButtonModule,    // Botones de Material
     MatIconModule,      // Íconos de Material
+    ThemeToggleComponent,
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'

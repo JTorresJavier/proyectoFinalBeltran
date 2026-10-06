@@ -54,6 +54,13 @@
 .pagina-encabezado button { flex-shrink: 0; }
 .pagina-encabezado button mat-icon { margin-right: 0.3rem; }
 
+.pagina-controles {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 .resumen {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -212,6 +219,7 @@
   .estadisticas-pagina { padding-top: 1.4rem; }
   .pagina-encabezado { align-items: flex-start; flex-direction: column; }
   .pagina-encabezado button { align-self: flex-start; }
+  .pagina-controles { flex-wrap: wrap; }
   .resumen { grid-template-columns: 1fr; gap: 0.65rem; }
   .resumen-item { padding: 0.8rem 1rem; }
   .ofertas-contenido { flex-direction: column; gap: 1.4rem; padding: 0.6rem 0; }

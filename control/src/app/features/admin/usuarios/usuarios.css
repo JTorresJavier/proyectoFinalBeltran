@@ -13,6 +13,13 @@
   gap: 12px;
 }
 
+.encabezado-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
 .titulo {
   display: flex;
   align-items: center;

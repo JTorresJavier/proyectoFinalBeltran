@@ -1,6 +1,7 @@
 /* ── CONTENEDOR PRINCIPAL ────────────────────
    Centra la card en toda la pantalla          */
 .login-contenedor {
+  position: relative;
   min-height: 100vh;       /* Ocupa toda la altura de la pantalla */
   display: flex;           /* Flexbox para centrar */
   align-items: center;     /* Centrado vertical */
@@ -86,4 +87,12 @@
 
 .login-footer a:hover {
   text-decoration: underline; /* Subrayado al hover */
+}
+
+.login-theme-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  color: #fff;
+  z-index: 2;
 }

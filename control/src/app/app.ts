@@ -1,8 +1,9 @@
 // ── IMPORTS ──────────────────────────────────
-import { Component } from '@angular/core';     // Decorador principal de Angular
+import { Component, inject } from '@angular/core'; // Decorador principal e inyección
 import { RouterOutlet } from '@angular/router'; // Permite insertar páginas según la URL
 
 import { routeAnimations } from './route-animations'; // Animación de transición entre páginas
+import { ThemeService } from './core/services/theme.service';
 
 // ── DECORADOR ────────────────────────────────
 // Componente RAÍZ de StoreHub.
@@ -19,5 +20,9 @@ import { routeAnimations } from './route-animations'; // Animación de transici�
 // ── CLASE ────────────────────────────────────
 // Sin lógica propia — solo actúa como contenedor principal
 export class AppComponent {
+  constructor() {
+    inject(ThemeService);
+  }
+
   title = 'StoreHub'; // Nombre de la aplicación
 }

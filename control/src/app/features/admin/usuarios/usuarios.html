@@ -9,12 +9,15 @@
       <h1>Gestión de Usuarios</h1>
     </div>
 
-    @if (!mostrarFormulario) {
-      <button mat-flat-button color="primary" (click)="nuevoUsuario()">
-        <mat-icon>person_add</mat-icon>
-        Nuevo usuario
-      </button>
-    }
+    <div class="encabezado-acciones">
+      <app-theme-toggle></app-theme-toggle>
+      @if (!mostrarFormulario) {
+        <button mat-flat-button color="primary" (click)="nuevoUsuario()">
+          <mat-icon>person_add</mat-icon>
+          Nuevo usuario
+        </button>
+      }
+    </div>
   </div>
 
   <!-- ── FORMULARIO (crear / editar) ────────── -->

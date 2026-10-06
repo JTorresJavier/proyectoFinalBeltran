@@ -15,6 +15,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar'; //
 
 // ── SERVICIOS ─────────────────────────────────
 import { AuthService } from '../../../core/services/auth.service'; // Servicio de auth
+import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 // ── DECORADOR ────────────────────────────────
 // Página de login del administrador.
@@ -33,6 +34,7 @@ import { AuthService } from '../../../core/services/auth.service'; // Servicio d
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,        // Para notificaciones
+    ThemeToggleComponent,
   ],
   templateUrl: './login.html',
   styleUrl: './login.css'

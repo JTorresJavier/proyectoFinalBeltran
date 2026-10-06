@@ -47,6 +47,10 @@ a {
   --mat-snack-bar-button-color: #ffffff;
 }
 
+html {
+  color-scheme: light;
+}
+
 .mat-mdc-snack-bar-container.snackbar--error {
   --mat-snack-bar-container-color: #b3261e;
   --mat-snack-bar-supporting-text-color: #ffffff;
@@ -63,4 +67,204 @@ a {
   --mat-snack-bar-container-color: #0d47a1;
   --mat-snack-bar-supporting-text-color: #ffffff;
   --mat-snack-bar-button-color: #ffffff;
+}
+
+/* ── TEMA OSCURO GLOBAL ─────────────────────────
+   Se activa desde el switch compartido y persiste
+   mientras el usuario navega entre secciones.    */
+html.theme-dark {
+  color-scheme: dark;
+  --app-bg: #0b1220;
+  --app-surface: #111c2e;
+  --app-surface-raised: #18263b;
+  --app-text: #e7edf6;
+  --app-muted: #a5b4c8;
+  --app-border: #293b52;
+  --app-accent: #91bdff;
+}
+
+html.theme-dark body {
+  background: var(--app-bg) !important;
+  color: var(--app-text);
+  transition: background-color 220ms ease, color 220ms ease;
+}
+
+html.theme-dark body :is(
+  h1, h2, h3, h4, h5, p, span, label, td, th, li, strong, small, legend,
+  .mat-mdc-card-title, .mat-mdc-card-subtitle, .mat-mdc-cell, .mat-mdc-header-cell,
+  .mat-mdc-paginator, .mdc-list-item__primary-text, .mdc-form-field, .mdc-label
+) {
+  color: var(--app-text) !important;
+}
+
+html.theme-dark body :is(
+  .dashboard-header, .productos-header, .caja-header, mat-toolbar
+) {
+  color: var(--app-text) !important;
+  background: #111d30 !important;
+  border-color: var(--app-border) !important;
+}
+
+html.theme-dark body :is(
+  mat-card, .mat-mdc-card, .mat-mdc-dialog-surface, .mat-mdc-menu-panel,
+  .mat-mdc-select-panel, .mat-mdc-autocomplete-panel, .mdc-data-table__table,
+  .mat-mdc-paginator, .login-card, .tarjeta-formulario, .tarjeta-tabla,
+  .formulario-card, .dolar-card, .estadisticas-card, .resumen-item,
+  .grafico-card, .categoria-card, .beneficio-card, .producto-card,
+  .oferta-card, .catalogo-hero-filtros, .categoria-chip
+) {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html.theme-dark body :is(
+  .dashboard-contenido, .productos-contenido, .estadisticas-pagina,
+  .pagina, .categorias-seccion, .ofertas-seccion, .beneficios-seccion,
+  .productos-seccion, .categorias-chips-seccion, .stats-bar
+) {
+  color: var(--app-text);
+  background-color: transparent !important;
+}
+
+html.theme-dark body .stats-bar-inner {
+  color: var(--app-text);
+  background: var(--app-surface) !important;
+  border: 1px solid var(--app-border);
+}
+
+html.theme-dark body .sbar-numero { color: var(--app-accent) !important; }
+html.theme-dark body .sbar-label { color: var(--app-muted) !important; }
+html.theme-dark body .sbar-divider { background: var(--app-border) !important; }
+html.theme-dark body .hc-ola path { fill: var(--app-bg) !important; }
+
+html.theme-dark body :is(.productos-header, .caja-header, .dashboard-header) a,
+html.theme-dark body :is(.productos-header, .caja-header, .dashboard-header) button,
+html.theme-dark body mat-toolbar button,
+html.theme-dark body mat-toolbar a {
+  color: var(--app-text) !important;
+}
+
+html.theme-dark body :is(.catalogo-hero, .login-contenedor) {
+  background: linear-gradient(135deg, #101b2d 0%, #172b45 58%, #203c5e 100%) !important;
+}
+
+html.theme-dark body .banner-cta {
+  background: linear-gradient(135deg, #14233a, #202a43) !important;
+  border-color: var(--app-border) !important;
+}
+
+html.theme-dark body :is(input, textarea, select, .mat-mdc-input-element, .mat-mdc-select-value) {
+  color: var(--app-text) !important;
+  background-color: var(--app-surface-raised) !important;
+  caret-color: var(--app-accent);
+}
+
+html.theme-dark body input:-webkit-autofill,
+html.theme-dark body input:-webkit-autofill:hover,
+html.theme-dark body input:-webkit-autofill:focus,
+html.theme-dark body textarea:-webkit-autofill {
+  -webkit-text-fill-color: var(--app-text) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--app-surface-raised) inset !important;
+  transition: background-color 9999s ease-out 0s;
+}
+
+html.theme-dark body :is(.mdc-text-field--filled, .mdc-text-field--outlined) {
+  color: var(--app-text) !important;
+  background: var(--app-surface-raised) !important;
+}
+
+html.theme-dark body :is(.mat-mdc-form-field, .mat-mdc-select-arrow, .mat-mdc-form-field-icon-suffix) {
+  color: var(--app-muted) !important;
+}
+
+html.theme-dark body .login-card .btn-login:disabled {
+  color: #9aabc1 !important;
+  background: #24354c !important;
+}
+
+html.theme-dark body :is(.mat-mdc-table, .mat-mdc-row, .mat-mdc-header-row, .mdc-data-table__header-row) {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+}
+
+html.theme-dark body :is(.mat-mdc-cell, .mat-mdc-header-cell, .mdc-data-table__cell, .mdc-data-table__header-cell) {
+  border-color: var(--app-border) !important;
+}
+
+html.theme-dark body :is(hr, .mat-divider, .stock-pie, .leyenda-total) {
+  border-color: var(--app-border) !important;
+}
+
+html.theme-dark body mat-icon {
+  color: #a9c8f2;
+}
+
+html.theme-dark body :is(.stat-icono.azul, .acceso-icono, .precio, .dolar-monto, .login-icono, .login-header h1) {
+  color: #91bdff !important;
+}
+
+html.theme-dark body :is(.stat-icono.verde, .stock-verde, .positivo, .dolar-icono) {
+  color: #76d6a0 !important;
+}
+
+html.theme-dark body :is(.stat-icono.naranja, .stock-naranja) {
+  color: #ffc16f !important;
+}
+
+html.theme-dark body :is(.stat-icono.rojo, .stock-rojo, .negativo, .estado-error mat-icon) {
+  color: #ff9292 !important;
+}
+
+html.theme-dark body :is(.rol-admin, .rol-empleado, .rol-repositor, .etiqueta.activo, .etiqueta.inactivo) {
+  background: #24364e !important;
+  color: #dce9fa !important;
+}
+
+html.theme-dark body .acumulado-proyectado,
+html.theme-dark body .acumulado-chip {
+  color: #e3edf9 !important;
+  background-color: #1a2a40 !important;
+  border-color: #405873;
+}
+
+html.theme-dark body .sin-oferta {
+  color: #9aaac0 !important;
+}
+
+html.theme-dark body ::placeholder {
+  color: #93a4ba !important;
+  opacity: 1;
+}
+
+html.theme-dark body a:not(.navbar-logo):not(.estadisticas-link) {
+  color: var(--app-accent);
+}
+
+html.theme-dark body .navbar-logo,
+html.theme-dark body .footer,
+html.theme-dark body .footer :is(span, p, a, mat-icon) {
+  color: #e7edf6 !important;
+}
+
+html.theme-dark body .footer {
+  background: #080e18 !important;
+}
+
+html.theme-dark body .estadisticas-card {
+  background: linear-gradient(135deg, #142238, #1b2d47) !important;
+}
+
+html.theme-dark body .barra-fondo {
+  background: #293a50 !important;
+}
+
+html.theme-dark body .donut-centro {
+  background: #111c2e !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-dark body {
+    transition: none;
+  }
 }
