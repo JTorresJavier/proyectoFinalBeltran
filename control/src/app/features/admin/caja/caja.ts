@@ -141,13 +141,13 @@ export class CajaComponent implements OnInit {
   // Registra la apertura con el monto inicial en efectivo
   abrirCaja(): void {
     if (this.montoInicial < 0) {
-      this.snackBar.open('⚠️ El monto inicial no puede ser negativo', 'Cerrar', { duration: 2000 });
+      this.snackBar.open('⚠️ El monto inicial no puede ser negativo', 'Cerrar', { duration: 2000, panelClass: 'snackbar--warning' });
       return;
     }
     this.cajaService.abrirCaja(this.montoInicial, this.usuarioLogueado?.nombre || '');
     this.cajaAbierta     = true;
     this.mostrarApertura = false;
-    this.snackBar.open(`✅ Caja abierta con $${this.montoInicial}`, 'Cerrar', { duration: 3000 });
+    this.snackBar.open(`✅ Caja abierta con $${this.montoInicial}`, 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
     this.cargarProductos();
   }
 
@@ -183,13 +183,13 @@ export class CajaComponent implements OnInit {
       if (itemExistente.cantidad < producto.stock!) {
         itemExistente.cantidad++;
         itemExistente.subtotal = itemExistente.cantidad * precio;
-        this.snackBar.open(`+1 ${producto.nombre}`, '', { duration: 800 });
+        this.snackBar.open(`+1 ${producto.nombre}`, '', { duration: 800, panelClass: 'snackbar--info' });
       } else {
-        this.snackBar.open(`⚠️ Stock máximo alcanzado`, 'Cerrar', { duration: 2000 });
+        this.snackBar.open(`⚠️ Stock máximo alcanzado`, 'Cerrar', { duration: 2000, panelClass: 'snackbar--warning' });
       }
     } else {
       this.carrito.push({ producto, cantidad: 1, subtotal: precio });
-      this.snackBar.open(`✅ ${producto.nombre} agregado`, '', { duration: 800 });
+      this.snackBar.open(`✅ ${producto.nombre} agregado`, '', { duration: 800, panelClass: 'snackbar--success' });
     }
   }
 
@@ -200,7 +200,7 @@ export class CajaComponent implements OnInit {
     const nuevaCantidad = item.cantidad + cambio;
     if (nuevaCantidad <= 0) { this.quitarDelCarrito(item); return; }
     if (nuevaCantidad > item.producto.stock!) {
-      this.snackBar.open('⚠️ Sin stock suficiente', 'Cerrar', { duration: 2000 });
+      this.snackBar.open('⚠️ Sin stock suficiente', 'Cerrar', { duration: 2000, panelClass: 'snackbar--warning' });
       return;
     }
     item.cantidad = nuevaCantidad;
@@ -228,7 +228,7 @@ export class CajaComponent implements OnInit {
   // Abre la pantalla de cobro con el total redondeado precargado
   cobrar(): void {
     if (this.carrito.length === 0) {
-      this.snackBar.open('⚠️ El carrito está vacío', 'Cerrar', { duration: 2000 });
+      this.snackBar.open('⚠️ El carrito está vacío', 'Cerrar', { duration: 2000, panelClass: 'snackbar--warning' });
       return;
     }
     this.montoPagado = this.totalRedondeado;
@@ -240,7 +240,7 @@ export class CajaComponent implements OnInit {
   // descuenta el stock en MongoDB y limpia el carrito
   confirmarCobro(): void {
     if (this.metodoPago === 'efectivo' && this.montoPagado < this.totalRedondeado) {
-      this.snackBar.open('⚠️ Monto insuficiente', 'Cerrar', { duration: 2000 });
+      this.snackBar.open('⚠️ Monto insuficiente', 'Cerrar', { duration: 2000, panelClass: 'snackbar--warning' });
       return;
     }
 
@@ -295,7 +295,7 @@ export class CajaComponent implements OnInit {
     const msg = this.metodoPago === 'efectivo'
       ? `✅ Cobrado $${this.totalRedondeado} — Vuelto: $${vueltoReal} — Acumulado: ${this.acumulado >= 0 ? '+' : ''}$${this.acumulado}`
       : `✅ Cobro confirmado — $${this.total}`;
-    this.snackBar.open(msg, 'Cerrar', { duration: 4000 });
+    this.snackBar.open(msg, 'Cerrar', { duration: 4000, panelClass: 'snackbar--success' });
 
     // ── LIMPIAMOS Y RECARGAMOS ────────────────
     this.carrito     = [];
@@ -324,7 +324,7 @@ export class CajaComponent implements OnInit {
     this.cajaAbierta     = false;
     this.mostrarCierre   = false;
     this.acumulado       = 0;
-    this.snackBar.open('✅ Caja cerrada correctamente', 'Cerrar', { duration: 3000 });
+    this.snackBar.open('✅ Caja cerrada correctamente', 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
     this.mostrarApertura = true;
   }
 

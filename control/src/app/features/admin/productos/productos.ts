@@ -158,7 +158,7 @@ export class ProductosComponent implements OnInit {
       // PUT — Actualizar producto existente
       this.productosService.update(this.productoEditandoId, datos).subscribe({
         next: () => {
-          this.snackBar.open('Producto actualizado ✅', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Producto actualizado ✅', 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
           this.mostrarFormulario = false;
           this.cargarProductos();
         },
@@ -168,7 +168,7 @@ export class ProductosComponent implements OnInit {
       // POST — Crear nuevo producto
       this.productosService.create(datos).subscribe({
         next: () => {
-          this.snackBar.open('Producto creado ✅', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Producto creado ✅', 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
           this.mostrarFormulario = false;
           this.cargarProductos();
         },
@@ -191,7 +191,7 @@ export class ProductosComponent implements OnInit {
 
       this.productosService.delete(producto._id || producto.id!).subscribe({
         next: () => {
-          this.snackBar.open('Producto eliminado 🗑️', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Producto eliminado 🗑️', 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
           this.cargarProductos();
         },
         error: (err) => console.error('Error eliminando:', err)

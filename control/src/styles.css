@@ -38,3 +38,29 @@ a {
 .mt-2 { margin-top: 2rem; }   /* Margen superior mediano */
 .mb-1 { margin-bottom: 1rem; } /* Margen inferior pequeño */
 .mb-2 { margin-bottom: 2rem; } /* Margen inferior mediano */
+
+/* ── COLORES DE NOTIFICACIONES ──────────────────
+   Las clases se aplican al contenedor global de Material. */
+.mat-mdc-snack-bar-container.snackbar--success {
+  --mat-snack-bar-container-color: #1b5e20;
+  --mat-snack-bar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+.mat-mdc-snack-bar-container.snackbar--error {
+  --mat-snack-bar-container-color: #b3261e;
+  --mat-snack-bar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+.mat-mdc-snack-bar-container.snackbar--warning {
+  --mat-snack-bar-container-color: #6d4c00;
+  --mat-snack-bar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+.mat-mdc-snack-bar-container.snackbar--info {
+  --mat-snack-bar-container-color: #0d47a1;
+  --mat-snack-bar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}

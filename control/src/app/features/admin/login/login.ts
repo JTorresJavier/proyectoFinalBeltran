@@ -112,7 +112,7 @@ export class LoginComponent {
             this.snackBar.open(
               `¡Bienvenido ${usuarioEncontrado.nombre}! (${usuarioEncontrado.rol})`,
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000, panelClass: 'snackbar--success' }
             );
 
             // Redirigimos al dashboard
@@ -123,7 +123,7 @@ export class LoginComponent {
             this.snackBar.open(
               'Usuario o contraseña incorrectos',
               'Cerrar',
-              { duration: 3000 }
+              { duration: 3000, panelClass: 'snackbar--error' }
             );
           }
         },
@@ -133,7 +133,7 @@ export class LoginComponent {
           this.snackBar.open(
             'Error al conectar con el servidor',
             'Cerrar',
-            { duration: 3000 }
+            { duration: 3000, panelClass: 'snackbar--error' }
           );
           console.error('Error login:', err);
         }

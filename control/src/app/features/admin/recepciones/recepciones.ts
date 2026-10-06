@@ -139,14 +139,14 @@ export class RecepcionesComponent implements OnInit {
 
     this.recepcionesService.create(datos).subscribe({
       next: () => {
-        this.snackBar.open('Recepción registrada - Stock actualizado', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('Recepción registrada - Stock actualizado', 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
         this.mostrarFormulario = false;
         this.cargarRecepciones();
         this.cargarProductos();
       },
       error: (err) => {
         console.error('Error registrando recepción:', err);
-        this.snackBar.open('Error al registrar la recepción', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('Error al registrar la recepción', 'Cerrar', { duration: 3000, panelClass: 'snackbar--error' });
       }
     });
   }
@@ -163,12 +163,12 @@ export class RecepcionesComponent implements OnInit {
 
       this.recepcionesService.delete(recepcion._id!).subscribe({
         next: () => {
-          this.snackBar.open('Registro eliminado', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Registro eliminado', 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
           this.cargarRecepciones();
         },
         error: (err) => {
           console.error('Error eliminando recepción:', err);
-          this.snackBar.open('Error al eliminar el registro', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Error al eliminar el registro', 'Cerrar', { duration: 3000, panelClass: 'snackbar--error' });
         }
       });
     });

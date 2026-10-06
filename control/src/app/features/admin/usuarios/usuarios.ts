@@ -109,7 +109,7 @@ export class UsuariosComponent implements OnInit {
       error: (err) => {
         console.error('Error cargando usuarios:', err);
         this.cargando = false;
-        this.snackBar.open('Error al cargar los usuarios', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('Error al cargar los usuarios', 'Cerrar', { duration: 3000, panelClass: 'snackbar--error' });
         this.cdr.detectChanges();
       }
     });
@@ -149,7 +149,7 @@ export class UsuariosComponent implements OnInit {
       u.id !== this.usuarioEditandoId
     );
     if (duplicado) {
-      this.snackBar.open('⚠️ Ese nombre de usuario ya existe', 'Cerrar', { duration: 3000 });
+      this.snackBar.open('⚠️ Ese nombre de usuario ya existe', 'Cerrar', { duration: 3000, panelClass: 'snackbar--warning' });
       return;
     }
 
@@ -162,26 +162,26 @@ export class UsuariosComponent implements OnInit {
             this.authService.guardarSesion(actualizado);
             this.usuarioLogueado = actualizado;
           }
-          this.snackBar.open('Usuario actualizado ✅', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Usuario actualizado ✅', 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
           this.mostrarFormulario = false;
           this.cargarUsuarios();
         },
         error: (err) => {
           console.error('Error actualizando:', err);
-          this.snackBar.open('Error al actualizar el usuario', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Error al actualizar el usuario', 'Cerrar', { duration: 3000, panelClass: 'snackbar--error' });
         }
       });
     } else {
       // POST — Crear nuevo usuario
       this.authService.createUsuario(datos).subscribe({
         next: () => {
-          this.snackBar.open('Usuario creado ✅', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Usuario creado ✅', 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
           this.mostrarFormulario = false;
           this.cargarUsuarios();
         },
         error: (err) => {
           console.error('Error creando:', err);
-          this.snackBar.open('Error al crear el usuario', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Error al crear el usuario', 'Cerrar', { duration: 3000, panelClass: 'snackbar--error' });
         }
       });
     }
@@ -191,7 +191,7 @@ export class UsuariosComponent implements OnInit {
   // DELETE — Elimina un usuario de la API
   eliminarUsuario(usuario: Usuario): void {
     if (this.esUsuarioActual(usuario)) {
-      this.snackBar.open('⚠️ No podés eliminar tu propio usuario', 'Cerrar', { duration: 3000 });
+      this.snackBar.open('⚠️ No podés eliminar tu propio usuario', 'Cerrar', { duration: 3000, panelClass: 'snackbar--warning' });
       return;
     }
     this.dialog.open(ConfirmacionDialogComponent, {
@@ -205,12 +205,12 @@ export class UsuariosComponent implements OnInit {
 
       this.authService.deleteUsuario(usuario._id || usuario.id!).subscribe({
         next: () => {
-          this.snackBar.open('Usuario eliminado 🗑️', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Usuario eliminado 🗑️', 'Cerrar', { duration: 3000, panelClass: 'snackbar--success' });
           this.cargarUsuarios();
         },
         error: (err) => {
           console.error('Error eliminando:', err);
-          this.snackBar.open('Error al eliminar el usuario', 'Cerrar', { duration: 3000 });
+          this.snackBar.open('Error al eliminar el usuario', 'Cerrar', { duration: 3000, panelClass: 'snackbar--error' });
         }
       });
     });
