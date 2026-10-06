@@ -19,6 +19,7 @@ import { MatChipsModule } from '@angular/material/chips';
 
 // ── SERVICIOS ─────────────────────────────────
 import { AuthService, Usuario } from '../../../core/services/auth.service';
+import { formAnimation } from '../../../form-animations';
 
 // ── DECORADOR ────────────────────────────────
 // Página de gestión de usuarios (solo administrador).
@@ -42,8 +43,9 @@ import { AuthService, Usuario } from '../../../core/services/auth.service';
     MatTableModule,
     MatChipsModule,
   ],
-  templateUrl: './usuarios.html',
-  styleUrl: './usuarios.css'
+    templateUrl: './usuarios.html',
+  styleUrl: './usuarios.css',
+  animations: [formAnimation]
 })
 
 // ── CLASE ────────────────────────────────────

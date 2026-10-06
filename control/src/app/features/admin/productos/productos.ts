@@ -20,6 +20,7 @@ import { MatChipsModule } from '@angular/material/chips';
 // ── SERVICIOS ─────────────────────────────────
 import { ProductosService, Producto } from '../../../core/services/productos.service';
 import { RouterLink } from '@angular/router';
+import { formAnimation } from '../../../form-animations';
 
 // ── DECORADOR ────────────────────────────────
 // Página de gestión de productos del administrador.
@@ -45,7 +46,8 @@ import { RouterLink } from '@angular/router';
     MatChipsModule,
   ],
   templateUrl: './productos.html',
-  styleUrl: './productos.css'
+  styleUrl: './productos.css',
+  animations: [formAnimation]
 })
 
 // ── CLASE ────────────────────────────────────

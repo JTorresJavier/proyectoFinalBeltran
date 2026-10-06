@@ -19,7 +19,7 @@
 
   <!-- ── FORMULARIO (crear / editar) ────────── -->
   @if (mostrarFormulario) {
-    <mat-card class="tarjeta-formulario">
+    <mat-card class="tarjeta-formulario" [@formAnimation]>
       <mat-card-header>
         <mat-card-title>
           {{ modoEdicion ? 'Editar usuario' : 'Nuevo usuario' }}

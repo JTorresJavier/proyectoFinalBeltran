@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { RecepcionesService, Recepcion } from '../../../core/services/recepciones.service';
 import { ProductosService, Producto } from '../../../core/services/productos.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { formAnimation } from '../../../form-animations';
 
 // ── DECORADOR ────────────────────────────────
 @Component({
@@ -39,7 +40,8 @@ import { AuthService } from '../../../core/services/auth.service';
     MatTableModule,
   ],
   templateUrl: './recepciones.html',
-  styleUrl: './recepciones.css'
+  styleUrl: './recepciones.css',
+  animations: [formAnimation]
 })
 
 // ── CLASE ────────────────────────────────────
