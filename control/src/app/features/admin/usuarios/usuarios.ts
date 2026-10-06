@@ -20,6 +20,8 @@ import { MatChipsModule } from '@angular/material/chips';
 // ── SERVICIOS ─────────────────────────────────
 import { AuthService, Usuario } from '../../../core/services/auth.service';
 import { formAnimation } from '../../../form-animations';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmacionDialogComponent } from '../../../shared/components/confirmacion-dialog/confirmacion-dialog';
 
 // ── DECORADOR ────────────────────────────────
 // Página de gestión de usuarios (solo administrador).
@@ -42,6 +44,7 @@ import { formAnimation } from '../../../form-animations';
     MatProgressSpinnerModule,
     MatTableModule,
     MatChipsModule,
+    MatDialogModule,
   ],
     templateUrl: './usuarios.html',
   styleUrl: './usuarios.css',
@@ -54,6 +57,7 @@ export class UsuariosComponent implements OnInit {
   // ── SERVICIOS INYECTADOS ──────────────────
   private authService = inject(AuthService);       // CRUD de usuarios y sesión
   private snackBar    = inject(MatSnackBar);       // Notificaciones
+  private dialog      = inject(MatDialog);
   private cdr         = inject(ChangeDetectorRef); // Detección de cambios
 
   // ── ESTADO ────────────────────────────────
@@ -190,17 +194,25 @@ export class UsuariosComponent implements OnInit {
       this.snackBar.open('⚠️ No podés eliminar tu propio usuario', 'Cerrar', { duration: 3000 });
       return;
     }
-    if (!confirm(`¿Eliminar al usuario "${usuario.usuario}"?`)) return;
+    this.dialog.open(ConfirmacionDialogComponent, {
+      width: 'min(420px, calc(100vw - 32px))',
+      data: {
+        titulo: 'Eliminar usuario',
+        mensaje: `¿Querés eliminar al usuario “${usuario.usuario}”? Esta acción no se puede deshacer.`,
+      },
+    }).afterClosed().subscribe((confirmado) => {
+      if (!confirmado) return;
 
       this.authService.deleteUsuario(usuario._id || usuario.id!).subscribe({
-      next: () => {
-        this.snackBar.open('Usuario eliminado 🗑️', 'Cerrar', { duration: 3000 });
-        this.cargarUsuarios();
-      },
-      error: (err) => {
-        console.error('Error eliminando:', err);
-        this.snackBar.open('Error al eliminar el usuario', 'Cerrar', { duration: 3000 });
-      }
+        next: () => {
+          this.snackBar.open('Usuario eliminado 🗑️', 'Cerrar', { duration: 3000 });
+          this.cargarUsuarios();
+        },
+        error: (err) => {
+          console.error('Error eliminando:', err);
+          this.snackBar.open('Error al eliminar el usuario', 'Cerrar', { duration: 3000 });
+        }
+      });
     });
   }
 

@@ -20,6 +20,8 @@ import { RecepcionesService, Recepcion } from '../../../core/services/recepcione
 import { ProductosService, Producto } from '../../../core/services/productos.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { formAnimation } from '../../../form-animations';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmacionDialogComponent } from '../../../shared/components/confirmacion-dialog/confirmacion-dialog';
 
 // ── DECORADOR ────────────────────────────────
 @Component({
@@ -38,6 +40,7 @@ import { formAnimation } from '../../../form-animations';
     MatSnackBarModule,
     MatProgressSpinnerModule,
     MatTableModule,
+    MatDialogModule,
   ],
   templateUrl: './recepciones.html',
   styleUrl: './recepciones.css',
@@ -51,6 +54,7 @@ export class RecepcionesComponent implements OnInit {
   private productosService   = inject(ProductosService);
   private authService        = inject(AuthService);
   private snackBar           = inject(MatSnackBar);
+  private dialog             = inject(MatDialog);
   private cdr                = inject(ChangeDetectorRef);
   private ngZone              = inject(NgZone);
 
@@ -148,17 +152,25 @@ export class RecepcionesComponent implements OnInit {
   }
 
   eliminarRecepcion(recepcion: Recepcion): void {
-    if (!confirm('¿Eliminar el registro de recepcion de "' + recepcion.productoNombre + '"?')) return;
-
-    this.recepcionesService.delete(recepcion._id!).subscribe({
-      next: () => {
-        this.snackBar.open('Registro eliminado', 'Cerrar', { duration: 3000 });
-        this.cargarRecepciones();
+    this.dialog.open(ConfirmacionDialogComponent, {
+      width: 'min(420px, calc(100vw - 32px))',
+      data: {
+        titulo: 'Eliminar recepción',
+        mensaje: `¿Querés eliminar el registro de “${recepcion.productoNombre}”? Esta acción no se puede deshacer.`,
       },
-      error: (err) => {
-        console.error('Error eliminando recepción:', err);
-        this.snackBar.open('Error al eliminar el registro', 'Cerrar', { duration: 3000 });
-      }
+    }).afterClosed().subscribe((confirmado) => {
+      if (!confirmado) return;
+
+      this.recepcionesService.delete(recepcion._id!).subscribe({
+        next: () => {
+          this.snackBar.open('Registro eliminado', 'Cerrar', { duration: 3000 });
+          this.cargarRecepciones();
+        },
+        error: (err) => {
+          console.error('Error eliminando recepción:', err);
+          this.snackBar.open('Error al eliminar el registro', 'Cerrar', { duration: 3000 });
+        }
+      });
     });
   }
 

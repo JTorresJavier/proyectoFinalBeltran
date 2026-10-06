@@ -21,6 +21,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { ProductosService, Producto } from '../../../core/services/productos.service';
 import { RouterLink } from '@angular/router';
 import { formAnimation } from '../../../form-animations';
+import { ConfirmacionDialogComponent } from '../../../shared/components/confirmacion-dialog/confirmacion-dialog';
 
 // ── DECORADOR ────────────────────────────────
 // Página de gestión de productos del administrador.
@@ -87,11 +88,11 @@ export class ProductosComponent implements OnInit {
   });
 
   // ── GETTERS ───────────────────────────────
-  get nombre()      { return this.formulario.get('nombre');      }
-  get categoria()   { return this.formulario.get('categoria');   }
-  get precio()      { return this.formulario.get('precio');      }
-  get stock()       { return this.formulario.get('stock');       }
-  get descripcion() { return this.formulario.get('descripcion'); }
+  get nombre()      { return this.formulario.controls.nombre;      }
+  get categoria()   { return this.formulario.controls.categoria;   }
+  get precio()      { return this.formulario.controls.precio;      }
+  get stock()       { return this.formulario.controls.stock;       }
+  get descripcion() { return this.formulario.controls.descripcion; }
 
   // ── LIFECYCLE HOOK ────────────────────────
   ngOnInit(): void {
@@ -179,13 +180,22 @@ export class ProductosComponent implements OnInit {
   // ── MÉTODO: ELIMINAR PRODUCTO ─────────────
   // DELETE — Elimina un producto de la API
   eliminarProducto(producto: Producto): void {
-    if (!confirm(`¿Eliminár "${producto.nombre}"?`)) return;
-    this.productosService.delete(producto._id || producto.id!).subscribe({ // ← CAMBIO
-      next: () => {
-        this.snackBar.open('Producto eliminado 🗑️', 'Cerrar', { duration: 3000 });
-        this.cargarProductos();
+    this.dialog.open(ConfirmacionDialogComponent, {
+      width: 'min(420px, calc(100vw - 32px))',
+      data: {
+        titulo: 'Eliminar producto',
+        mensaje: `¿Querés eliminar “${producto.nombre}”? Esta acción no se puede deshacer.`,
       },
-      error: (err) => console.error('Error eliminando:', err)
+    }).afterClosed().subscribe((confirmado) => {
+      if (!confirmado) return;
+
+      this.productosService.delete(producto._id || producto.id!).subscribe({
+        next: () => {
+          this.snackBar.open('Producto eliminado 🗑️', 'Cerrar', { duration: 3000 });
+          this.cargarProductos();
+        },
+        error: (err) => console.error('Error eliminando:', err)
+      });
     });
   }
 
