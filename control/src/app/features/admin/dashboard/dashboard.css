@@ -85,6 +85,29 @@
   color: #333;          /* Gris oscuro */
 }
 
+/* ── ANIMACIÓN DE ENTRADA EN CASCADA ─────────
+   Las cards de estadísticas y accesos aparecen
+   una tras otra al cargar el dashboard         */
+@keyframes apareceDashboard {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-card {
+  animation: apareceDashboard 0.4s ease backwards;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
+.stat-card:nth-child(4) { animation-delay: 0.2s; }
+
 /* ── GRID DE ESTADÍSTICAS ────────────────────
    4 cards de números clave                    */
 .stats-grid {
@@ -144,6 +167,15 @@
   gap: 1rem; /* Espacio entre cards */
 }
 
+.acceso-card {
+  animation: apareceDashboard 0.4s ease backwards;
+}
+
+.acceso-card:nth-child(1) { animation-delay: 0.25s; }
+.acceso-card:nth-child(2) { animation-delay: 0.3s; }
+.acceso-card:nth-child(3) { animation-delay: 0.35s; }
+.acceso-card:nth-child(4) { animation-delay: 0.4s; }
+
 /* ── CARD DE ACCESO RÁPIDO ───────────────────
    Card clickeable que navega a una sección    */
 .acceso-card {
@@ -175,6 +207,8 @@
 
 .dolar-card {
   max-width: 320px;
+  animation: apareceDashboard 0.4s ease backwards;
+  animation-delay: 0.22s;
 }
 
 .dolar h2 {
