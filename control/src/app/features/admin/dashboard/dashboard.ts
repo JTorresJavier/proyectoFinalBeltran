@@ -17,6 +17,8 @@ import { AuthService, Usuario } from '../../../core/services/auth.service';
 import { ProductosService } from '../../../core/services/productos.service';
 import { DolarService, Cotizacion } from '../../../core/services/dolar.service';
 
+type ClaveEstadistica = 'totalProductos' | 'stockBajo' | 'enOferta' | 'sinStock';
+
 // ── DECORADOR ────────────────────────────────
 // Página principal del panel de administración.
 // Muestra resumen del negocio y accesos rápidos.
@@ -57,6 +59,13 @@ export class DashboardComponent implements OnInit {
   stockBajo: number      = 0; // Productos con stock menor a 5
   enOferta: number       = 0; // Productos en oferta
   sinStock: number       = 0; // Productos sin stock
+  estadisticasAnimadas: Record<ClaveEstadistica, number> = {
+    totalProductos: 0,
+    stockBajo: 0,
+    enOferta: 0,
+    sinStock: 0,
+  };
+  private frameContador: number | undefined;
   
   // ── COTIZACIÓN DEL DÓLAR ──────────────────
   // Se consume desde una API externa (DolarAPI) — fuente de datos
@@ -89,7 +98,12 @@ export class DashboardComponent implements OnInit {
           this.stockBajo      = productos.filter(p => p.stock > 0 && p.stock < 5).length;
           this.enOferta       = productos.filter(p => p.oferta).length;
           this.sinStock       = productos.filter(p => p.stock === 0).length;
-          this.cdr.detectChanges();
+          this.animarEstadisticas({
+            totalProductos: this.totalProductos,
+            stockBajo: this.stockBajo,
+            enOferta: this.enOferta,
+            sinStock: this.sinStock,
+          });
         });
       },
       error: (err) => {
@@ -99,6 +113,42 @@ export class DashboardComponent implements OnInit {
         });
       }
     });
+  }
+
+  private animarEstadisticas(objetivos: Record<ClaveEstadistica, number>): void {
+    if (this.frameContador !== undefined) {
+      cancelAnimationFrame(this.frameContador);
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.estadisticasAnimadas = { ...objetivos };
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const inicio = performance.now();
+    const duracion = 900;
+    const valoresIniciales = { ...this.estadisticasAnimadas };
+    const actualizar = (ahora: number): void => {
+      const progreso = Math.min((ahora - inicio) / duracion, 1);
+      const suavizado = 1 - Math.pow(1 - progreso, 3);
+
+      this.estadisticasAnimadas = {
+        totalProductos: Math.round(valoresIniciales.totalProductos + (objetivos.totalProductos - valoresIniciales.totalProductos) * suavizado),
+        stockBajo: Math.round(valoresIniciales.stockBajo + (objetivos.stockBajo - valoresIniciales.stockBajo) * suavizado),
+        enOferta: Math.round(valoresIniciales.enOferta + (objetivos.enOferta - valoresIniciales.enOferta) * suavizado),
+        sinStock: Math.round(valoresIniciales.sinStock + (objetivos.sinStock - valoresIniciales.sinStock) * suavizado),
+      };
+      this.cdr.detectChanges();
+
+      if (progreso < 1) {
+        this.frameContador = requestAnimationFrame(actualizar);
+      } else {
+        this.frameContador = undefined;
+      }
+    };
+
+    this.frameContador = requestAnimationFrame(actualizar);
   }
 
   // ── MÉTODO: CARGAR COTIZACIÓN DEL DÓLAR ───

@@ -150,6 +150,7 @@
   font-size: 2rem;   /* Grande */
   font-weight: bold; /* Negrita */
   color: #333;       /* Gris oscuro */
+  font-variant-numeric: tabular-nums; /* Evita que los dígitos cambien el ancho mientras cuentan */
 }
 
 /* ── LABEL DE ESTADÍSTICA ────────────────────
