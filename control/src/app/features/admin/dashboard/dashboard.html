@@ -96,8 +96,9 @@
   
   <!-- ── COTIZACIÓN DEL DÓLAR ──────────────
        Fuente de datos externa (DolarAPI)    -->
-  <section class="dolar">
-    <h2>💵 Cotización del Dólar</h2>
+  <div class="paneles-inferiores">
+    <section class="dolar">
+      <h2>💵 Cotización del Dólar</h2>
 
     @if (cargandoDolar) {
       <mat-card class="dolar-card">
@@ -136,7 +137,22 @@
         </mat-card-content>
       </mat-card>
     }
-  </section>
+    </section>
+
+    <a class="estadisticas-link" routerLink="/admin/estadisticas" aria-label="Abrir dashboard estadístico">
+      <mat-card class="estadisticas-card">
+        <mat-card-content>
+          <span class="estadisticas-card-icono"><mat-icon>query_stats</mat-icon></span>
+          <span class="estadisticas-card-contenido">
+            <span class="estadisticas-card-eyebrow">ANÁLISIS DEL NEGOCIO</span>
+            <span class="estadisticas-card-titulo">Dashboard estadístico</span>
+            <span class="estadisticas-card-descripcion">Explorá ofertas y stock por categoría.</span>
+          </span>
+          <mat-icon class="estadisticas-card-flecha">arrow_forward</mat-icon>
+        </mat-card-content>
+      </mat-card>
+    </a>
+  </div>
 
   <!-- ── ACCESOS RÁPIDOS ───────────────────
        Cards de navegación según el rol      -->

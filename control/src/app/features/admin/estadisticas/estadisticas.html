@@ -1,0 +1,157 @@
+<main class="estadisticas-pagina contenedor">
+  <header class="pagina-encabezado">
+    <div>
+      <a class="volver" routerLink="/admin/dashboard">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al dashboard
+      </a>
+      <p class="eyebrow">STOREHUB · ADMINISTRACIÓN</p>
+      <h1>Dashboard estadístico</h1>
+      <p class="introduccion">Una lectura rápida de tus ofertas y del stock disponible por categoría.</p>
+    </div>
+    <button mat-stroked-button type="button" (click)="cargarDatos()" [disabled]="cargando">
+      <mat-icon>refresh</mat-icon>
+      Actualizar datos
+    </button>
+  </header>
+
+  @if (cargando) {
+    <section class="estado estado-cargando" aria-live="polite">
+      <mat-spinner diameter="38"></mat-spinner>
+      <div><strong>Preparando tus estadísticas</strong><span>Estamos leyendo el catálogo actual.</span></div>
+    </section>
+  } @else if (error) {
+    <section class="estado estado-error" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <div><strong>No pudimos cargar los datos</strong><span>{{ mensajeError }}</span></div>
+      <button mat-flat-button color="primary" type="button" (click)="cargarDatos()">Reintentar</button>
+    </section>
+  } @else if (productos.length === 0) {
+    <section class="estado estado-vacio">
+      <mat-icon>inventory_2</mat-icon>
+      <div><strong>El catálogo todavía está vacío</strong><span>Cuando cargues productos, acá vas a ver la distribución de ofertas y stock.</span></div>
+      <a mat-flat-button color="primary" routerLink="/admin/productos">Ir a productos</a>
+    </section>
+  } @else {
+    <section class="resumen" aria-label="Indicadores principales del catálogo">
+      <article class="resumen-item">
+        <span class="resumen-icono azul"><mat-icon>inventory_2</mat-icon></span>
+        <span><strong>{{ productos.length }}</strong><small>Productos analizados</small></span>
+      </article>
+      <article class="resumen-item">
+        <span class="resumen-icono violeta"><mat-icon>warehouse</mat-icon></span>
+        <span><strong>{{ totalUnidades }}</strong><small>Unidades en stock</small></span>
+      </article>
+      <article class="resumen-item">
+        <span class="resumen-icono verde"><mat-icon>local_offer</mat-icon></span>
+        <span><strong>{{ cantidadEnOferta }}</strong><small>Productos en oferta</small></span>
+      </article>
+      <article class="resumen-item">
+        <span class="resumen-icono azul"><mat-icon>payments</mat-icon></span>
+        <span><strong>{{ valorInventarioFormateado }}</strong><small>Valor del stock a precio de lista</small></span>
+      </article>
+    </section>
+
+    <section class="graficos" aria-label="Gráficos del catálogo">
+      <mat-card class="grafico-card">
+        <mat-card-content>
+          <div class="grafico-encabezado">
+            <div><p class="grafico-kicker">SALUD DEL INVENTARIO</p><h2>Estado de las existencias</h2></div>
+            <mat-icon>donut_large</mat-icon>
+          </div>
+          <p class="grafico-descripcion">Productos agrupados por disponibilidad para detectar faltantes a tiempo.</p>
+
+          <div class="ofertas-contenido">
+            <div class="donut" [style.background]="graficoEstadoStock" role="img"
+              [attr.aria-label]="productosConStockSaludable + ' productos con stock saludable, ' + productosConStockBajo + ' con stock bajo y ' + productosSinStock + ' sin stock'">
+              <div class="donut-centro"><strong>{{ productos.length }}</strong><span>productos</span></div>
+            </div>
+            <div class="leyenda">
+              <div class="leyenda-item"><span class="leyenda-punto punto-saludable"></span><span>Stock saludable</span><strong>{{ productosConStockSaludable }}</strong></div>
+              <div class="leyenda-item"><span class="leyenda-punto punto-bajo"></span><span>Stock bajo</span><strong>{{ productosConStockBajo }}</strong></div>
+              <div class="leyenda-item"><span class="leyenda-punto punto-agotado"></span><span>Sin stock</span><strong>{{ productosSinStock }}</strong></div>
+              <div class="leyenda-total"><span>Productos</span><strong>{{ productos.length }}</strong></div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="grafico-card">
+        <mat-card-content>
+          <div class="grafico-encabezado">
+            <div><p class="grafico-kicker">PROMOCIONES</p><h2>Ofertas en el catálogo</h2></div>
+            <mat-icon>local_offer</mat-icon>
+          </div>
+          <p class="grafico-descripcion">Participación de productos con descuento sobre el catálogo completo.</p>
+          <div class="ofertas-contenido">
+            <div class="donut" [style.background]="graficoOferta" role="img"
+              [attr.aria-label]="cantidadEnOferta + ' productos en oferta de ' + productos.length">
+              <div class="donut-centro"><strong>{{ porcentajeOferta }}%</strong><span>en oferta</span></div>
+            </div>
+            <div class="leyenda">
+              <div class="leyenda-item"><span class="leyenda-punto punto-oferta"></span><span>Con oferta</span><strong>{{ cantidadEnOferta }}</strong></div>
+              <div class="leyenda-item"><span class="leyenda-punto punto-normal"></span><span>Sin oferta</span><strong>{{ cantidadSinOferta }}</strong></div>
+              <div class="leyenda-total"><span>Total de productos</span><strong>{{ productos.length }}</strong></div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="grafico-card stock-card">
+        <mat-card-content>
+          <div class="grafico-encabezado">
+            <div><p class="grafico-kicker">INVENTARIO</p><h2>Stock por categoría</h2></div>
+            <mat-icon>bar_chart</mat-icon>
+          </div>
+          <p class="grafico-descripcion">Unidades disponibles agrupadas por categoría del catálogo.</p>
+
+          @if (totalUnidades === 0) {
+            <div class="sin-stock"><mat-icon>inventory</mat-icon><span>Los productos cargados no tienen unidades en stock.</span></div>
+          } @else {
+            <div class="barras" role="list" aria-label="Unidades de stock por categoría">
+              @for (categoria of categoriasStock; track categoria.nombre) {
+                <div class="barra-fila" role="listitem">
+                  <div class="barra-etiqueta"><span>{{ categoria.nombre }}</span><strong>{{ categoria.cantidad }}</strong></div>
+                  <div class="barra-fondo" role="img" [attr.aria-label]="categoria.cantidad + ' unidades'">
+                    <span class="barra-valor" [style.width.%]="categoria.porcentaje"></span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+          <div class="stock-pie"><span>Unidades totales</span><strong>{{ totalUnidades }}</strong></div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="grafico-card">
+        <mat-card-content>
+          <div class="grafico-encabezado">
+            <div><p class="grafico-kicker">OFERTAS POR CATEGORÍA</p><h2>Promociones por categoría</h2></div>
+            <mat-icon>sell</mat-icon>
+          </div>
+          <p class="grafico-descripcion">Cantidad de productos con oferta dentro de cada categoría.</p>
+
+          @if (cantidadEnOferta === 0) {
+            <div class="sin-stock"><mat-icon>local_offer</mat-icon><span>No hay productos con ofertas activas.</span></div>
+          } @else {
+            <div class="barras barras-ofertas" role="list" aria-label="Productos en oferta por categoría">
+              @for (categoria of categoriasStock; track categoria.nombre) {
+                @if (categoria.ofertas > 0) {
+                  <div class="barra-fila" role="listitem">
+                    <div class="barra-etiqueta"><span>{{ categoria.nombre }}</span><strong>{{ categoria.ofertas }}</strong></div>
+                    <div class="barra-fondo" role="img" [attr.aria-label]="categoria.ofertas + ' productos con oferta'">
+                      <span class="barra-valor barra-oferta" [style.width.%]="categoria.porcentajeOfertas"></span>
+                    </div>
+                  </div>
+                }
+              }
+            </div>
+          }
+          <div class="stock-pie"><span>Productos en oferta</span><strong>{{ cantidadEnOferta }}</strong></div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <p class="nota-datos"><mat-icon>info</mat-icon> Los gráficos reflejan los datos actuales del catálogo.</p>
+  }
+</main>

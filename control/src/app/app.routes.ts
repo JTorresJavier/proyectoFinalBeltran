@@ -50,6 +50,13 @@ export const routes: Routes = [
     canActivate: [authGuard] // Solo si está logueado
   },
   {
+    path: 'admin/estadisticas',
+    loadComponent: () =>
+      import('./features/admin/estadisticas/estadisticas')
+        .then(m => m.EstadisticasComponent),
+    canActivate: [authGuard] // Solo si está logueado
+  },
+  {
     path: 'admin/productos',
     loadComponent: () =>
       import('./features/admin/productos/productos')
