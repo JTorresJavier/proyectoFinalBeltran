@@ -38,7 +38,7 @@
        @if: muestra el formulario solo cuando
        mostrarFormulario es true              -->
   @if (mostrarFormulario) {
-    <mat-card class="formulario-card">
+    <mat-card class="formulario-card" [@formAnimation]>
 
       <!-- Título dinámico según modo edición o creación -->
       <mat-card-header>
@@ -59,10 +59,10 @@
             <mat-form-field appearance="outline" class="campo-flex">
               <mat-label>Nombre</mat-label>
               <input matInput formControlName="nombre" placeholder="Ej: Coca Cola 2.25L"/>
-              @if (nombre?.invalid && nombre?.touched) {
+              @if (nombre?.invalid && nombre.touched) {
                 <mat-error>
-                  @if (nombre?.errors?.['required'])  { Nombre obligatorio. }
-                  @if (nombre?.errors?.['minlength']) { Mínimo 3 caracteres. }
+                  @if (nombre.errors?.['required'])  { Nombre obligatorio. }
+                  @if (nombre.errors?.['minlength']) { Mínimo 3 caracteres. }
                 </mat-error>
               }
             </mat-form-field>
@@ -75,7 +75,7 @@
                   <mat-option [value]="cat">{{ cat }}</mat-option>
                 }
               </mat-select>
-              @if (categoria?.invalid && categoria?.touched) {
+              @if (categoria?.invalid && categoria.touched) {
                 <mat-error>Seleccioná una categoría.</mat-error>
               }
             </mat-form-field>
@@ -90,7 +90,7 @@
               <mat-label>Precio</mat-label>
               <input matInput type="number" formControlName="precio"/>
               <span matPrefix>$&nbsp;</span>
-              @if (precio?.invalid && precio?.touched) {
+              @if (precio?.invalid && precio.touched) {
                 <mat-error>Precio obligatorio y mayor a 0.</mat-error>
               }
             </mat-form-field>
@@ -99,7 +99,7 @@
             <mat-form-field appearance="outline" class="campo-flex">
               <mat-label>Stock</mat-label>
               <input matInput type="number" formControlName="stock"/>
-              @if (stock?.invalid && stock?.touched) {
+              @if (stock?.invalid && stock.touched) {
                 <mat-error>Stock obligatorio y mayor a 0.</mat-error>
               }
             </mat-form-field>
@@ -110,7 +110,7 @@
           <mat-form-field appearance="outline" class="campo-completo">
             <mat-label>Descripción</mat-label>
             <textarea matInput formControlName="descripcion" rows="2"></textarea>
-            @if (descripcion?.invalid && descripcion?.touched) {
+            @if (descripcion?.invalid && descripcion.touched) {
               <mat-error>Descripción obligatoria.</mat-error>
             }
           </mat-form-field>
