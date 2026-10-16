@@ -1,55 +1,55 @@
-// ── IMPORTS ──────────────────────────────────
-const express  = require('express');  // Servidor web
-const mongoose = require('mongoose'); // Conexión a MongoDB
-const cors     = require('cors');     // Permite peticiones desde Angular
-const dotenv   = require('dotenv');   // Lee el archivo .env
+require('dotenv').config();
+const express  = require('express');
+const mongoose = require('mongoose');
+const cors     = require('cors');
 
-// ── CONFIGURACIÓN ─────────────────────────────
-// Carga las variables del archivo .env
-dotenv.config();
+// ── RUTAS ─────────────────────────────────────────────────────────────
+const productosRoutes    = require('./src/routes/productos.routes');
+const usuariosRoutes     = require('./src/routes/usuarios.routes');
+const recepcionesRoutes  = require('./src/routes/recepciones.routes');
+const movimientosRoutes  = require('./src/routes/movimientos.routes');
 
-// Creamos la app de Express
+// ── MIDDLEWARE DE AUDITORÍA ───────────────────────────────────────────
+const { auditoriaMiddleware } = require('./src/middleware/auditoria.middleware');
+
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-// ── MIDDLEWARES ───────────────────────────────
-// Permite peticiones desde cualquier origen (Angular en localhost:4200)
+// ── MIDDLEWARES GLOBALES ──────────────────────────────────────────────
 app.use(cors());
-
-// Permite recibir JSON en el body de las peticiones
 app.use(express.json());
 
-// ── CONEXIÓN A MONGODB ────────────────────────
-// Conectamos a MongoDB Atlas usando la URL del .env
+// ── AUDITORÍA AUTOMÁTICA ──────────────────────────────────────────────
+app.use('/api', auditoriaMiddleware);
+
+// ── PROXY DÓLAR ───────────────────────────────────────────────────────
+// Angular no puede llamar a dolarapi.com directamente (CORS).
+// El backend hace el fetch server-to-server y lo devuelve al frontend.
+app.get('/api/dolar', async (req, res) => {
+  try {
+    const response = await fetch('https://dolarapi.com/v1/dolares');
+    const data     = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'No se pudo obtener cotización del dólar' });
+  }
+});
+
+// ── RUTAS ─────────────────────────────────────────────────────────────
+app.use('/api/productos',   productosRoutes);
+app.use('/api/usuarios',    usuariosRoutes);
+app.use('/api/recepciones', recepcionesRoutes);
+app.use('/api/movimientos', movimientosRoutes);
+
+// ── CONEXIÓN A MONGODB ────────────────────────────────────────────────
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ Conectado a MongoDB Atlas'))
-  .catch(err => console.error('❌ Error conectando a MongoDB:', err));
-
-// ── RUTAS ─────────────────────────────────────
-// Importamos y registramos las rutas de la API
-const productosRoutes  = require('./src/routes/productos.routes');
-const usuariosRoutes   = require('./src/routes/usuarios.routes');
-const recepcionesRoutes = require('./src/routes/recepciones.routes');
-
-// Registramos las rutas con su prefijo
-app.use('/api/productos',   productosRoutes);   // /api/productos
-app.use('/api/usuarios',    usuariosRoutes);     // /api/usuarios
-app.use('/api/recepciones', recepcionesRoutes);  // /api/recepciones
-
-// ── RUTA DE PRUEBA ────────────────────────────
-// Para verificar que la API está funcionando
-app.get('/', (req, res) => {
-  res.json({
-    mensaje: '🏪 StoreHub API funcionando',
-    version: '1.0.0',
-    endpoints: [
-      '/api/productos',
-      '/api/usuarios'
-    ]
+  .then(() => {
+    console.log('✅ Conectado a MongoDB');
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('❌ Error al conectar a MongoDB:', err.message);
+    process.exit(1);
   });
-});
-
-// ── INICIAR SERVIDOR ──────────────────────────
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
-});

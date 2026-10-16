@@ -24,7 +24,7 @@ export class DolarService {
 
   // ── CONFIGURACIÓN ─────────────────────────
   private http = inject(HttpClient);                    // Inyectamos HttpClient
-  private apiUrl = 'https://dolarapi.com/v1/dolares';    // Endpoint público
+  private apiUrl = 'http://localhost:3000/api/dolar';    // Endpoint público
 
   // ── MÉTODO: OBTENER TODAS LAS COTIZACIONES ─
   // GET — Devuelve el array completo (oficial, blue, bolsa, etc.)

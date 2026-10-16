@@ -1,0 +1,190 @@
+<app-navbar>
+    
+</app-navbar>
+
+<div class="movimientos-container">
+
+  <!-- HEADER -->
+  <div class="movimientos-header">
+    <div class="header-titulo">
+      <mat-icon>manage_search</mat-icon>
+      <div>
+        <h1>Registro de movimientos</h1>
+        <p>{{ total }} registros encontrados</p>
+      </div>
+    </div>
+    <button mat-stroked-button (click)="limpiarFiltros()">
+      <mat-icon>refresh</mat-icon> Limpiar filtros
+    </button>
+  </div>
+
+  <!-- FILTROS -->
+  <mat-card class="filtros-card">
+    <div class="filtros-grid">
+
+      <!-- Filtro: Usuario -->
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario</mat-label>
+        <mat-select [(ngModel)]="filtros.usuario" (ngModelChange)="aplicarFiltros()">
+          <mat-option value="">Todos</mat-option>
+          @for (u of usuariosList; track u) {
+            <mat-option [value]="u">{{ u }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matSuffix>person</mat-icon>
+      </mat-form-field>
+
+      <!-- Filtro: Rol -->
+      <mat-form-field appearance="outline">
+        <mat-label>Rol</mat-label>
+        <mat-select [(ngModel)]="filtros.rol" (ngModelChange)="aplicarFiltros()">
+          <mat-option value="">Todos</mat-option>
+          @for (r of rolesOpciones; track r) {
+            <mat-option [value]="r">{{ r }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matSuffix>badge</mat-icon>
+      </mat-form-field>
+
+      <!-- Filtro: Acción -->
+      <mat-form-field appearance="outline">
+        <mat-label>Acción</mat-label>
+        <mat-select [(ngModel)]="filtros.accion" (ngModelChange)="aplicarFiltros()">
+          <mat-option value="">Todas</mat-option>
+          @for (a of accionesOpciones; track a.value) {
+            <mat-option [value]="a.value">{{ a.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-icon matSuffix>bolt</mat-icon>
+      </mat-form-field>
+
+      <!-- Filtro: Fecha desde -->
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput
+               type="date"
+               [(ngModel)]="filtros.fechaDesde"
+               (change)="aplicarFiltros()" />
+        <mat-icon matSuffix>calendar_today</mat-icon>
+      </mat-form-field>
+
+      <!-- Filtro: Fecha hasta -->
+      <mat-form-field appearance="outline">
+        <mat-label>Hasta</mat-label>
+        <input matInput
+               type="date"
+               [(ngModel)]="filtros.fechaHasta"
+               (change)="aplicarFiltros()" />
+        <mat-icon matSuffix>event</mat-icon>
+      </mat-form-field>
+
+    </div>
+  </mat-card>
+
+  <!-- SPINNER -->
+  @if (cargando) {
+    <div class="spinner-wrap">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Cargando movimientos...</p>
+    </div>
+  }
+
+  <!-- TABLA -->
+  @if (!cargando) {
+    <mat-card class="tabla-card">
+      <div class="tabla-scroll">
+        <table mat-table [dataSource]="movimientos" class="tabla-movimientos">
+
+          <!-- Columna: Fecha -->
+          <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef>Fecha y hora</th>
+            <td mat-cell *matCellDef="let m">
+              <div class="fecha-celda">
+                <span class="fecha-dia">{{ m.fecha | date:'dd/MM/yyyy' }}</span>
+                <span class="fecha-hora">{{ m.fecha | date:'HH:mm:ss' }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Columna: Usuario -->
+          <ng-container matColumnDef="usuario">
+            <th mat-header-cell *matHeaderCellDef>Usuario</th>
+            <td mat-cell *matCellDef="let m">
+              <span class="usuario-chip">
+                <mat-icon>person</mat-icon>
+                {{ m.usuario }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Columna: Rol -->
+          <ng-container matColumnDef="rol">
+            <th mat-header-cell *matHeaderCellDef>Rol</th>
+            <td mat-cell *matCellDef="let m">
+              <span class="rol-badge"
+                    [style.background]="colorParaRol(m.rol) + '22'"
+                    [style.color]="colorParaRol(m.rol)"
+                    [style.border]="'1px solid ' + colorParaRol(m.rol) + '44'">
+                {{ m.rol }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Columna: Acción -->
+          <ng-container matColumnDef="accion">
+            <th mat-header-cell *matHeaderCellDef>Acción</th>
+            <td mat-cell *matCellDef="let m">
+              <span class="accion-badge"
+                    [style.background]="(colorAccion[m.accion] || '#9e9e9e') + '22'"
+                    [style.color]="colorAccion[m.accion] || '#9e9e9e'"
+                    [style.border]="'1px solid ' + (colorAccion[m.accion] || '#9e9e9e') + '44'">
+                {{ etiquetaAccion[m.accion] || m.accion }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Columna: Detalle -->
+          <ng-container matColumnDef="detalle">
+            <th mat-header-cell *matHeaderCellDef>Detalle</th>
+            <td mat-cell *matCellDef="let m">
+              <span class="detalle-texto" [matTooltip]="m.endpoint">
+                {{ m.detalle || '—' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Columna: IP -->
+          <ng-container matColumnDef="ip">
+            <th mat-header-cell *matHeaderCellDef>IP</th>
+            <td mat-cell *matCellDef="let m">
+              <span class="ip-texto">{{ m.ip || '—' }}</span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columnas; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnas;" class="fila-movimiento"></tr>
+
+        </table>
+      </div>
+
+      <!-- Sin resultados -->
+      @if (movimientos.length === 0) {
+        <div class="sin-resultados">
+          <mat-icon>search_off</mat-icon>
+          <p>No se encontraron movimientos con los filtros aplicados.</p>
+        </div>
+      }
+
+      <!-- Paginador -->
+      <mat-paginator
+        [length]="total"
+        [pageSize]="filtros.limit || 50"
+        [pageSizeOptions]="[25, 50, 100, 200]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+
+    </mat-card>
+  }
+
+</div>

@@ -1,15 +1,10 @@
 // ── IMPORTS ──────────────────────────────────
-import { Routes } from '@angular/router';                    // Tipo Routes
-import { authGuard, adminGuard } from './core/guards/auth.guard'; // Guards de protección
+import { Routes } from '@angular/router';
+import { authGuard, adminGuard } from './core/guards/auth.guard';
 
-// ── RUTAS PÚBLICAS Y PRIVADAS ─────────────────
-// Define la navegación completa de StoreHub.
-// Las rutas usan Lazy Loading — se cargan solo cuando se necesitan.
-// Las rutas de admin están protegidas por guards.
 export const routes: Routes = [
 
   // ── RUTA RAÍZ ────────────────────────────────
-  // Redirige la URL vacía al inicio del cliente
   {
     path: '',
     redirectTo: 'inicio',
@@ -17,7 +12,6 @@ export const routes: Routes = [
   },
 
   // ── RUTAS PÚBLICAS (vista cliente) ───────────
-  // Accesibles sin login
   {
     path: 'inicio',
     loadComponent: () =>
@@ -38,7 +32,6 @@ export const routes: Routes = [
   },
 
   // ── RUTA LOGIN ────────────────────────────────
-  // Accesible sin login — puerta de entrada al admin
   {
     path: 'login',
     loadComponent: () =>
@@ -47,54 +40,60 @@ export const routes: Routes = [
   },
 
   // ── RUTAS PRIVADAS (vista admin) ─────────────
-  // Protegidas por authGuard — requieren login
   {
     path: 'admin/dashboard',
     loadComponent: () =>
       import('./features/admin/dashboard/dashboard')
         .then(m => m.DashboardComponent),
-    canActivate: [authGuard] // Solo si está logueado
+    canActivate: [authGuard]
   },
   {
     path: 'admin/estadisticas',
     loadComponent: () =>
       import('./features/admin/estadisticas/estadisticas')
         .then(m => m.EstadisticasComponent),
-    canActivate: [authGuard] // Solo si está logueado
+    canActivate: [authGuard]
   },
   {
     path: 'admin/productos',
     loadComponent: () =>
       import('./features/admin/productos/productos')
         .then(m => m.ProductosComponent),
-    canActivate: [authGuard] // Solo si está logueado
+    canActivate: [authGuard]
   },
   {
     path: 'admin/caja',
     loadComponent: () =>
       import('./features/admin/caja/caja')
         .then(m => m.CajaComponent),
-    canActivate: [authGuard] // Solo si está logueado
+    canActivate: [authGuard]
   },
-
   {
     path: 'admin/usuarios',
     loadComponent: () =>
       import('./features/admin/usuarios/usuarios')
         .then(m => m.UsuariosComponent),
-    canActivate: [authGuard, adminGuard] // Logueado Y además admin
+    canActivate: [authGuard, adminGuard]
   },
-
   {
     path: 'admin/recepciones',
     loadComponent: () =>
       import('./features/admin/recepciones/recepciones')
         .then(m => m.RecepcionesComponent),
-    canActivate: [authGuard] // Logueado — cualquier rol puede recepcionar mercadería
+    canActivate: [authGuard]
+  },
+
+  // ── NUEVA RUTA: MOVIMIENTOS ───────────────────
+  // Solo accesible para admin (adminGuard)
+  {
+    path: 'admin/movimientos',
+    loadComponent: () =>
+      import('./features/admin/movimientos/movimientos')
+        .then(m => m.MovimientosComponent),
+    canActivate: [authGuard, adminGuard]
   },
 
   // ── RUTA COMODÍN ─────────────────────────────
-  // Cualquier URL no definida redirige al inicio
   {
     path: '**',
     redirectTo: 'inicio'
