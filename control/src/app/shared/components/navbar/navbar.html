@@ -31,6 +31,19 @@
     </button>
   }
 
+  <!-- ── BOTÓN CARRITO ──────────────────────────
+       Badge reactivo con la cantidad de items.
+       Se oculta cuando el carrito está vacío.    -->
+  <button mat-icon-button
+          routerLink="/carrito"
+          aria-label="Carrito de compras"
+          [matBadge]="(cantidadCarrito$ | async) ?? 0"
+          matBadgeColor="warn"
+          matBadgeSize="small"
+          [matBadgeHidden]="(cantidadCarrito$ | async) === 0">
+    <mat-icon>shopping_cart</mat-icon>
+  </button>
+
   <!-- ── ESTADO DE SESIÓN ────────────────────────
        async pipe: se suscribe solo al observable y
        se desuscribe solo al destruir el componente.

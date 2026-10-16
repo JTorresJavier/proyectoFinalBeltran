@@ -30,6 +30,12 @@ export const routes: Routes = [
       import('./features/cliente/catalogo/catalogo')
         .then(m => m.CatalogoComponent)
   },
+  {
+    path: 'carrito',
+    loadComponent: () =>
+      import('./features/cliente/carrito/carrito')
+        .then(m => m.CarritoComponent)
+  },
 
   // ── RUTA LOGIN ────────────────────────────────
   // Accesible sin login — puerta de entrada al admin
@@ -78,7 +84,7 @@ export const routes: Routes = [
         .then(m => m.UsuariosComponent),
     canActivate: [authGuard, adminGuard] // Logueado Y además admin
   },
-  
+
   {
     path: 'admin/recepciones',
     loadComponent: () =>

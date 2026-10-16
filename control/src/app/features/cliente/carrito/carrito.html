@@ -1,0 +1,95 @@
+<div class="carrito-container">
+
+  <div class="carrito-header">
+    <h1><mat-icon>shopping_cart</mat-icon> Tu carrito</h1>
+    <button mat-button color="warn" (click)="vaciar()" *ngIf="(carrito$ | async)?.length">
+      <mat-icon>delete_sweep</mat-icon> Vaciar
+    </button>
+  </div>
+
+  <ng-container *ngIf="carrito$ | async as items">
+
+    <!-- CARRITO VACÍO -->
+    <div class="carrito-vacio" *ngIf="items.length === 0">
+      <mat-icon>remove_shopping_cart</mat-icon>
+      <p>Tu carrito está vacío</p>
+      <button mat-raised-button color="primary" routerLink="/catalogo">
+        <mat-icon>store</mat-icon> Ver catálogo
+      </button>
+    </div>
+
+    <!-- LISTA DE ITEMS -->
+    <div class="carrito-items" *ngIf="items.length > 0">
+
+      <mat-card class="item-card" *ngFor="let item of items">
+        <div class="item-content">
+
+          <!-- Ícono del producto -->
+          <div class="item-icon">
+            <mat-icon>{{ item.producto.icono }}</mat-icon>
+          </div>
+
+          <!-- Info del producto -->
+          <div class="item-info">
+            <span class="item-nombre">{{ item.producto.nombre }}</span>
+            <span class="item-categoria">{{ item.producto.categoria }}</span>
+            <div class="item-precio-unitario">
+              <span *ngIf="item.producto.oferta && item.producto.descuento > 0" class="precio-original">
+                {{ item.producto.precio | currency:'$':'symbol':'1.0-0' }}
+              </span>
+              <span class="precio-final">
+                {{ precioFinal(item) | currency:'$':'symbol':'1.0-0' }}
+              </span>
+              <span *ngIf="item.producto.oferta && item.producto.descuento > 0" class="badge-descuento">
+                -{{ item.producto.descuento }}%
+              </span>
+            </div>
+          </div>
+
+          <!-- Controles de cantidad -->
+          <div class="item-controles">
+            <button mat-icon-button (click)="disminuir(item)" [disabled]="item.cantidad <= 1">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="cantidad">{{ item.cantidad }}</span>
+            <button mat-icon-button (click)="aumentar(item)" [disabled]="item.cantidad >= item.producto.stock">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          <!-- Subtotal -->
+          <div class="item-subtotal">
+            {{ subtotal(item) | currency:'$':'symbol':'1.0-0' }}
+          </div>
+
+          <!-- Eliminar -->
+          <button mat-icon-button color="warn" (click)="eliminar(item)" class="btn-eliminar">
+            <mat-icon>close</mat-icon>
+          </button>
+
+        </div>
+      </mat-card>
+
+      <mat-divider></mat-divider>
+
+      <!-- RESUMEN TOTAL -->
+      <div class="carrito-resumen">
+        <div class="resumen-fila total-fila">
+          <span>Total</span>
+          <span class="total-monto">{{ total$ | async | currency:'$':'symbol':'1.0-0' }}</span>
+        </div>
+
+        <div class="resumen-acciones">
+          <button mat-stroked-button routerLink="/catalogo">
+            <mat-icon>arrow_back</mat-icon> Seguir comprando
+          </button>
+          <button mat-raised-button color="primary" (click)="finalizarCompra()">
+            <mat-icon>payment</mat-icon> Finalizar compra
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
+
+</div>

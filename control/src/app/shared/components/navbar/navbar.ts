@@ -7,9 +7,11 @@ import { CommonModule } from '@angular/common'; // Directivas ngIf, ngFor, etc.
 import { MatToolbarModule } from '@angular/material/toolbar'; // Barra de navegación
 import { MatButtonModule } from '@angular/material/button';   // Botones Material
 import { MatIconModule } from '@angular/material/icon';       // Íconos Material
+import { MatBadgeModule } from '@angular/material/badge';     // Badge para el carrito
 
 // ── SERVICIOS ─────────────────────────────────
 import { AuthService, Usuario } from '../../../core/services/auth.service';
+import { CarritoService } from '../../../core/services/carrito.service';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle';
 
 // ── DECORADOR ────────────────────────────────
@@ -26,6 +28,7 @@ import { ThemeToggleComponent } from '../theme-toggle/theme-toggle';
     MatToolbarModule,   // Toolbar de Material
     MatButtonModule,    // Botones de Material
     MatIconModule,      // Íconos de Material
+    MatBadgeModule,     // Badge del carrito
     ThemeToggleComponent,
   ],
   templateUrl: './navbar.html',
@@ -37,8 +40,9 @@ import { ThemeToggleComponent } from '../theme-toggle/theme-toggle';
 export class NavbarComponent {
 
   // ── SERVICIOS INYECTADOS ──────────────────
-  private authService = inject(AuthService); // Para logout y estado de sesión
-  private router       = inject(Router);      // Para redirigir tras logout
+  private authService    = inject(AuthService);    // Para logout y estado de sesión
+  private carritoService = inject(CarritoService); // Para el badge del carrito
+  private router         = inject(Router);         // Para redirigir tras logout
 
   // ── LINKS DEL MENÚ ────────────────────────
   // Array de links que se muestran en el navbar con @for
@@ -51,6 +55,10 @@ export class NavbarComponent {
   // Observable al que el template se suscribe con el pipe "async".
   // Cada vez que el AuthService avisa un cambio, esto se actualiza solo.
   usuarioActual$ = this.authService.usuarioActual$;
+
+  // ── BADGE DEL CARRITO ─────────────────────
+  // Cantidad total de unidades en el carrito (para el badge)
+  cantidadCarrito$ = this.carritoService.cantidadTotal$;
 
   // ── MÉTODO: LOGOUT ─────────────────────────
   logout(): void {

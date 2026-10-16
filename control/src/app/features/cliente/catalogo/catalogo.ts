@@ -13,12 +13,14 @@ import { MatSelectModule          } from '@angular/material/select';
 import { MatChipsModule           } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatBadgeModule           } from '@angular/material/badge';
+import { MatSnackBarModule        } from '@angular/material/snack-bar';
 
 // ── COMPONENTES PROPIOS ───────────────────────
 import { NavbarComponent } from '../../../shared/components/navbar/navbar';
 
 // ── SERVICIOS ─────────────────────────────────
 import { ProductosService, Producto } from '../../../core/services/productos.service';
+import { CarritoService } from '../../../core/services/carrito.service';
 
 // ── DECORADOR ────────────────────────────────
 // Página de catálogo del cliente.
@@ -38,6 +40,7 @@ import { ProductosService, Producto } from '../../../core/services/productos.ser
     MatChipsModule,
     MatProgressSpinnerModule,
     MatBadgeModule,
+    MatSnackBarModule,
     NavbarComponent,
   ],
   templateUrl: './catalogo.html',
@@ -49,6 +52,7 @@ export class CatalogoComponent implements OnInit {
 
   // ── SERVICIOS INYECTADOS ──────────────────
   private productosService = inject(ProductosService);  // API REST de productos
+  private carritoService   = inject(CarritoService);    // Carrito de compras
   private cdr              = inject(ChangeDetectorRef); // Fuerza actualización de la vista
   private ngZone           = inject(NgZone);            // Zona Angular para detectar cambios HTTP
 
@@ -87,13 +91,32 @@ export class CatalogoComponent implements OnInit {
   // ── CATEGORÍAS CON ÍCONO ─────────────────
   // Lista de categorías con su ícono de Material Icons para los chips
   categorias = [
-    { nombre: 'Bebidas',    icono: 'local_bar'         },
-    { nombre: 'Snacks',     icono: 'fastfood'          },
-    { nombre: 'Lácteos',    icono: 'egg'               },
-    { nombre: 'Limpieza',   icono: 'cleaning_services' },
-    { nombre: 'Golosinas',  icono: 'cake'              },
-    { nombre: 'Fiambres',   icono: 'lunch_dining'      },
-    { nombre: 'Carnes',     icono: 'kebab_dining'      },
+    { nombre: 'Gaseosas',              icono: 'local_drink'       },
+    { nombre: 'Aguas y Jugos',         icono: 'water_drop'        },
+    { nombre: 'Bebidas con Alcohol',   icono: 'sports_bar'        },
+    { nombre: 'Lácteos',               icono: 'egg'               },
+    { nombre: 'Fiambres',              icono: 'lunch_dining'      },
+    { nombre: 'Carnes',                icono: 'kebab_dining'      },
+    { nombre: 'Congelados',            icono: 'ac_unit'           },
+    { nombre: 'Verdulería',            icono: 'eco'               },
+    { nombre: 'Panadería',             icono: 'bakery_dining'     },
+    { nombre: 'Almacén',               icono: 'storefront'        },
+    { nombre: 'Enlatados',             icono: 'inventory_2'       },
+    { nombre: 'Aceites y Condimentos', icono: 'oil_barrel'        },
+    { nombre: 'Cereales y Legumbres',  icono: 'grass'             },
+    { nombre: 'Desayuno y Merienda',   icono: 'free_breakfast'    },
+    { nombre: 'Snacks',                icono: 'fastfood'          },
+    { nombre: 'Golosinas',             icono: 'cake'              },
+    { nombre: 'Limpieza',              icono: 'cleaning_services' },
+    { nombre: 'Higiene Personal',      icono: 'soap'              },
+    { nombre: 'Perfumería',            icono: 'self_care'         },
+    { nombre: 'Farmacia',              icono: 'local_pharmacy'    },
+    { nombre: 'Mascotas',              icono: 'pets'              },
+    { nombre: 'Ferretería',            icono: 'hardware'          },
+    { nombre: 'Librería',              icono: 'menu_book'         },
+    { nombre: 'Electrónica',           icono: 'devices'           },
+    { nombre: 'Infantil',              icono: 'child_care'        },
+    { nombre: 'Textil',                icono: 'checkroom'         },
   ];
 
   // ── LIFECYCLE: ngOnInit ───────────────────
@@ -168,5 +191,11 @@ export class CatalogoComponent implements OnInit {
     this._categoriaSeleccionada = '';
     this._soloOfertas           = false;
     this.aplicarFiltros();
+  }
+
+  // ── MÉTODO: AGREGAR AL CARRITO ────────────
+  // Delega en CarritoService — respeta stock máximo
+  agregarAlCarrito(producto: Producto): void {
+    this.carritoService.agregar(producto);
   }
 }

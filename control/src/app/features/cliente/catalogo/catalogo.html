@@ -172,7 +172,8 @@
         <mat-card-actions class="producto-acciones">
           <button mat-raised-button
                   class="btn-agregar"
-                  [disabled]="producto.stock === 0">
+                  [disabled]="producto.stock === 0"
+                  (click)="agregarAlCarrito(producto)">
             <mat-icon>add_shopping_cart</mat-icon>
             {{ producto.stock === 0 ? 'Sin stock' : 'Agregar' }}
           </button>
