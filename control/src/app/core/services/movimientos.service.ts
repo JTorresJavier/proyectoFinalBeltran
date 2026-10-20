@@ -81,7 +81,7 @@ export const COLORES_ACCION: Record<string, string> = {
 export class MovimientosService {
 
   private http    = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/api/movimientos';
+  private baseUrl = 'https://storehub-api-t6br.onrender.com/api/movimientos';
 
   // ── GET con filtros y paginación ──────────────────────────────────
   getAll(filtros: FiltrosMovimientos = {}): Observable<RespuestaMovimientos> {

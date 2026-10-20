@@ -26,7 +26,7 @@ export class AuthService {
 
   // ── CONFIGURACIÓN ─────────────────────────
   private http = inject(HttpClient);   // Inyectamos HttpClient
-  private apiUrl = 'http://localhost:3000/api/usuarios'; // URL base
+  private apiUrl = 'https://storehub-api-t6br.onrender.com/api/usuarios'; // URL base
   private claveStorage = 'storehub_usuario'; // Clave en LocalStorage
   
   // ── ESTADO REACTIVO DE SESIÓN ─────────────
