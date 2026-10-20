@@ -1,43 +1,67 @@
 // ── IMPORTS ──────────────────────────────────
-import { inject } from '@angular/core';           // Para inyectar servicios
-import { CanActivateFn, Router } from '@angular/router'; // Tipo del guard y router
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
-// ── SERVICIOS ─────────────────────────────────
-import { AuthService } from '../services/auth.service'; // Servicio de autenticación
+// ── GUARD: LOGIN ──────────────────────────────
+// Protege todas las rutas admin.
+// Sin sesión activa → redirige al login.
+export const authGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router      = inject(Router);
 
-// ── GUARD GENERAL: estaLogueado ───────────────
-// Protege rutas que requieren login.
-// Si no hay sesión → redirige al login.
-export const authGuard: CanActivateFn = (route, state) => {
-
-  // Inyectamos los servicios necesarios
-  const authService = inject(AuthService); // Servicio de auth
-  const router = inject(Router);           // Router para redirigir
-
-  // Verificamos si hay sesión activa
   if (authService.estaLogueado()) {
-    return true; // Tiene sesión → puede acceder
+    return true;
   }
 
-  // No tiene sesión → redirige al login
   router.navigate(['/login']);
   return false;
 };
 
-// ── GUARD DE ADMIN ────────────────────────────
-// Protege rutas que requieren rol de administrador.
-// Si no es admin → redirige al dashboard.
-export const adminGuard: CanActivateFn = (route, state) => {
-
+// ── GUARD: SOLO ADMIN ─────────────────────────
+// Rutas: estadisticas, usuarios, movimientos
+export const adminGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
-  const router = inject(Router);
+  const router      = inject(Router);
 
-  // Verificamos si es admin
   if (authService.esAdmin()) {
-    return true; // Es admin → puede acceder
+    return true;
   }
 
-  // No es admin → redirige al dashboard
+  router.navigate(['/admin/dashboard']);
+  return false;
+};
+
+// ── GUARD: ADMIN + EMPLEADO + REPOSITOR ───────
+// Rutas: recepciones (cajero NO puede entrar)
+export const noEsCajeroGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router      = inject(Router);
+
+  const usuario = authService.obtenerUsuario();
+  const rol = usuario?.rol;
+
+  if (rol === 'admin' || rol === 'empleado' || rol === 'repositor') {
+    return true;
+  }
+
+  router.navigate(['/admin/dashboard']);
+  return false;
+};
+
+// ── GUARD: ADMIN + CAJERO ─────────────────────
+// Rutas: caja (empleado y repositor NO pueden entrar)
+export const cajaGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router      = inject(Router);
+
+  const usuario = authService.obtenerUsuario();
+  const rol = usuario?.rol;
+
+  if (rol === 'admin' || rol === 'cajero') {
+    return true;
+  }
+
   router.navigate(['/admin/dashboard']);
   return false;
 };

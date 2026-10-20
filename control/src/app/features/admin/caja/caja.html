@@ -1,6 +1,4 @@
-<!-- ── HEADER ────────────────────────────────
-     Barra superior con nombre del cajero,
-     acumulado del día y acceso al historial   -->
+<!-- ── HEADER ──────────────────────────────── -->
 <header class="caja-header">
   <div class="header-izquierda">
     <mat-icon>store</mat-icon>
@@ -8,12 +6,10 @@
     <span class="header-seccion">/ Caja</span>
   </div>
   <div class="header-derecha">
-    <!-- Nombre del cajero logueado -->
     @if (usuarioLogueado) {
       <mat-icon>account_circle</mat-icon>
       <span>{{ usuarioLogueado.nombre }}</span>
     }
-    <!-- Controles visibles solo cuando la caja está abierta -->
     @if (cajaAbierta) {
       <div class="acumulado-chip" [class]="'acumulado-' + estadoAcumulado">
         <mat-icon>balance</mat-icon>
@@ -35,9 +31,7 @@
   </div>
 </header>
 
-<!-- ── PANTALLA DE APERTURA DE CAJA ──────────
-     Se muestra cuando la caja está cerrada.
-     El cajero ingresa el monto inicial en efectivo -->
+<!-- ── PANTALLA DE APERTURA DE CAJA ────────── -->
 @if (mostrarApertura) {
   <div class="pantalla-overlay">
     <mat-card class="apertura-card">
@@ -51,7 +45,6 @@
         <p class="apertura-desc">
           Ingresá el monto inicial en efectivo para abrir la caja.
         </p>
-        <!-- Input del monto inicial vinculado con [(ngModel)] -->
         <mat-form-field appearance="outline" class="campo-completo">
           <mat-label>Monto inicial en caja</mat-label>
           <span matPrefix>$ </span>
@@ -68,9 +61,7 @@
   </div>
 }
 
-<!-- ── PANTALLA DE COBRO ─────────────────────
-     Muestra el total redondeado, método de pago,
-     cálculo de vuelto y billetes sugeridos      -->
+<!-- ── PANTALLA DE COBRO ──────────────────── -->
 @if (cobrando) {
   <div class="pantalla-overlay">
     <mat-card class="cobro-card">
@@ -79,37 +70,19 @@
       </mat-card-header>
       <mat-card-content>
 
-        <!-- Total real y total redondeado a $50 -->
         <div class="totales-cobro">
           <div class="total-item">
             <span class="total-label-small">Total real</span>
             <span class="total-real">{{ total | currency:'ARS':'symbol':'1.0-0' }}</span>
           </div>
           <div class="total-item">
-            <span class="total-label-small">Total a cobrar (redondeado a $50)</span>
+            <span class="total-label-small">Total sugerido (redondeado a $50)</span>
             <span class="total-grande">{{ totalRedondeado | currency:'ARS':'symbol':'1.0-0' }}</span>
-          </div>
-          <!-- Diferencia generada por el redondeo de esta venta -->
-          <div class="diferencia-venta" [class.positivo]="diferenciaVenta >= 0" [class.negativo]="diferenciaVenta < 0">
-            <mat-icon>{{ diferenciaVenta >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-            <span>
-              Diferencia esta venta:
-              {{ diferenciaVenta >= 0 ? '+' : '' }}{{ diferenciaVenta | currency:'ARS':'symbol':'1.0-0' }}
-            </span>
-          </div>
-          <!-- Cómo quedaría el acumulado tras confirmar esta venta -->
-          <div class="acumulado-proyectado">
-            <mat-icon>account_balance</mat-icon>
-            <span>
-              Acumulado tras esta venta:
-              <strong>{{ (acumulado + diferenciaVenta) >= 0 ? '+' : '' }}{{ (acumulado + diferenciaVenta) | currency:'ARS':'symbol':'1.0-0' }}</strong>
-            </span>
           </div>
         </div>
 
         <mat-divider class="mt-1 mb-1"></mat-divider>
 
-        <!-- Selector de método de pago -->
         <mat-form-field appearance="outline" class="campo-completo">
           <mat-label>Método de pago</mat-label>
           <mat-select [(ngModel)]="metodoPago">
@@ -120,11 +93,40 @@
           </mat-select>
         </mat-form-field>
 
-        <!-- Sección de efectivo: montos rápidos, input y cálculo de vuelto -->
         @if (metodoPago === 'efectivo') {
           <div class="seccion-efectivo">
 
-            <!-- Botones de monto rápido para agilizar el cobro -->
+            <!-- PRECIO COBRADO EDITABLE -->
+            <mat-form-field appearance="outline" class="campo-completo">
+              <mat-label>Precio cobrado</mat-label>
+              <span matPrefix>$ </span>
+              <input matInput type="number" [(ngModel)]="montoCobrado"/>
+              <mat-hint>Modificá si cobrás un monto distinto al sugerido</mat-hint>
+            </mat-form-field>
+
+            <!-- PROYECCIÓN DEL ACUMULADO EN TIEMPO REAL -->
+            <div class="diferencia-venta"
+              [class.positivo]="diferenciaCobro >= 0"
+              [class.negativo]="diferenciaCobro < 0">
+              <mat-icon>{{ diferenciaCobro >= 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+              <span>
+                Diferencia esta venta:
+                {{ diferenciaCobro >= 0 ? '+' : '' }}{{ diferenciaCobro | currency:'ARS':'symbol':'1.0-0' }}
+              </span>
+            </div>
+            <div class="acumulado-proyectado">
+              <mat-icon>account_balance</mat-icon>
+              <span>
+                Acumulado tras esta venta:
+                <strong>
+                  {{ (acumulado + diferenciaCobro) >= 0 ? '+' : '' }}{{ (acumulado + diferenciaCobro) | currency:'ARS':'symbol':'1.0-0' }}
+                </strong>
+              </span>
+            </div>
+
+            <mat-divider class="mt-1 mb-1"></mat-divider>
+
+            <!-- MONTO RECIBIDO DEL CLIENTE -->
             <p class="label-montos">Monto recibido rápido:</p>
             <div class="montos-rapidos">
               @for (monto of [500, 1000, 2000, 5000, 10000]; track monto) {
@@ -137,26 +139,23 @@
               }
             </div>
 
-            <!-- Input manual del monto entregado por el cliente -->
             <mat-form-field appearance="outline" class="campo-completo">
-              <mat-label>Monto recibido</mat-label>
+              <mat-label>Monto recibido del cliente</mat-label>
               <span matPrefix>$ </span>
               <input matInput type="number" [(ngModel)]="montoPagado"/>
             </mat-form-field>
 
-            <!-- Vuelto y desglose en billetes -->
             @if (montoPagado > 0) {
               <div class="vuelto-seccion">
-
-                <!-- Monto del vuelto o aviso de monto insuficiente -->
                 <div class="vuelto-monto" [class.vuelto-ok]="vuelto >= 0" [class.vuelto-error]="vuelto < 0">
-                  <span class="vuelto-label">Vuelto:</span>
+                  <span class="vuelto-label">{{ vuelto >= 0 ? 'Vuelto:' : 'Debe:' }}</span>
                   <span class="vuelto-valor">
-                    {{ vuelto >= 0 ? (vuelto | currency:'ARS':'symbol':'1.0-0') : '⚠️ Monto insuficiente' }}
+                    {{ vuelto >= 0
+                      ? (vuelto | currency:'ARS':'symbol':'1.0-0')
+                      : (Math.abs(vuelto) | currency:'ARS':'symbol':'1.0-0') }}
                   </span>
                 </div>
 
-                <!-- Sugerencia de billetes para dar el vuelto exacto -->
                 @if (vuelto > 0 && billetesVuelto.length > 0) {
                   <div class="billetes-sugeridos">
                     <p class="billetes-titulo">💵 Dar de vuelto:</p>
@@ -170,14 +169,12 @@
                     </div>
                   </div>
                 }
-
               </div>
             }
 
           </div>
         }
 
-        <!-- Resumen de cantidad de items en el carrito -->
         <p class="resumen-items">
           {{ cantidadItems }} items — {{ carrito.length }} productos distintos
         </p>
@@ -185,11 +182,7 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <!-- Botón deshabilitado si el monto es insuficiente en efectivo -->
-        <button
-          mat-raised-button color="primary" class="btn-confirmar"
-          [disabled]="metodoPago === 'efectivo' && vuelto < 0"
-          (click)="confirmarCobro()">
+        <button mat-raised-button color="primary" class="btn-confirmar" (click)="confirmarCobro()">
           <mat-icon>check_circle</mat-icon>
           Confirmar Cobro
         </button>
@@ -203,9 +196,7 @@
   </div>
 }
 
-<!-- ── PANTALLA DE CIERRE DE CAJA ─────────────
-     Resumen del día con ventas por método de pago,
-     acumulado y conteo de efectivo real          -->
+<!-- ── PANTALLA DE CIERRE DE CAJA ───────────── -->
 @if (mostrarCierre) {
   <div class="pantalla-overlay">
     <mat-card class="cierre-card">
@@ -214,10 +205,7 @@
         <mat-card-subtitle>Resumen del día</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-
         <div class="cierre-resumen">
-
-          <!-- Totales generales del día -->
           <div class="cierre-fila">
             <span>Total de ventas:</span>
             <strong>{{ ventasHoy.length }}</strong>
@@ -229,7 +217,6 @@
 
           <mat-divider class="mt-1 mb-1"></mat-divider>
 
-          <!-- Desglose por método de pago -->
           <p class="cierre-subtitulo">Por método de pago:</p>
           <div class="cierre-fila">
             <span>💵 Efectivo:</span>
@@ -250,7 +237,6 @@
 
           <mat-divider class="mt-1 mb-1"></mat-divider>
 
-          <!-- Acumulado del día con color según estado -->
           <div class="cierre-fila acumulado-cierre" [class]="'acumulado-' + estadoAcumulado">
             <span>Diferencia acumulada (efectivo):</span>
             <strong>{{ acumulado >= 0 ? '+' : '' }}{{ acumulado | currency:'ARS':'symbol':'1.0-0' }}</strong>
@@ -258,7 +244,6 @@
 
           <mat-divider class="mt-1 mb-1"></mat-divider>
 
-          <!-- Conteo manual del efectivo en caja -->
           <p class="cierre-subtitulo">Conteo de efectivo real:</p>
           <mat-form-field appearance="outline" class="campo-completo">
             <mat-label>Efectivo contado en caja</mat-label>
@@ -266,7 +251,6 @@
             <input matInput type="number" [(ngModel)]="efectivoContado"/>
           </mat-form-field>
 
-          <!-- Diferencia entre lo contado y lo esperado -->
           @if (efectivoContado > 0) {
             <div class="diferencia-cierre"
               [class.positivo]="diferenciaCierre >= 0"
@@ -279,9 +263,7 @@
               </span>
             </div>
           }
-
         </div>
-
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="warn" class="btn-confirmar" (click)="confirmarCierre()">
@@ -297,9 +279,7 @@
   </div>
 }
 
-<!-- ── HISTORIAL DE VENTAS ────────────────────
-     Panel lateral con todas las ventas del día,
-     mostrando hora, método, total y diferencia  -->
+<!-- ── HISTORIAL DE VENTAS ──────────────────── -->
 @if (mostrarHistorial) {
   <div class="historial-panel">
     <div class="historial-header">
@@ -316,7 +296,6 @@
             <span class="historial-metodo">{{ venta.metodoPago }}</span>
             <span class="historial-total">{{ venta.totalCobrado | currency:'ARS':'symbol':'1.0-0' }}</span>
           </div>
-          <!-- Diferencia generada por redondeo en esta venta -->
           <div class="historial-diferencia"
             [class.positivo]="venta.diferencia >= 0"
             [class.negativo]="venta.diferencia < 0">
@@ -328,7 +307,6 @@
         <p class="historial-vacio">Sin ventas registradas hoy.</p>
       }
     </div>
-    <!-- Total acumulado del día al pie del historial -->
     <div class="historial-total-dia">
       <span>Total del día:</span>
       <strong>{{ totalHoy | currency:'ARS':'symbol':'1.0-0' }}</strong>
@@ -336,16 +314,10 @@
   </div>
 }
 
-<!-- ── CONTENIDO PRINCIPAL DE LA CAJA ─────────
-     Solo visible cuando la caja está abierta
-     y no hay pantalla de cobro o cierre activa -->
+<!-- ── CONTENIDO PRINCIPAL ──────────────────── -->
 @if (cajaAbierta && !cobrando && !mostrarCierre) {
   <div class="caja-contenido" [class.con-historial]="mostrarHistorial">
 
-    <!-- ── PANEL IZQUIERDO: PRODUCTOS ─────────
-         Grilla de productos con buscador.
-         Muestra precio tachado + precio con descuento
-         cuando el producto está en oferta          -->
     <div class="panel-productos">
       <h2>🔍 Productos</h2>
       <mat-form-field appearance="outline" class="buscador">
@@ -359,13 +331,11 @@
           <div class="producto-item" (click)="agregarAlCarrito(producto)">
             <mat-icon class="producto-icono">{{ producto.icono || 'shopping_bag' }}</mat-icon>
             <p class="producto-nombre">{{ producto.nombre }}</p>
-            <!-- Si tiene oferta: muestra precio tachado + precio con descuento -->
             @if (producto.oferta && producto.descuento) {
               <p class="producto-precio-tachado"><s>{{ producto.precio | currency:'ARS':'symbol':'1.0-0' }}</s></p>
               <p class="producto-precio producto-precio-oferta">{{ producto.precio * (1 - producto.descuento / 100) | currency:'ARS':'symbol':'1.0-0' }}</p>
               <span class="oferta-badge">-{{ producto.descuento }}% OFF</span>
             } @else {
-              <!-- Sin oferta: muestra el precio normal -->
               <p class="producto-precio">{{ producto.precio | currency:'ARS':'symbol':'1.0-0' }}</p>
             }
             <p class="producto-stock">Stock: {{ producto.stock }}</p>
@@ -380,14 +350,10 @@
       </div>
     </div>
 
-    <!-- ── PANEL DERECHO: CARRITO ─────────────
-         Lista de items agregados con controles
-         de cantidad y el total a cobrar          -->
     <div class="panel-carrito">
       <div class="carrito-header">
         <h2>
           🛒 Carrito
-          <!-- Badge con la cantidad total de unidades -->
           @if (cantidadItems > 0) {
             <span class="carrito-badge">{{ cantidadItems }}</span>
           }
@@ -399,7 +365,6 @@
         }
       </div>
 
-      <!-- Estado vacío del carrito -->
       @if (carrito.length === 0) {
         <div class="carrito-vacio">
           <mat-icon>shopping_cart</mat-icon>
@@ -408,7 +373,6 @@
         </div>
       }
 
-      <!-- Lista de items con controles de cantidad -->
       @if (carrito.length > 0) {
         <div class="carrito-items">
           @for (item of carrito; track item.producto.id) {
@@ -417,7 +381,6 @@
                 <mat-icon>{{ item.producto.icono || 'shopping_bag' }}</mat-icon>
                 <span class="item-nombre">{{ item.producto.nombre }}</span>
               </div>
-              <!-- Botones para incrementar o decrementar la cantidad -->
               <div class="item-cantidad">
                 <button mat-icon-button (click)="cambiarCantidad(item, -1)">
                   <mat-icon>remove</mat-icon>
@@ -427,7 +390,6 @@
                   <mat-icon>add</mat-icon>
                 </button>
               </div>
-              <!-- Subtotal ya con descuento aplicado -->
               <div class="item-subtotal">
                 {{ item.subtotal | currency:'ARS':'symbol':'1.0-0' }}
               </div>
@@ -440,7 +402,6 @@
 
         <mat-divider></mat-divider>
 
-        <!-- Totales: subtotal real y total redondeado a $50 -->
         <div class="carrito-totales">
           <div class="carrito-total-fila">
             <span>Subtotal:</span>
@@ -450,7 +411,6 @@
             <span>A cobrar (redondeado):</span>
             <strong>{{ totalRedondeado | currency:'ARS':'symbol':'1.0-0' }}</strong>
           </div>
-          <!-- Indicador visual de la diferencia que genera esta venta -->
           <div class="diferencia-proyectada"
             [class.positivo]="diferenciaVenta >= 0"
             [class.negativo]="diferenciaVenta < 0">
@@ -459,7 +419,6 @@
           </div>
         </div>
 
-        <!-- Botón principal para ir a la pantalla de cobro -->
         <button mat-raised-button color="primary" class="btn-cobrar" (click)="cobrar()">
           <mat-icon>point_of_sale</mat-icon>
           Cobrar {{ totalRedondeado | currency:'ARS':'symbol':'1.0-0' }}

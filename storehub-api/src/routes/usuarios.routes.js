@@ -1,13 +1,13 @@
 // ── IMPORTS ──────────────────────────────────
-const express  = require('express');          // Router de Express
-const router   = express.Router();            // Creamos el router
-const Usuario  = require('../models/usuario.model'); // Modelo de Usuario
+const express  = require('express');
+const router   = express.Router();
+const bcrypt   = require('bcryptjs');          // Hash de contraseñas
+const Usuario  = require('../models/usuario.model');
 
 // ── GET /api/usuarios ─────────────────────────
-// Obtiene todos los usuarios
+// Obtiene todos los usuarios (sin password)
 router.get('/', async (req, res) => {
   try {
-    // Excluimos el password por seguridad
     const usuarios = await Usuario.find().select('-password');
     res.json(usuarios);
   } catch (err) {
@@ -16,27 +16,36 @@ router.get('/', async (req, res) => {
 });
 
 // ── GET /api/usuarios/login ───────────────────
-// Busca un usuario por nombre de usuario para el login
+// Verifica credenciales con bcrypt y devuelve el usuario sin password
 router.get('/login', async (req, res) => {
   try {
-    const { usuario } = req.query; // Recibe ?usuario=admin
+    const { usuario, password } = req.query; // Recibe ?usuario=admin&password=1234
 
-    // Buscamos el usuario incluyendo el password para verificar
+    // Buscamos el usuario (incluye password para poder comparar)
     const usuarioEncontrado = await Usuario.findOne({ usuario });
 
     if (!usuarioEncontrado) {
-      return res.json([]); // Devuelve array vacío si no existe
+      return res.json([]); // Array vacío si no existe
     }
 
-    // Devolvemos en array para mantener compatibilidad con el frontend
-    res.json([usuarioEncontrado]);
+    // Comparamos el password ingresado con el hash guardado en la BD
+    const passwordValido = await bcrypt.compare(password, usuarioEncontrado.password);
+
+    if (!passwordValido) {
+      return res.json([]); // Array vacío si la contraseña no coincide
+    }
+
+    // Devolvemos en array para compatibilidad, pero SIN el password
+    const { password: _, ...usuarioSinPass } = usuarioEncontrado.toObject();
+    res.json([usuarioSinPass]);
+
   } catch (err) {
     res.status(500).json({ error: 'Error en login', detalle: err.message });
   }
 });
 
 // ── GET /api/usuarios/:id ─────────────────────
-// Obtiene un usuario por ID
+// Obtiene un usuario por ID (sin password)
 router.get('/:id', async (req, res) => {
   try {
     const usuario = await Usuario.findById(req.params.id).select('-password');
@@ -48,26 +57,47 @@ router.get('/:id', async (req, res) => {
 });
 
 // ── POST /api/usuarios ────────────────────────
-// Crea un nuevo usuario
+// Crea un nuevo usuario — hashea la contraseña antes de guardar
 router.post('/', async (req, res) => {
   try {
-    const usuario = new Usuario(req.body);
+    const datos = { ...req.body };
+
+    // Si viene password en texto plano, lo hasheamos
+    if (datos.password) {
+      datos.password = await bcrypt.hash(datos.password, 10);
+    }
+
+    const usuario = new Usuario(datos);
     await usuario.save();
-    res.status(201).json(usuario);
+
+    // Devolvemos sin el password
+    const { password, ...usuarioSinPass } = usuario.toObject();
+    res.status(201).json(usuarioSinPass);
   } catch (err) {
     res.status(400).json({ error: 'Error creando usuario', detalle: err.message });
   }
 });
 
 // ── PUT /api/usuarios/:id ─────────────────────
-// Actualiza un usuario existente
+// Actualiza un usuario — si cambia password, lo hashea
 router.put('/:id', async (req, res) => {
   try {
+    const datos = { ...req.body };
+
+    // Solo hasheamos si mandan un password nuevo
+    if (datos.password) {
+      datos.password = await bcrypt.hash(datos.password, 10);
+    } else {
+      // Si no mandan password, no lo pisamos
+      delete datos.password;
+    }
+
     const usuario = await Usuario.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      datos,
       { new: true }
-    );
+    ).select('-password');
+
     if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
     res.json(usuario);
   } catch (err) {

@@ -1,20 +1,20 @@
 // ── IMPORTS ──────────────────────────────────
-import { Component, inject, OnInit } from '@angular/core';     // Component e inject
-import { CommonModule } from '@angular/common';                 // Directivas ngIf, ngFor
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; // Reactive Forms
-import { Router , RouterLink} from '@angular/router';                     // Para redirigir tras login
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 
 // ── ANGULAR MATERIAL ──────────────────────────
-import { MatCardModule } from '@angular/material/card';           // Card del formulario
-import { MatButtonModule } from '@angular/material/button';       // Botones Material
-import { MatIconModule } from '@angular/material/icon';           // Íconos Material
-import { MatInputModule } from '@angular/material/input';         // Inputs Material
-import { MatFormFieldModule } from '@angular/material/form-field';// Campos de formulario
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Loading
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar'; // Notificaciones
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 // ── SERVICIOS ─────────────────────────────────
-import { AuthService } from '../../../core/services/auth.service'; // Servicio de auth
+import { AuthService } from '../../../core/services/auth.service';
 import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 // ── DECORADOR ────────────────────────────────
@@ -25,7 +25,7 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,      // Para Reactive Forms
+    ReactiveFormsModule,
     RouterLink,
     MatCardModule,
     MatButtonModule,
@@ -33,7 +33,7 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
     MatInputModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule,        // Para notificaciones
+    MatSnackBarModule,
     ThemeToggleComponent,
   ],
   templateUrl: './login.html',
@@ -41,70 +41,60 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
 })
 
 // ── CLASE ────────────────────────────────────
-// Lógica del login
 export class LoginComponent {
 
   // ── SERVICIOS INYECTADOS ──────────────────
-  private authService = inject(AuthService); // Servicio de autenticación
-  private router = inject(Router);           // Para redirigir tras login
-  private snackBar = inject(MatSnackBar);    // Para mostrar notificaciones
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
 
   // ── ESTADO ────────────────────────────────
-  cargando: boolean = false;       // Controla el spinner de carga
-  mostrarPassword: boolean = false; // Controla si se muestra la contraseña
+  cargando: boolean = false;
+  mostrarPassword: boolean = false;
 
   // ── FORMULARIO REACTIVO ───────────────────
-  // FormGroup con validaciones para usuario y contraseña
   formulario = new FormGroup({
     usuario: new FormControl('', [
-      Validators.required,        // Campo obligatorio
-      Validators.minLength(3),    // Mínimo 3 caracteres
+      Validators.required,
+      Validators.minLength(3),
     ]),
     password: new FormControl('', [
-      Validators.required,        // Campo obligatorio
-      Validators.minLength(4),    // Mínimo 4 caracteres
+      Validators.required,
+      Validators.minLength(4),
     ]),
   });
 
   // ── GETTERS ───────────────────────────────
-  // Acceso rápido a los controles del formulario
   get usuario() { return this.formulario.get('usuario'); }
   get password() { return this.formulario.get('password'); }
 
   // ── MÉTODO: TOGGLE PASSWORD ───────────────
-  // Muestra u oculta la contraseña
   togglePassword(): void {
     this.mostrarPassword = !this.mostrarPassword;
   }
 
   // ── MÉTODO: SUBMIT ────────────────────────
-  // Se ejecuta al enviar el formulario
   onSubmit(): void {
 
-    // Si el formulario tiene errores no continuamos
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;
     }
 
-    // Activamos el spinner de carga
     this.cargando = true;
 
     const usuarioInput = this.formulario.value.usuario!;
     const passwordInput = this.formulario.value.password!;
 
-    // Llamamos al servicio para verificar credenciales en la API
+    // Llamamos al servicio — el backend ya verificó las credenciales con bcrypt
     this.authService.login(usuarioInput, passwordInput)
       .subscribe({
         next: (usuarios) => {
           this.cargando = false;
 
-          // Buscamos el usuario que coincida con usuario Y password
-          const usuarioEncontrado = usuarios.find(
-            u => u.usuario === usuarioInput &&
-                 u.password === passwordInput &&
-                 u.activo === true
-          );
+          // El backend devuelve el usuario si las credenciales son correctas,
+          // o array vacío si no coinciden — solo verificamos activo
+          const usuarioEncontrado = usuarios.find(u => u.activo === true);
 
           if (usuarioEncontrado) {
             // Guardamos la sesión en LocalStorage
@@ -130,7 +120,6 @@ export class LoginComponent {
           }
         },
         error: (err) => {
-          // Error de conexión con la API
           this.cargando = false;
           this.snackBar.open(
             'Error al conectar con el servidor',

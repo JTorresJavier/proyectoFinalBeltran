@@ -1,6 +1,6 @@
 // ── IMPORTS ──────────────────────────────────
 import { Routes } from '@angular/router';
-import { authGuard, adminGuard } from './core/guards/auth.guard';
+import { authGuard, adminGuard, noEsCajeroGuard, cajaGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
 
@@ -39,7 +39,7 @@ export const routes: Routes = [
         .then(m => m.LoginComponent)
   },
 
-  // ── RUTAS PRIVADAS (vista admin) ─────────────
+  // ── DASHBOARD — todos los roles ───────────────
   {
     path: 'admin/dashboard',
     loadComponent: () =>
@@ -47,13 +47,8 @@ export const routes: Routes = [
         .then(m => m.DashboardComponent),
     canActivate: [authGuard]
   },
-  {
-    path: 'admin/estadisticas',
-    loadComponent: () =>
-      import('./features/admin/estadisticas/estadisticas')
-        .then(m => m.EstadisticasComponent),
-    canActivate: [authGuard]
-  },
+
+  // ── PRODUCTOS — todos los roles ───────────────
   {
     path: 'admin/productos',
     loadComponent: () =>
@@ -61,13 +56,35 @@ export const routes: Routes = [
         .then(m => m.ProductosComponent),
     canActivate: [authGuard]
   },
+
+  // ── RECEPCIONES — admin, empleado, repositor ──
+  {
+    path: 'admin/recepciones',
+    loadComponent: () =>
+      import('./features/admin/recepciones/recepciones')
+        .then(m => m.RecepcionesComponent),
+    canActivate: [authGuard, noEsCajeroGuard]
+  },
+
+  // ── CAJA — admin, cajero ──────────────────────
   {
     path: 'admin/caja',
     loadComponent: () =>
       import('./features/admin/caja/caja')
         .then(m => m.CajaComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard, cajaGuard]
   },
+
+  // ── ESTADÍSTICAS — solo admin ─────────────────
+  {
+    path: 'admin/estadisticas',
+    loadComponent: () =>
+      import('./features/admin/estadisticas/estadisticas')
+        .then(m => m.EstadisticasComponent),
+    canActivate: [authGuard, adminGuard]
+  },
+
+  // ── USUARIOS — solo admin ─────────────────────
   {
     path: 'admin/usuarios',
     loadComponent: () =>
@@ -75,16 +92,8 @@ export const routes: Routes = [
         .then(m => m.UsuariosComponent),
     canActivate: [authGuard, adminGuard]
   },
-  {
-    path: 'admin/recepciones',
-    loadComponent: () =>
-      import('./features/admin/recepciones/recepciones')
-        .then(m => m.RecepcionesComponent),
-    canActivate: [authGuard]
-  },
 
-  // ── NUEVA RUTA: MOVIMIENTOS ───────────────────
-  // Solo accesible para admin (adminGuard)
+  // ── MOVIMIENTOS — solo admin ──────────────────
   {
     path: 'admin/movimientos',
     loadComponent: () =>

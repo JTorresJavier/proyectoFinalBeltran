@@ -9,14 +9,14 @@ const usuarioSchema = new mongoose.Schema({
   nombre: {
     type: String,
     required: true,
-    trim: true         // Elimina espacios al inicio y fin
+    trim: true          // Elimina espacios al inicio y fin
   },
   usuario: {
     type: String,
     required: true,
-    unique: true,      // No puede haber dos usuarios iguales
+    unique: true,       // No puede haber dos usuarios iguales
     trim: true,
-    lowercase: true    // Guarda siempre en minúsculas
+    lowercase: true     // Guarda siempre en minúsculas
   },
   password: {
     type: String,
@@ -25,17 +25,17 @@ const usuarioSchema = new mongoose.Schema({
   rol: {
     type: String,
     required: true,
-    enum: ['admin', 'empleado', 'repositor'], // Solo estos valores permitidos
+    enum: ['admin', 'empleado', 'cajero', 'repositor'], // ← agregado cajero
     default: 'empleado'
   },
   activo: {
     type: Boolean,
-    default: true      // Por defecto el usuario está activo
+    default: true       // Por defecto el usuario está activo
   }
 
 }, {
   // ── OPCIONES ──────────────────────────────
-  timestamps: true     // Agrega createdAt y updatedAt automáticamente
+  timestamps: true      // Agrega createdAt y updatedAt automáticamente
 });
 
 // ── EXPORTAMOS EL MODELO ──────────────────────

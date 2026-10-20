@@ -11,13 +11,13 @@ export interface Usuario {
   nombre: string;    // Nombre completo
   usuario: string;   // Nombre de usuario para login
   password: string;  // Contraseña
-  rol: string;       // 'admin', 'empleado', 'repositor'
+  rol: string;       // 'admin', 'empleado', 'cajero', 'repositor'
   activo: boolean;   // Si el usuario está activo
 }
 
 // ── DECORADOR ────────────────────────────────
 // Servicio que maneja la autenticación y sesión.
-// Usa MockAPI para verificar credenciales y
+// Usa la API para verificar credenciales con bcrypt y
 // LocalStorage para persistir la sesión.
 @Injectable({
   providedIn: 'root' // Disponible en toda la app (Singleton)
@@ -48,15 +48,12 @@ export class AuthService {
   // ── MÉTODOS DE SESIÓN ─────────────────────
 
   // Guarda el usuario en LocalStorage al hacer login
-  // JSON.stringify convierte el objeto a string para guardarlo
-  
   guardarSesion(usuario: Usuario): void {
     localStorage.setItem(this.claveStorage, JSON.stringify(usuario));
     this.usuarioActualSubject.next(usuario); // Avisamos del cambio
   }
 
   // Recupera el usuario guardado en LocalStorage
-  // JSON.parse convierte el string de vuelta a objeto
   obtenerUsuario(): Usuario | null {
     const datos = localStorage.getItem(this.claveStorage);
     return datos ? JSON.parse(datos) : null;
@@ -106,10 +103,11 @@ export class AuthService {
     return this.http.delete<Usuario>(`${this.apiUrl}/${id}`);
   }
 
-  // LOGIN — Busca el usuario en la API y verifica credenciales
-  // Retorna el usuario si las credenciales son correctas, null si no
+  // LOGIN — Manda usuario y password al backend para verificar con bcrypt
+  // El backend compara y devuelve el usuario sin password, o array vacío si falla
   login(usuarioInput: string, passwordInput: string): Observable<Usuario[]> {
-    // Buscamos por nombre de usuario en la API
-    return this.http.get<Usuario[]>(`${this.apiUrl}/login?usuario=${usuarioInput}`);
+    return this.http.get<Usuario[]>(
+      `${this.apiUrl}/login?usuario=${encodeURIComponent(usuarioInput)}&password=${encodeURIComponent(passwordInput)}`
+    );
   }
 }

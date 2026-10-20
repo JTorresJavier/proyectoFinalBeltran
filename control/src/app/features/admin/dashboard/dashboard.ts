@@ -70,19 +70,17 @@ export class DashboardComponent implements OnInit {
   private frameContador: number | undefined;
   
   // ── COTIZACIÓN DEL DÓLAR ──────────────────
-  // Se consume desde una API externa (DolarAPI) — fuente de datos
-  // relacionada a la temática del negocio (precios en pesos).
   dolarOficial: Cotizacion | undefined = undefined; // Cotización actual
   cargandoDolar: boolean               = true;      // Spinner mientras carga
   errorDolar: boolean                  = false;      // Si falló la consulta
 
   // ── ACCESOS RÁPIDOS ───────────────────────
   accesos = [
-    { label: 'Gestión de Productos', icono: 'inventory_2',     ruta: '/admin/productos',   roles: ['admin', 'repositor'] },
-    { label: 'Caja',                 icono: 'point_of_sale',   ruta: '/admin/caja',        roles: ['admin', 'empleado']  },
-    { label: 'Usuarios',             icono: 'manage_accounts', ruta: '/admin/usuarios',    roles: ['admin']              },
-    { label: 'Recepciones',          icono: 'inventory',       ruta: '/admin/recepciones', roles: ['admin', 'repositor'] },
-    { label: 'Movimientos',          icono: 'manage_search',   ruta: '/admin/movimientos', roles: ['admin']              },
+    { label: 'Gestión de Productos', icono: 'inventory_2',     ruta: '/admin/productos',   roles: ['admin', 'empleado', 'cajero', 'repositor'] },
+    { label: 'Caja',                 icono: 'point_of_sale',   ruta: '/admin/caja',        roles: ['admin', 'cajero']                          },
+    { label: 'Usuarios',             icono: 'manage_accounts', ruta: '/admin/usuarios',    roles: ['admin']                                    },
+    { label: 'Recepciones',          icono: 'inventory',       ruta: '/admin/recepciones', roles: ['admin', 'empleado', 'repositor']            },
+    { label: 'Movimientos',          icono: 'manage_search',   ruta: '/admin/movimientos', roles: ['admin']                                    },
   ];
 
   // ── LIFECYCLE HOOK ────────────────────────
@@ -93,7 +91,7 @@ export class DashboardComponent implements OnInit {
   }
 
   // ── MÉTODO: CARGAR ESTADÍSTICAS ───────────
-    cargarEstadisticas(): void {
+  cargarEstadisticas(): void {
     this.productosService.getAll().subscribe({
       next: (productos) => {
         this.ngZone.run(() => {
@@ -155,9 +153,7 @@ export class DashboardComponent implements OnInit {
   }
 
   // ── MÉTODO: CARGAR COTIZACIÓN DEL DÓLAR ───
-  // Consume la API externa DolarAPI (fuente de datos externa
-  // relacionada a la temática del negocio).
-    cargarCotizacionDolar(): void {
+  cargarCotizacionDolar(): void {
     this.cargandoDolar = false;
     this.dolarService.getDolarOficial().subscribe({
       next: (cotizacion) => {
@@ -171,7 +167,7 @@ export class DashboardComponent implements OnInit {
         this.ngZone.run(() => {
           console.error('Error cargando cotización del dólar:', err);
           this.errorDolar    = true;
-          this.cargandoDolar = false;1.
+          this.cargandoDolar = false;
           this.cdr.detectChanges();
         });
       }

@@ -48,7 +48,7 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
     MatChipsModule,
     MatDialogModule,
   ],
-    templateUrl: './usuarios.html',
+  templateUrl: './usuarios.html',
   styleUrl: './usuarios.css',
   animations: [formAnimation]
 })
@@ -75,7 +75,8 @@ export class UsuariosComponent implements OnInit {
   columnasTabla: string[] = ['nombre', 'usuario', 'rol', 'activo', 'acciones'];
 
   // ── ROLES DISPONIBLES ─────────────────────
-  roles: string[] = ['admin', 'empleado', 'repositor'];
+  // Roles que el admin puede asignar al crear/editar un usuario
+  roles: string[] = ['admin', 'empleado', 'cajero', 'repositor'];
 
   // ── FORMULARIO REACTIVO ───────────────────
   formulario = new FormGroup({
@@ -118,20 +119,32 @@ export class UsuariosComponent implements OnInit {
   }
 
   // ── MÉTODO: NUEVO USUARIO ─────────────────
+  // Prepara el formulario en modo creación con password obligatorio
   nuevoUsuario(): void {
     this.modoEdicion       = false;
     this.usuarioEditandoId = '';
     this.mostrarPassword   = false;
+
+    // Al crear, la contraseña es obligatoria
+    this.formulario.get('password')?.setValidators([Validators.required, Validators.minLength(4)]);
+    this.formulario.get('password')?.updateValueAndValidity();
+
     this.formulario.reset({ activo: true });
     this.mostrarFormulario = true;
   }
 
   // ── MÉTODO: EDITAR USUARIO ────────────────
-    editarUsuario(usuario: Usuario): void {
+  // Prepara el formulario en modo edición con password opcional
+  editarUsuario(usuario: Usuario): void {
     this.modoEdicion       = true;
     this.usuarioEditandoId = usuario._id || usuario.id!;
     this.mostrarPassword   = false;
-    this.formulario.patchValue(usuario);
+
+    // En edición la contraseña es opcional — solo se cambia si se ingresa
+    this.formulario.get('password')?.clearValidators();
+    this.formulario.get('password')?.updateValueAndValidity();
+
+    this.formulario.patchValue({ ...usuario, password: '' });
     this.mostrarFormulario = true;
   }
 
@@ -156,6 +169,12 @@ export class UsuariosComponent implements OnInit {
     }
 
     if (this.modoEdicion) {
+      // Si estamos editando y no se ingresó password, lo eliminamos
+      // para que el backend no lo pise con un valor vacío
+      if (!datos.password) {
+        delete (datos as any).password;
+      }
+
       // PUT — Actualizar usuario existente
       this.authService.updateUsuario(this.usuarioEditandoId, datos).subscribe({
         next: (actualizado) => {
@@ -190,7 +209,7 @@ export class UsuariosComponent implements OnInit {
   }
 
   // ── MÉTODO: ELIMINAR USUARIO ──────────────
-  // DELETE — Elimina un usuario de la API
+  // DELETE — Elimina un usuario de la API con confirmación
   eliminarUsuario(usuario: Usuario): void {
     if (this.esUsuarioActual(usuario)) {
       this.snackBar.open('⚠️ No podés eliminar tu propio usuario', 'Cerrar', { duration: 3000, panelClass: 'snackbar--warning' });
@@ -200,7 +219,7 @@ export class UsuariosComponent implements OnInit {
       width: 'min(420px, calc(100vw - 32px))',
       data: {
         titulo: 'Eliminar usuario',
-        mensaje: `¿Querés eliminar al usuario “${usuario.usuario}”? Esta acción no se puede deshacer.`,
+        mensaje: `¿Querés eliminar al usuario "${usuario.usuario}"? Esta acción no se puede deshacer.`,
       },
     }).afterClosed().subscribe((confirmado) => {
       if (!confirmado) return;
@@ -219,12 +238,14 @@ export class UsuariosComponent implements OnInit {
   }
 
   // ── MÉTODO: CANCELAR ──────────────────────
+  // Cierra el formulario y resetea los campos
   cancelar(): void {
     this.mostrarFormulario = false;
     this.formulario.reset();
   }
 
   // ── MÉTODO: TOGGLE PASSWORD ───────────────
+  // Alterna la visibilidad de la contraseña en el input
   togglePassword(): void {
     this.mostrarPassword = !this.mostrarPassword;
   }
@@ -232,7 +253,7 @@ export class UsuariosComponent implements OnInit {
   // ── MÉTODO: ES EL USUARIO ACTUAL ──────────
   // Lo usa el template para deshabilitar el botón de eliminar
   esUsuarioActual(usuario: Usuario): boolean {
-    const idUsuario = usuario._id || usuario.id;
+    const idUsuario  = usuario._id || usuario.id;
     const idLogueado = this.usuarioLogueado?._id || this.usuarioLogueado?.id;
     return idUsuario === idLogueado;
   }
