@@ -1,7 +1,9 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f5f7fb;
+  background: var(--app-bg, #f5f7fb);
+  color: var(--app-text, #203d5a);
+  transition: background-color 220ms ease, color 220ms ease;
 }
 
 .estadisticas-pagina {
@@ -190,14 +192,15 @@
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  background: #fff;
-  border: 1px solid #e3eaf2;
+  color: var(--app-text, #203d5a);
+  background: var(--app-surface, #fff);
+  border: 1px solid var(--app-border, #e3eaf2);
   border-radius: 16px;
 }
 
 .estado > div { display: grid; gap: 0.3rem; }
-.estado strong { color: #203d5a; }
-.estado span { color: #718096; font-size: 0.88rem; line-height: 1.45; }
+.estado strong { color: var(--app-text, #203d5a); }
+.estado span { color: var(--app-muted, #718096); font-size: 0.88rem; line-height: 1.45; }
 .estado mat-icon { flex: 0 0 auto; color: #1976d2; }
 .estado button, .estado a { margin-left: auto; flex-shrink: 0; }
 .estado-error mat-icon { color: #bb4a43; }
@@ -229,5 +232,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .donut, .barra-valor { animation: none; transition: none; }
+  :host, .donut, .barra-valor { animation: none; transition: none; }
 }
