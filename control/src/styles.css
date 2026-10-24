@@ -275,7 +275,6 @@ html.theme-dark body .sin-oferta {
 
 html.theme-dark body ::placeholder {
   color: #93a4ba !important;
-  opacity: 1;
 }
 
 html.theme-dark body a:not(.navbar-logo):not(.estadisticas-link) {
