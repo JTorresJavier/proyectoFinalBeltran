@@ -21,7 +21,7 @@
       </button>
       <button mat-button color="warn" (click)="cerrarCaja()">
         <mat-icon>lock</mat-icon>
-        Cerrar Caja
+        Cerrar caja
       </button>
     }
   </div>
@@ -43,14 +43,14 @@
         </p>
         <mat-form-field appearance="outline" class="campo-completo">
           <mat-label>Monto inicial en caja</mat-label>
-          <span matPrefix>$ </span>
+          <span matTextPrefix>$&nbsp;</span>
           <input matInput type="number" [(ngModel)]="montoInicial" min="0"/>
         </mat-form-field>
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="primary" class="btn-completo" (click)="abrirCaja()">
           <mat-icon>lock_open</mat-icon>
-          Abrir Caja
+          Abrir caja
         </button>
       </mat-card-actions>
     </mat-card>
@@ -62,7 +62,7 @@
   <div class="pantalla-overlay">
     <mat-card class="cobro-card">
       <mat-card-header>
-        <mat-card-title>💰 Confirmar Cobro</mat-card-title>
+        <mat-card-title>Confirmar cobro</mat-card-title>
       </mat-card-header>
       <mat-card-content>
 
@@ -81,7 +81,7 @@
 
         <mat-form-field appearance="outline" class="campo-completo">
           <mat-label>Método de pago</mat-label>
-          <mat-select [(ngModel)]="metodoPago">
+          <mat-select [(ngModel)]="metodoPago" [disabled]="procesandoCobro">
             <mat-option value="efectivo">💵 Efectivo</mat-option>
             <mat-option value="debito">💳 Débito</mat-option>
             <mat-option value="credito">💳 Crédito</mat-option>
@@ -95,8 +95,8 @@
             <!-- PRECIO COBRADO EDITABLE -->
             <mat-form-field appearance="outline" class="campo-completo">
               <mat-label>Precio cobrado</mat-label>
-              <span matPrefix>$ </span>
-              <input matInput type="number" [(ngModel)]="montoCobrado"/>
+              <span matTextPrefix>$&nbsp;</span>
+              <input matInput type="number" [(ngModel)]="montoCobrado" [disabled]="procesandoCobro"/>
               <mat-hint>Modificá si cobrás un monto distinto al sugerido</mat-hint>
             </mat-form-field>
 
@@ -137,8 +137,8 @@
 
             <mat-form-field appearance="outline" class="campo-completo">
               <mat-label>Monto recibido del cliente</mat-label>
-              <span matPrefix>$ </span>
-              <input matInput type="number" [(ngModel)]="montoPagado"/>
+              <span matTextPrefix>$&nbsp;</span>
+              <input matInput type="number" [(ngModel)]="montoPagado" [disabled]="procesandoCobro"/>
             </mat-form-field>
 
             @if (montoPagado > 0) {
@@ -178,11 +178,11 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <button mat-raised-button color="primary" class="btn-confirmar" (click)="confirmarCobro()">
+        <button mat-raised-button color="primary" class="btn-confirmar" (click)="confirmarCobro()" [disabled]="procesandoCobro">
           <mat-icon>check_circle</mat-icon>
-          Confirmar Cobro
+          {{ procesandoCobro ? 'Procesando…' : 'Confirmar cobro' }}
         </button>
-        <button mat-stroked-button (click)="cancelarCobro()">
+        <button mat-stroked-button (click)="cancelarCobro()" [disabled]="procesandoCobro">
           <mat-icon>arrow_back</mat-icon>
           Volver
         </button>
@@ -197,8 +197,8 @@
   <div class="pantalla-overlay">
     <mat-card class="cierre-card">
       <mat-card-header>
-        <mat-card-title>🔒 Cierre de Caja</mat-card-title>
-        <mat-card-subtitle>Resumen del día</mat-card-subtitle>
+        <mat-card-title>Cierre de caja</mat-card-title>
+        <mat-card-subtitle>Resumen del turno</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="cierre-resumen">
@@ -243,7 +243,7 @@
           <p class="cierre-subtitulo">Conteo de efectivo real:</p>
           <mat-form-field appearance="outline" class="campo-completo">
             <mat-label>Efectivo contado en caja</mat-label>
-            <span matPrefix>$ </span>
+            <span matTextPrefix>$&nbsp;</span>
             <input matInput type="number" [(ngModel)]="efectivoContado"/>
           </mat-form-field>
 
@@ -264,7 +264,7 @@
       <mat-card-actions>
         <button mat-raised-button color="warn" class="btn-confirmar" (click)="confirmarCierre()">
           <mat-icon>lock</mat-icon>
-          Confirmar Cierre
+          Confirmar cierre
         </button>
         <button mat-stroked-button (click)="mostrarCierre = false">
           <mat-icon>arrow_back</mat-icon>
@@ -279,7 +279,7 @@
 @if (mostrarHistorial) {
   <div class="historial-panel">
     <div class="historial-header">
-      <h3>📋 Ventas de hoy ({{ ventasHoy.length }})</h3>
+      <h3>Ventas del turno ({{ ventasHoy.length }})</h3>
       <button mat-icon-button (click)="mostrarHistorial = false">
         <mat-icon>close</mat-icon>
       </button>

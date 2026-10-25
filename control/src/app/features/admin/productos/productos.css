@@ -129,3 +129,65 @@
   border: 1px solid var(--pm-linea);
   overflow: hidden;
 }
+
+/* ── HERRAMIENTAS DE LA TABLA ────────────────
+   Buscador y conteo arriba de la tabla        */
+.tabla-herramientas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.tabla-buscador {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: min(360px, 100%);
+  height: 42px;
+  padding: 0 1rem;
+  border: 1px solid var(--pm-borde);
+  border-radius: 999px;
+  background: var(--pm-surface);
+}
+
+.tabla-buscador:focus-within {
+  border-color: var(--pm-violeta);
+}
+
+.tabla-buscador mat-icon {
+  color: var(--pm-violeta);
+}
+
+.tabla-buscador input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent !important;
+  font: inherit;
+  color: var(--pm-texto);
+}
+
+.tabla-conteo {
+  font-size: 0.85rem;
+  color: var(--pm-texto-suave);
+}
+
+/* La tabla se desplaza de costado en pantallas chicas */
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+.stock-alerta {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: -3px;
+}
+
+.hint-error {
+  color: var(--pm-error);
+}

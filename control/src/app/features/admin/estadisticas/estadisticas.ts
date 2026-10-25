@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TimeoutError, timeout } from 'rxjs';
 import { ProductosService, Producto } from '../../../core/services/productos.service';
-import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 interface CategoriaStock {
   nombre: string;
@@ -20,7 +19,7 @@ interface CategoriaStock {
 @Component({
   selector: 'app-estadisticas',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink, MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './estadisticas.html',
   styleUrl: './estadisticas.css',
 })

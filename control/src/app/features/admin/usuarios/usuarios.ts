@@ -2,7 +2,6 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core'; // Component, lifecycle e inject
 import { CommonModule } from '@angular/common';             // Directivas ngIf, ngFor
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; // Reactive Forms
-import { RouterLink } from '@angular/router';               // Para volver al dashboard
 
 // ── ANGULAR MATERIAL ──────────────────────────
 import { MatCardModule } from '@angular/material/card';
@@ -22,7 +21,6 @@ import { AuthService, Usuario } from '../../../core/services/auth.service';
 import { formAnimation } from '../../../form-animations';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmacionDialogComponent } from '../../../shared/components/confirmacion-dialog/confirmacion-dialog';
-import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 // ── DECORADOR ────────────────────────────────
 // Página de gestión de usuarios (solo administrador).
@@ -33,7 +31,6 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -43,7 +40,6 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
     MatSlideToggleModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    ThemeToggleComponent,
     MatTableModule,
     MatChipsModule,
     MatDialogModule,
@@ -141,7 +137,8 @@ export class UsuariosComponent implements OnInit {
     this.mostrarPassword   = false;
 
     // En edición la contraseña es opcional — solo se cambia si se ingresa
-    this.formulario.get('password')?.clearValidators();
+    // En edición la contraseña es opcional, pero si se escribe debe tener 4+ caracteres
+    this.formulario.get('password')?.setValidators([Validators.minLength(4)]);
     this.formulario.get('password')?.updateValueAndValidity();
 
     this.formulario.patchValue({ ...usuario, password: '' });
@@ -157,11 +154,20 @@ export class UsuariosComponent implements OnInit {
     }
 
     const datos = this.formulario.getRawValue() as Usuario;
+    datos.nombre  = datos.nombre.trim();
+    datos.usuario = datos.usuario.trim().toLowerCase();
+
+    // Un admin no puede quitarse su propio rol ni desactivarse (quedaría sin acceso)
+    const editandoseASiMismo = this.modoEdicion && this.idDe(this.usuarioLogueado) === this.usuarioEditandoId;
+    if (editandoseASiMismo && (datos.rol !== 'admin' || !datos.activo)) {
+      this.snackBar.open('No podés quitarte el rol de administrador ni desactivar tu propio usuario', 'Cerrar', { duration: 4000, panelClass: 'snackbar--warning' });
+      return;
+    }
 
     // Evitamos dos usuarios con el mismo nombre de usuario
     const duplicado = this.usuarios.some(u =>
-      u.usuario.toLowerCase() === datos.usuario.toLowerCase() &&
-      u.id !== this.usuarioEditandoId
+      u.usuario.toLowerCase() === datos.usuario &&
+      this.idDe(u) !== this.usuarioEditandoId   // MongoDB usa _id: comparar el id real
     );
     if (duplicado) {
       this.snackBar.open('⚠️ Ese nombre de usuario ya existe', 'Cerrar', { duration: 3000, panelClass: 'snackbar--warning' });
@@ -179,7 +185,7 @@ export class UsuariosComponent implements OnInit {
       this.authService.updateUsuario(this.usuarioEditandoId, datos).subscribe({
         next: (actualizado) => {
           // Si me edité a mí mismo, actualizo la sesión guardada
-          if (this.usuarioLogueado?.id === this.usuarioEditandoId) {
+          if (editandoseASiMismo) {
             this.authService.guardarSesion(actualizado);
             this.usuarioLogueado = actualizado;
           }
@@ -253,8 +259,11 @@ export class UsuariosComponent implements OnInit {
   // ── MÉTODO: ES EL USUARIO ACTUAL ──────────
   // Lo usa el template para deshabilitar el botón de eliminar
   esUsuarioActual(usuario: Usuario): boolean {
-    const idUsuario  = usuario._id || usuario.id;
-    const idLogueado = this.usuarioLogueado?._id || this.usuarioLogueado?.id;
-    return idUsuario === idLogueado;
+    return this.idDe(usuario) === this.idDe(this.usuarioLogueado);
+  }
+
+  // Identificador real del usuario (MongoDB usa _id)
+  private idDe(usuario: Usuario | null): string | undefined {
+    return usuario?._id || usuario?.id;
   }
 }

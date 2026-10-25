@@ -164,7 +164,7 @@
                     <p class="detalle-obs"><mat-icon>notes</mat-icon> {{ p.observaciones }}</p>
                   }
                   <ul class="detalle-items">
-                    @for (item of p.items; track item.nombre) {
+                    @for (item of p.items; track $index) {
                       <li>
                         <span class="detalle-cantidad">{{ item.cantidad }} u.</span>
                         <span>{{ item.nombre }}</span>

@@ -15,6 +15,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTableModule } from '@angular/material/table';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialog } from '@angular/material/dialog';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 // ── SERVICIOS ─────────────────────────────────
 import { ProductosService, Producto } from '../../../core/services/productos.service';
@@ -22,6 +25,7 @@ import { AuthService, Usuario } from '../../../core/services/auth.service';
 import { CajaService, Venta } from '../../../core/services/caja.service';
 import { Router } from '@angular/router';
 import { ProductoImagenComponent } from '../../../shared/components/producto-imagen/producto-imagen';
+import { ConfirmacionDialogComponent } from '../../../shared/components/confirmacion-dialog/confirmacion-dialog';
 
 // ── INTERFACE ────────────────────────────────
 interface ItemCarrito {
@@ -62,6 +66,7 @@ export class CajaComponent implements OnInit {
   private cdr              = inject(ChangeDetectorRef);
   private ngZone           = inject(NgZone);
   private router           = inject(Router);
+  private dialog           = inject(MatDialog);
 
   Math = Math;
 
@@ -84,6 +89,7 @@ export class CajaComponent implements OnInit {
   mostrarApertura: boolean  = false;
 
   // ── PAGO ──────────────────────────────────
+  procesandoCobro       = false;      // Bloquea el botón mientras se descuenta el stock
   metodoPago: string    = 'efectivo';
   montoPagado: number   = 0;
   montoCobrado: number  = 0;  // ← lo que vos decidís cobrar (editable)
@@ -167,6 +173,8 @@ export class CajaComponent implements OnInit {
       } else {
         this.snackBar.open(`⚠️ Stock máximo alcanzado`, 'Cerrar', { duration: 2000, panelClass: 'snackbar--warning' });
       }
+    } else if (producto.stock <= 0) {
+      this.snackBar.open(`${producto.nombre} no tiene stock`, 'Cerrar', { duration: 2000, panelClass: 'snackbar--warning' });
     } else {
       this.carrito.push({ producto, cantidad: 1, subtotal: precio });
       this.snackBar.open(`✅ ${producto.nombre} agregado`, '', { duration: 800, panelClass: 'snackbar--success' });
@@ -196,8 +204,12 @@ export class CajaComponent implements OnInit {
 
   // ── MÉTODO: LIMPIAR CARRITO ───────────────
   limpiarCarrito(): void {
-    if (!confirm('¿Limpiar el carrito?')) return;
-    this.carrito = [];
+    this.dialog.open(ConfirmacionDialogComponent, {
+      width: 'min(420px, calc(100vw - 32px))',
+      data: { titulo: 'Vaciar carrito', mensaje: '¿Querés quitar todos los productos del carrito?', textoConfirmar: 'Vaciar' },
+    }).afterClosed().subscribe(confirmado => {
+      if (confirmado) this.carrito = [];
+    });
   }
 
   // ── MÉTODO: COBRAR ────────────────────────
@@ -212,7 +224,22 @@ export class CajaComponent implements OnInit {
   }
 
   // ── MÉTODO: CONFIRMAR COBRO ───────────────
+  // 1. Valida el pago. 2. Descuenta el stock en la API (todos los productos).
+  // 3. Recién si la API confirma, registra la venta y vacía el carrito.
+  //    Si falla, no se registra nada y el cobro queda abierto para reintentar.
   confirmarCobro(): void {
+    if (this.procesandoCobro) return;
+
+    // Efectivo cobra el monto redondeado; débito, crédito y transferencia cobran el total exacto
+    const importe = this.metodoPago === 'efectivo' ? this.montoCobrado : this.total;
+    if (importe <= 0) {
+      this.snackBar.open('El precio cobrado tiene que ser mayor a $0', 'Cerrar', { duration: 2500, panelClass: 'snackbar--warning' });
+      return;
+    }
+    if (this.metodoPago === 'efectivo' && this.montoPagado < this.montoCobrado) {
+      this.snackBar.open(`Falta dinero: el cliente entregó $${this.montoPagado} y se cobran $${this.montoCobrado}`, 'Cerrar', { duration: 3000, panelClass: 'snackbar--warning' });
+      return;
+    }
 
     // La diferencia usa montoCobrado (lo que vos decidís registrar),
     // no montoPagado (lo que dio el cliente) ni totalRedondeado.
@@ -221,54 +248,86 @@ export class CajaComponent implements OnInit {
       ? this.montoCobrado - this.total
       : 0;
 
-    const venta: Venta = {
-      id:           this.cajaService.generarId(),
-      fecha:        new Date().toISOString(),
-      cajero:       this.usuarioLogueado?.nombre || '',
-      items:        this.carrito.map(i => ({
-        nombre:   i.producto.nombre,
-        cantidad: i.cantidad,
-        precio:   i.producto.precio,
-        subtotal: i.subtotal,
-      })),
-      total:        this.total,
-      totalCobrado: this.metodoPago === 'efectivo'
-        ? this.montoPagado
-        : this.total,
-      diferencia,
-      metodoPago:   this.metodoPago,
-    };
+    // Foto del cobro al confirmar: si algo cambia mientras responde la API,
+    // la venta se registra con lo que realmente se descontó
+    const items        = this.carrito.map(i => ({ ...i, stockOriginal: i.producto.stock }));
+    const total        = this.total;
+    const metodoPago   = this.metodoPago;
+    const montoCobrado = this.montoCobrado;
+    const montoPagado  = this.montoPagado;
+    const idDe = (p: Producto) => p._id || p.id!;
 
-    this.cajaService.guardarVenta(venta);
-    this.acumulado = this.cajaService.obtenerAcumulado();
+    // Solo se envía el stock nuevo: así no se pisan precios u ofertas
+    // que otro usuario haya cambiado mientras tanto.
+    // Cada pedido informa si salió bien, para poder deshacer los que sí se aplicaron.
+    const descuentos = items.map(item =>
+      this.productosService.update(idDe(item.producto), {
+        stock: item.stockOriginal - item.cantidad,
+      }).pipe(
+        map(() => true),
+        catchError(() => of(false))
+      )
+    );
 
-    const vueltoReal = this.montoPagado - this.montoCobrado;
+    this.procesandoCobro = true;
+    forkJoin(descuentos).subscribe(resultados => {
+      if (resultados.some(ok => !ok)) {
+        // Falla parcial: se devuelve el stock de los productos que sí se descontaron
+        const reversiones = items
+          .filter((_, i) => resultados[i])
+          .map(item => this.productosService.update(idDe(item.producto), { stock: item.stockOriginal })
+            .pipe(map(() => true), catchError(() => of(false))));
 
-    // ── DESCONTAMOS STOCK EN LA API ───────────
-    this.carrito.forEach(item => {
-      const id = (item.producto as any)._id || item.producto.id!;
-      this.productosService.update(id, {
-        ...item.producto,
-        stock: item.producto.stock! - item.cantidad
-      }).subscribe();
+        (reversiones.length ? forkJoin(reversiones) : of([] as boolean[])).subscribe(revertidos => {
+          this.procesandoCobro = false;
+          const msg = revertidos.every(ok => ok)
+            ? 'No se pudo registrar la venta: el stock no se modificó. Revisá la conexión y probá de nuevo.'
+            : 'No se pudo registrar la venta y parte del stock quedó descontado. Revisalo en Gestión de productos.';
+          this.snackBar.open(msg, 'Cerrar', { duration: 6000, panelClass: 'snackbar--error' });
+          this.cargarProductos();
+          this.cdr.detectChanges();
+        });
+        return;
+      }
+
+      const venta: Venta = {
+        id:           this.cajaService.generarId(),
+        fecha:        new Date().toISOString(),
+        cajero:       this.usuarioLogueado?.nombre || '',
+        items:        items.map(i => ({
+          nombre:   i.producto.nombre,
+          cantidad: i.cantidad,
+          precio:   i.producto.precio,
+          subtotal: i.subtotal,
+        })),
+        total,
+        // Lo que entra a la caja es lo cobrado, no lo que entregó el cliente
+        totalCobrado: metodoPago === 'efectivo' ? montoCobrado : total,
+        diferencia,
+        metodoPago,
+      };
+
+      this.cajaService.guardarVenta(venta);
+      this.acumulado = this.cajaService.obtenerAcumulado();
+
+      const vuelto = montoPagado - montoCobrado;
+      const msg = metodoPago === 'efectivo'
+        ? `Cobrado $${montoCobrado} — Vuelto: $${vuelto} — Acumulado: ${this.acumulado >= 0 ? '+' : ''}$${this.acumulado}`
+        : `Cobro confirmado — $${total}`;
+      this.snackBar.open(msg, 'Cerrar', { duration: 4000, panelClass: 'snackbar--success' });
+
+      this.carrito         = [];
+      this.cobrando        = false;
+      this.montoPagado     = 0;
+      this.montoCobrado    = 0;
+      this.procesandoCobro = false;
+      this.cargarProductos();
     });
-
-    const msg = this.metodoPago === 'efectivo'
-      ? vueltoReal >= 0
-        ? `✅ Cobrado $${this.montoCobrado} — Vuelto: $${vueltoReal} — Acumulado: ${this.acumulado >= 0 ? '+' : ''}$${this.acumulado}`
-        : `✅ Cobrado $${this.montoCobrado} — Debe: $${Math.abs(vueltoReal)} — Acumulado: ${this.acumulado >= 0 ? '+' : ''}$${this.acumulado}`
-      : `✅ Cobro confirmado — $${this.total}`;
-    this.snackBar.open(msg, 'Cerrar', { duration: 4000, panelClass: 'snackbar--success' });
-
-    this.carrito      = [];
-    this.cobrando     = false;
-    this.montoPagado  = 0;
-    this.montoCobrado = 0;
-    this.cargarProductos();
   }
 
   // ── MÉTODO: CANCELAR COBRO ────────────────
   cancelarCobro(): void {
+    if (this.procesandoCobro) return; // No se puede volver al carrito mientras se registra el cobro
     this.cobrando = false;
   }
 

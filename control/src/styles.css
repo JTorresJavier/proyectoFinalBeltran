@@ -13,6 +13,7 @@
   --pm-violeta-suave: #F3EAF8;
   --pm-borde: #E4D2F0;
   --pm-acento: #6B2D8C;          /* Texto destacado (precios, números) */
+  --pm-etiqueta: #8A3FA6;        /* Etiquetas chicas en violeta (contraste AA) */
   --pm-blanco: #FBF9F7;
 
   --pm-bg: #F6F2F8;
@@ -25,9 +26,9 @@
   --pm-oferta: #C42A44;
   --pm-oferta-suave: #FDECEF;
   --pm-error: #B3261E;           /* Texto de error o diferencia negativa */
-  --pm-ok: #1E8E5A;
+  --pm-ok: #17744A;
   --pm-ok-suave: #E6F5EC;
-  --pm-alerta: #B86E00;
+  --pm-alerta: #8F5500;
   --pm-alerta-suave: #FFF3DF;
 
   --pm-radio: 12px;
@@ -158,6 +159,7 @@ html.theme-dark {
   --pm-violeta-suave: #2c1b3d;
   --pm-violeta-oscuro: #ecdff6;
   --pm-acento: #D3B4EE;
+  --pm-etiqueta: #C9A6E0;
   --pm-ok: #6FD39A;
   --pm-alerta: #F0B45A;
   --pm-oferta-suave: #3a1820;
@@ -186,11 +188,14 @@ html.theme-dark body {
   transition: background-color 220ms ease, color 220ms ease;
 }
 
+/* Texto claro por defecto en modo oscuro. Las exclusiones van dentro de
+   :where() para no sumar especificidad: así las reglas de color con
+   significado (stock, precios, montos) siguen pudiendo pisar este color. */
 html.theme-dark body :is(
   h1, h2, h3, h4, h5, p, span, label, td, th, li, strong, small, legend,
   .mat-mdc-card-title, .mat-mdc-card-subtitle, .mat-mdc-cell, .mat-mdc-header-cell,
   .mat-mdc-paginator, .mdc-list-item__primary-text, .mdc-form-field, .mdc-label
-):not(.pm-header *):not(.pm-cartel *):not(.pm-badge):not(.mat-mdc-unelevated-button *):not(.mat-mdc-raised-button *) {
+):where(:not(.pm-header *):not(.pm-cartel *):not(.pm-badge):not(.mat-mdc-unelevated-button *):not(.mat-mdc-raised-button *)) {
   color: var(--app-text) !important;
 }
 

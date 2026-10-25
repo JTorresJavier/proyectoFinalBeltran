@@ -19,7 +19,7 @@
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--pm-violeta-medio);
+  color: var(--pm-etiqueta);
 }
 
 .herramientas {
@@ -288,7 +288,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--pm-violeta-medio) !important;
+  color: var(--pm-etiqueta) !important;
 }
 
 .producto h3 {

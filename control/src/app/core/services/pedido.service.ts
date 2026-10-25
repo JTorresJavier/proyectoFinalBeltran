@@ -1,26 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import { Producto } from './productos.service';
-
-// ── INTERFACES ────────────────────────────────
-
-// Un renglón del pedido de reposición
-export interface ItemPedido {
-  producto: Producto;
-  cantidad: number;
-}
-
-// Pedido ya registrado y enviado al proveedor
-export interface PedidoRegistrado {
-  id: string;
-  fecha: string;          // ISO
-  proveedor: string;
-  observaciones: string;
-  usuario: string;        // Quién lo armó
-  items: { nombre: string; categoria: string; cantidad: number; costoEstimado: number }[];
-  totalUnidades: number;
-  totalEstimado: number;
-}
+import { ItemPedido, PedidoRegistrado } from '../models/pedido.model';
+export type { ItemPedido, PedidoRegistrado } from '../models/pedido.model'; // Se re-exporta para los componentes
 
 const CLAVE_PEDIDO    = 'pm_pedido_actual';
 const CLAVE_HISTORIAL = 'pm_pedidos_registrados';

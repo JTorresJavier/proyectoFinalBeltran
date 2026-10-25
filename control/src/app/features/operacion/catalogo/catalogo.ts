@@ -17,6 +17,7 @@ import { ProductoImagenComponent } from '../../../shared/components/producto-ima
 import { ProductosService, Producto } from '../../../core/services/productos.service';
 import { PedidoService } from '../../../core/services/pedido.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { CATEGORIAS } from '../../../core/data/categorias';
 
 type FiltroStock = '' | 'agotado' | 'bajo';
 type Orden = 'nombre' | 'precio-asc' | 'precio-desc' | 'stock';
@@ -74,34 +75,9 @@ export class CatalogoComponent implements OnInit {
   puedePedir = ['admin', 'empleado', 'repositor'].includes(this.authService.obtenerUsuario()?.rol ?? '');
 
   // ── CATEGORÍAS CON ÍCONO ─────────────────
-  categorias = [
-    { nombre: 'Gaseosas',              icono: 'local_drink'       },
-    { nombre: 'Aguas y Jugos',         icono: 'water_drop'        },
-    { nombre: 'Bebidas con Alcohol',   icono: 'sports_bar'        },
-    { nombre: 'Lácteos',               icono: 'egg'               },
-    { nombre: 'Fiambres',              icono: 'lunch_dining'      },
-    { nombre: 'Carnes',                icono: 'kebab_dining'      },
-    { nombre: 'Congelados',            icono: 'ac_unit'           },
-    { nombre: 'Verdulería',            icono: 'eco'               },
-    { nombre: 'Panadería',             icono: 'bakery_dining'     },
-    { nombre: 'Almacén',               icono: 'storefront'        },
-    { nombre: 'Enlatados',             icono: 'inventory_2'       },
-    { nombre: 'Aceites y Condimentos', icono: 'oil_barrel'        },
-    { nombre: 'Cereales y Legumbres',  icono: 'grass'             },
-    { nombre: 'Desayuno y Merienda',   icono: 'free_breakfast'    },
-    { nombre: 'Snacks',                icono: 'fastfood'          },
-    { nombre: 'Golosinas',             icono: 'cake'              },
-    { nombre: 'Limpieza',              icono: 'cleaning_services' },
-    { nombre: 'Higiene Personal',      icono: 'soap'              },
-    { nombre: 'Perfumería',            icono: 'self_care'         },
-    { nombre: 'Farmacia',              icono: 'local_pharmacy'    },
-    { nombre: 'Mascotas',              icono: 'pets'              },
-    { nombre: 'Ferretería',            icono: 'hardware'          },
-    { nombre: 'Librería',              icono: 'menu_book'         },
-    { nombre: 'Electrónica',           icono: 'devices'           },
-    { nombre: 'Infantil',              icono: 'child_care'        },
-    { nombre: 'Textil',                icono: 'checkroom'         },
-  ];
+  // Lista compartida con el alta de productos (core/data/categorias.ts)
+  categorias = CATEGORIAS;
+
 
   // ── LIFECYCLE: ngOnInit ───────────────────
   // Escucha los filtros de la URL y carga el catálogo una vez
@@ -238,6 +214,6 @@ export class CatalogoComponent implements OnInit {
 
   // Búsqueda sin tildes ni mayúsculas: "lacteos" encuentra "Lácteos"
   private normalizar(texto: string): string {
-    return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   }
 }

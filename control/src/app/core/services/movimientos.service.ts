@@ -1,40 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-// ── INTERFACES ────────────────────────────────────────────────────────
-export interface Movimiento {
-  _id:        string;
-  usuario:    string;
-  usuarioId:  string | null;
-  rol:        string;
-  accion:     string;
-  detalle:    string;
-  entidad:    string;
-  entidadId:  string;
-  ip:         string;
-  metodo:     string;
-  endpoint:   string;
-  fecha:      string;
-}
-
-export interface RespuestaMovimientos {
-  movimientos:   Movimiento[];
-  total:         number;
-  pagina:        number;
-  totalPaginas:  number;
-  porPagina:     number;
-}
-
-export interface FiltrosMovimientos {
-  usuario?:    string;
-  rol?:        string;
-  accion?:     string;
-  fechaDesde?: string;   // ISO string: '2026-10-01'
-  fechaHasta?: string;   // ISO string: '2026-10-31'
-  page?:       number;
-  limit?:      number;
-}
+import { environment } from '../../../environments/environment'; // URL base de la API
+import { Movimiento, RespuestaMovimientos, FiltrosMovimientos } from '../models/movimiento.model';
+export type { Movimiento, RespuestaMovimientos, FiltrosMovimientos } from '../models/movimiento.model'; // Se re-exporta para los componentes
 
 // ── ETIQUETAS LEGIBLES PARA ACCIONES ─────────────────────────────────
 export const ETIQUETAS_ACCION: Record<string, string> = {
@@ -56,22 +25,24 @@ export const ETIQUETAS_ACCION: Record<string, string> = {
 };
 
 // ── COLORES POR ACCIÓN (para chips/badges en la tabla) ────────────────
+// Tonos profundos: el texto del badge usa el mismo color sobre un fondo
+// translúcido y tiene que leerse bien (contraste AA)
 export const COLORES_ACCION: Record<string, string> = {
-  LOGIN:                '#4caf50',
-  LOGOUT:               '#9e9e9e',
-  CREAR_PRODUCTO:       '#2196f3',
-  EDITAR_PRODUCTO:      '#ff9800',
-  ELIMINAR_PRODUCTO:    '#f44336',
-  CREAR_USUARIO:        '#2196f3',
-  EDITAR_USUARIO:       '#ff9800',
-  ELIMINAR_USUARIO:     '#f44336',
-  VENTA:                '#4caf50',
-  ANULAR_VENTA:         '#f44336',
-  RECEPCION_MERCADERIA: '#9c27b0',
-  AJUSTE_STOCK:         '#ff9800',
-  PEDIDO_CREADO:        '#00bcd4',
-  ERROR:                '#f44336',
-  OTRO:                 '#9e9e9e',
+  LOGIN:                '#1B5E20',
+  LOGOUT:               '#616161',
+  CREAR_PRODUCTO:       '#0D47A1',
+  EDITAR_PRODUCTO:      '#8F4700',
+  ELIMINAR_PRODUCTO:    '#B71C1C',
+  CREAR_USUARIO:        '#0D47A1',
+  EDITAR_USUARIO:       '#8F4700',
+  ELIMINAR_USUARIO:     '#B71C1C',
+  VENTA:                '#1B5E20',
+  ANULAR_VENTA:         '#B71C1C',
+  RECEPCION_MERCADERIA: '#7B1FA2',
+  AJUSTE_STOCK:         '#8F4700',
+  PEDIDO_CREADO:        '#00695C',
+  ERROR:                '#B71C1C',
+  OTRO:                 '#616161',
 };
 
 // ── SERVICIO ──────────────────────────────────────────────────────────
@@ -81,7 +52,7 @@ export const COLORES_ACCION: Record<string, string> = {
 export class MovimientosService {
 
   private http    = inject(HttpClient);
-  private baseUrl = 'https://storehub-api-t6br.onrender.com/api/movimientos';
+  private baseUrl = `${environment.apiUrl}/movimientos`;
 
   // ── GET con filtros y paginación ──────────────────────────────────
   getAll(filtros: FiltrosMovimientos = {}): Observable<RespuestaMovimientos> {

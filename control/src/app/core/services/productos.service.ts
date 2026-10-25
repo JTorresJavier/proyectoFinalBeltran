@@ -2,21 +2,9 @@
 import { Injectable, inject } from '@angular/core'; // Decorador e inyección
 import { HttpClient } from '@angular/common/http';  // Para llamadas HTTP
 import { Observable } from 'rxjs';                  // Para manejar respuestas asíncronas
-
-// ── INTERFACE ────────────────────────────────
-// Define la forma de un Producto — contrato de datos
-export interface Producto {
-  _id?: string;        // ← MongoDB usa _id
-  id?: string;         // ← compatibilidad
-  nombre: string;      // Nombre del producto
-  categoria: string;   // Categoría
-  precio: number;      // Precio en ARS
-  stock: number;       // Cantidad disponible
-  descripcion: string; // Descripción breve
-  icono: string;       // Ícono de Material Icons
-  oferta: boolean;     // Si está en oferta
-  descuento: number;   // Porcentaje de descuento
-}
+import { environment } from '../../../environments/environment'; // URL base de la API
+import { Producto } from '../models/producto.model';
+export type { Producto } from '../models/producto.model'; // Se re-exporta para los componentes
 
 // ── DECORADOR ────────────────────────────────
 // Servicio que centraliza todas las llamadas HTTP
@@ -28,7 +16,7 @@ export class ProductosService {
 
   // ── CONFIGURACIÓN ─────────────────────────
   private http = inject(HttpClient); // Inyectamos HttpClient
-  private apiUrl = 'https://storehub-api-t6br.onrender.com/api/productos'; // URL base
+  private apiUrl = `${environment.apiUrl}/productos`; // URL base
 
   // ── MÉTODOS CRUD ──────────────────────────
 
@@ -48,7 +36,7 @@ export class ProductosService {
   }
 
   // PUT — Actualizar un producto existente
-  update(id: string, producto: Producto): Observable<Producto> {
+  update(id: string, producto: Partial<Producto>): Observable<Producto> { // Admite cambios parciales (ej: solo stock)
     return this.http.put<Producto>(`${this.apiUrl}/${id}`, producto);
   }
 

@@ -3,14 +3,10 @@
   <!-- ── ENCABEZADO ─────────────────────────── -->
   <div class="encabezado">
     <div class="titulo">
-      <button mat-icon-button routerLink="/admin/dashboard" aria-label="Volver al panel">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <h1>Gestión de Usuarios</h1>
+      <h1 class="pm-titulo-pagina">Gestión de usuarios</h1>
     </div>
 
     <div class="encabezado-acciones">
-      <app-theme-toggle></app-theme-toggle>
       @if (!mostrarFormulario) {
         <button mat-flat-button color="primary" (click)="nuevoUsuario()">
           <mat-icon>person_add</mat-icon>
@@ -139,7 +135,8 @@
                 <mat-icon>edit</mat-icon>
               </button>
               <button mat-icon-button color="warn" (click)="eliminarUsuario(u)"
-                      [disabled]="esUsuarioActual(u)" aria-label="Eliminar usuario">
+                      [disabled]="esUsuarioActual(u)" disabledInteractive aria-label="Eliminar usuario"
+                      [title]="esUsuarioActual(u) ? 'No podés eliminar tu propio usuario' : 'Eliminar usuario'">
                 <mat-icon>delete</mat-icon>
               </button>
             </td>

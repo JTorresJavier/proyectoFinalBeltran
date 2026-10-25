@@ -15,7 +15,7 @@
     <!-- EVENT BINDING: muestra el formulario al hacer click -->
     <button mat-raised-button color="primary" (click)="nuevoProducto()">
       <mat-icon>add</mat-icon>
-      Nuevo Producto
+      Nuevo producto
     </button>
   </div>
 
@@ -28,7 +28,7 @@
       <!-- Título dinámico según modo edición o creación -->
       <mat-card-header>
         <mat-card-title>
-          {{ modoEdicion ? '✏️ Editar Producto' : '➕ Nuevo Producto' }}
+          {{ modoEdicion ? 'Editar producto' : 'Nuevo producto' }}
         </mat-card-title>
       </mat-card-header>
 
@@ -74,9 +74,9 @@
             <mat-form-field appearance="outline" class="campo-flex">
               <mat-label>Precio</mat-label>
               <input matInput type="number" formControlName="precio"/>
-              <span matPrefix>$&nbsp;</span>
+              <span matTextPrefix>$&nbsp;</span>
               @if (precio.invalid && precio.touched) {
-                <mat-error>Precio obligatorio y mayor a 0.</mat-error>
+                <mat-error>El precio es obligatorio y tiene que ser mayor a $0.</mat-error>
               }
             </mat-form-field>
 
@@ -85,7 +85,7 @@
               <mat-label>Stock</mat-label>
               <input matInput type="number" formControlName="stock"/>
               @if (stock.invalid && stock.touched) {
-                <mat-error>Stock obligatorio y mayor a 0.</mat-error>
+                <mat-error>El stock es obligatorio y no puede ser negativo.</mat-error>
               }
             </mat-form-field>
 
@@ -111,7 +111,12 @@
             <!-- Campo descuento -->
             <mat-form-field appearance="outline" class="campo-flex">
               <mat-label>Descuento (%)</mat-label>
-              <input matInput type="number" formControlName="descuento"/>
+              <input matInput type="number" min="1" max="100" formControlName="descuento"/>
+              @if (formulario.hasError('descuentoInvalido')) {
+                <mat-hint class="hint-error">Con oferta, el descuento va de 1% a 100%.</mat-hint>
+              } @else if (descuento.disabled) {
+                <mat-hint>Activá la oferta para cargar un descuento.</mat-hint>
+              }
             </mat-form-field>
 
           </div>
@@ -119,9 +124,9 @@
           <!-- ── BOTONES ──────────────────────────── -->
           <div class="form-botones">
             <!-- Botón guardar -->
-            <button mat-raised-button color="primary" type="submit">
+            <button mat-raised-button color="primary" type="submit" [disabled]="guardando">
               <mat-icon>save</mat-icon>
-              {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+              {{ guardando ? 'Guardando…' : (modoEdicion ? 'Actualizar' : 'Guardar') }}
             </button>
             <!-- Botón cancelar — EVENT BINDING -->
             <button mat-stroked-button type="button" (click)="cancelar()">
@@ -148,7 +153,18 @@
       <mat-card-content>
         <!-- mat-table: tabla de Angular Material
              [dataSource]: array de productos     -->
-        <table mat-table [dataSource]="productos" class="tabla-completa">
+        <!-- Buscador de la tabla -->
+        <div class="tabla-herramientas">
+          <label class="tabla-buscador">
+            <mat-icon>search</mat-icon>
+            <input type="search" [value]="busqueda" (input)="buscar($any($event.target).value)"
+                   placeholder="Buscar por nombre o categoría" aria-label="Buscar producto" />
+          </label>
+          <span class="tabla-conteo">{{ dataSource.filteredData.length }} de {{ productos.length }} productos</span>
+        </div>
+
+        <div class="tabla-scroll">
+        <table mat-table [dataSource]="dataSource" class="tabla-completa">
 
           <!-- ── COLUMNA NOMBRE ─────────────────── -->
           <ng-container matColumnDef="nombre">
@@ -186,7 +202,7 @@
               @if (p.stock === 0) {
                 <span class="stock-rojo">Sin stock</span>
               } @else if (p.stock < 5) {
-                <span class="stock-naranja">{{ p.stock }} ⚠️</span>
+                <span class="stock-naranja">{{ p.stock }} <mat-icon class="stock-alerta">warning_amber</mat-icon></span>
               } @else {
                 <span class="stock-verde">{{ p.stock }}</span>
               }
@@ -231,6 +247,18 @@
           <tr mat-row *matRowDef="let row; columns: columnasTabla;"></tr>
 
         </table>
+        </div>
+
+        <!-- Paginador de Angular Material -->
+        <mat-paginator [pageSizeOptions]="[10, 25, 50]" [pageSize]="25" showFirstLastButtons
+                       aria-label="Páginas de productos"></mat-paginator>
+
+        @if (productos.length > 0 && dataSource.filteredData.length === 0) {
+          <div class="sin-productos">
+            <mat-icon>search_off</mat-icon>
+            <p>No hay productos que coincidan con “{{ busqueda }}”.</p>
+          </div>
+        }
 
         <!-- @empty equivalente: sin productos -->
         @if (productos.length === 0) {

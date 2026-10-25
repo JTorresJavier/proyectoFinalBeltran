@@ -5,7 +5,7 @@
 export function slugProducto(nombre: string): string {
   return nombre
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '') // Quita tildes
+    .replace(/[\u0300-\u036f]/g, '') // Quita tildes
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')     // Todo lo que no es letra o número → guion
     .replace(/^-|-$/g, '');          // Sin guiones al principio ni al final

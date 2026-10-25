@@ -2,18 +2,14 @@
 
   <div class="encabezado">
     <div class="titulo">
-      <button mat-icon-button routerLink="/admin/dashboard" aria-label="Volver al panel">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <h1>Recepcion de Mercaderia</h1>
+      <h1 class="pm-titulo-pagina">Recepción de mercadería</h1>
     </div>
 
     <div class="encabezado-acciones">
-      <app-theme-toggle></app-theme-toggle>
       @if (!mostrarFormulario) {
         <button mat-flat-button color="primary" (click)="nuevaRecepcion()">
           <mat-icon>add_box</mat-icon>
-          Registrar recepcion
+          Registrar recepción
         </button>
       }
     </div>
@@ -22,7 +18,7 @@
   @if (mostrarFormulario) {
     <mat-card class="tarjeta-formulario" [@formAnimation]>
       <mat-card-header>
-        <mat-card-title>Nueva recepcion</mat-card-title>
+        <mat-card-title>Nueva recepción</mat-card-title>
       </mat-card-header>
 
       <mat-card-content>
@@ -30,15 +26,22 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Producto</mat-label>
-            <mat-select formControlName="producto">
-              @for (p of productos; track p._id) {
-                <mat-option [value]="p._id">
-                  {{ p.nombre }} - stock actual: {{ p.stock }}
+            <!-- Autocompletado: se escribe parte del nombre y se elige de la lista -->
+            <input matInput [formControl]="busquedaProducto" [matAutocomplete]="listaProductos"
+                   placeholder="Escribí el nombre del producto" />
+            <mat-icon matSuffix>search</mat-icon>
+            <mat-autocomplete #listaProductos="matAutocomplete" [displayWith]="mostrarProducto"
+                              (optionSelected)="seleccionarProducto($event)">
+              @for (p of productosFiltrados; track p._id) {
+                <mat-option [value]="p">
+                  {{ p.nombre }} <small class="opcion-stock">· stock actual: {{ p.stock }}</small>
                 </mat-option>
+              } @empty {
+                <mat-option disabled>No hay productos con ese nombre</mat-option>
               }
-            </mat-select>
-            @if (producto?.hasError('required')) {
-              <mat-error>Elegi un producto</mat-error>
+            </mat-autocomplete>
+            @if (busquedaProducto.touched && producto?.hasError('required')) {
+              <mat-hint class="hint-error">Elegí un producto de la lista</mat-hint>
             }
           </mat-form-field>
 
@@ -57,8 +60,8 @@
             <input matInput formControlName="proveedor" placeholder="Ej: Distribuidora Norte" />
             @if (proveedor?.hasError('required')) {
               <mat-error>El proveedor es obligatorio</mat-error>
-            } @else if (proveedor?.hasError('minlength')) {
-              <mat-error>Minimo 2 caracteres</mat-error>
+            } @else if (proveedor?.hasError('pattern')) {
+              <mat-error>Mínimo 2 caracteres, sin contar espacios</mat-error>
             }
           </mat-form-field>
 
@@ -86,7 +89,7 @@
         <mat-spinner diameter="40"></mat-spinner>
       </div>
     } @else if (recepciones.length === 0) {
-      <p class="vacio">Todavia no hay recepciones registradas.</p>
+      <p class="vacio">Todavía no hay recepciones registradas.</p>
     } @else {
       <div class="contenedor-tabla">
         <table mat-table [dataSource]="recepciones">

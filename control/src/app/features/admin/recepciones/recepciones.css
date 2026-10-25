@@ -69,3 +69,12 @@ table {
   justify-content: flex-end;
   gap: 0.65rem;
 }
+
+/* Autocompletado de producto */
+.opcion-stock {
+  color: var(--pm-texto-suave);
+}
+
+.hint-error {
+  color: var(--pm-error);
+}

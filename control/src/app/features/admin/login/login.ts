@@ -121,8 +121,15 @@ export class LoginComponent {
             // Redirigimos al portal de inicio
             this.router.navigate(['/inicio']);
 
+          } else if (usuarios.length > 0) {
+            // Credenciales correctas pero el usuario está desactivado
+            this.snackBar.open(
+              'Tu usuario está desactivado. Pedile a un administrador que lo active.',
+              'Cerrar',
+              { duration: 4000, panelClass: 'snackbar--warning' }
+            );
           } else {
-            // Credenciales incorrectas o usuario inactivo
+            // Credenciales incorrectas
             this.snackBar.open(
               'Usuario o contraseña incorrectos',
               'Cerrar',

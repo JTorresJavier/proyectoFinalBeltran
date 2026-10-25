@@ -22,7 +22,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--pm-violeta-medio);
+  color: var(--pm-etiqueta);
 }
 
 .saludo h1 {
@@ -375,7 +375,7 @@
 
 .alerta.rojo {
   background: var(--pm-oferta-suave);
-  color: var(--pm-oferta) !important;
+  color: var(--pm-error) !important;
 }
 
 .alerta.ambar {
@@ -478,7 +478,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--pm-violeta-medio) !important;
+  color: var(--pm-etiqueta) !important;
 }
 
 .tarjeta h3 {

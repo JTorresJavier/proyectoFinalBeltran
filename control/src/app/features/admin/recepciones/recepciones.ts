@@ -2,7 +2,6 @@
 import { ChangeDetectorRef, Component, OnInit, inject, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 
 // ── ANGULAR MATERIAL ──────────────────────────
 import { MatCardModule } from '@angular/material/card';
@@ -10,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
@@ -22,7 +21,6 @@ import { AuthService } from '../../../core/services/auth.service';
 import { formAnimation } from '../../../form-animations';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmacionDialogComponent } from '../../../shared/components/confirmacion-dialog/confirmacion-dialog';
-import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 // ── DECORADOR ────────────────────────────────
 @Component({
@@ -31,16 +29,14 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    MatSelectModule,
+    MatAutocompleteModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    ThemeToggleComponent,
     MatTableModule,
     MatDialogModule,
   ],
@@ -70,9 +66,13 @@ export class RecepcionesComponent implements OnInit {
   formulario = new FormGroup({
     producto:      new FormControl('', [Validators.required]),
     cantidad:      new FormControl(1,  [Validators.required, Validators.min(1)]),
-    proveedor:     new FormControl('', [Validators.required, Validators.minLength(2)]),
+    // El proveedor se valida sin contar espacios: "  " no es un nombre
+    proveedor:     new FormControl('', [Validators.required, Validators.pattern(/^\s*\S.*\S\s*$/)]),
     observaciones: new FormControl(''),
   });
+
+  // Buscador del producto (autocompletado). El formulario guarda solo el _id.
+  busquedaProducto = new FormControl<string | Producto>('');
 
   get producto()  { return this.formulario.get('producto');  }
   get cantidad()  { return this.formulario.get('cantidad');  }
@@ -81,6 +81,27 @@ export class RecepcionesComponent implements OnInit {
   ngOnInit(): void {
     this.cargarProductos();
     this.cargarRecepciones();
+
+    // Si se vuelve a escribir después de elegir, el producto deja de estar elegido
+    this.busquedaProducto.valueChanges.subscribe(valor => {
+      if (typeof valor === 'string') this.formulario.controls.producto.setValue('');
+    });
+  }
+
+  // Hasta 30 coincidencias por nombre o categoría, sin importar tildes
+  get productosFiltrados(): Producto[] {
+    const valor = this.busquedaProducto.value;
+    const texto = this.normalizar(typeof valor === 'string' ? valor : valor?.nombre ?? '');
+    return this.productos
+      .filter(p => !texto || this.normalizar(`${p.nombre} ${p.categoria}`).includes(texto))
+      .slice(0, 30);
+  }
+
+  mostrarProducto = (p: Producto | string | null): string => (typeof p === 'string' ? p : p?.nombre ?? '');
+
+  seleccionarProducto(evento: MatAutocompleteSelectedEvent): void {
+    const p = evento.option.value as Producto;
+    this.formulario.controls.producto.setValue(p._id ?? '');
   }
 
   cargarProductos(): void {
@@ -117,12 +138,14 @@ export class RecepcionesComponent implements OnInit {
 
   nuevaRecepcion(): void {
     this.formulario.reset({ cantidad: 1 });
+    this.busquedaProducto.reset('');
     this.mostrarFormulario = true;
   }
 
   guardarRecepcion(): void {
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
+      this.busquedaProducto.markAsTouched();
       return;
     }
 
@@ -134,7 +157,7 @@ export class RecepcionesComponent implements OnInit {
       producto:       idProducto,
       productoNombre: productoSeleccionado?.nombre || '',
       cantidad:       this.formulario.value.cantidad!,
-      proveedor:      this.formulario.value.proveedor!,
+      proveedor:      this.formulario.value.proveedor!.trim(),
       observaciones:  this.formulario.value.observaciones || '',
       usuario:        usuarioActual?.nombre || '',
     };
@@ -147,8 +170,8 @@ export class RecepcionesComponent implements OnInit {
         this.cargarProductos();
       },
       error: (err) => {
-        console.error('Error registrando recepción:', err);
-        this.snackBar.open('Error al registrar la recepción', 'Cerrar', { duration: 3000, panelClass: 'snackbar--error' });
+        const motivo = err.status === 0 ? 'sin conexión con el servidor' : (err.error?.error ?? 'error del servidor');
+        this.snackBar.open(`No se pudo registrar la recepción: ${motivo}`, 'Cerrar', { duration: 4000, panelClass: 'snackbar--error' });
       }
     });
   }
@@ -158,7 +181,7 @@ export class RecepcionesComponent implements OnInit {
       width: 'min(420px, calc(100vw - 32px))',
       data: {
         titulo: 'Eliminar recepción',
-        mensaje: `¿Querés eliminar el registro de “${recepcion.productoNombre}”? Esta acción no se puede deshacer.`,
+        mensaje: `¿Querés eliminar el registro de “${recepcion.productoNombre}”? Es una corrección del historial: el stock que ya se sumó no se descuenta.`,
       },
     }).afterClosed().subscribe((confirmado) => {
       if (!confirmado) return;
@@ -179,5 +202,11 @@ export class RecepcionesComponent implements OnInit {
   cancelar(): void {
     this.mostrarFormulario = false;
     this.formulario.reset();
+    this.busquedaProducto.reset('');
+  }
+
+  // Búsqueda sin tildes ni mayúsculas
+  private normalizar(texto: string): string {
+    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   }
 }

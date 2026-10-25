@@ -2,18 +2,9 @@
 import { Injectable, inject } from '@angular/core'; // Decorador e inyección
 import { HttpClient } from '@angular/common/http';  // Para llamadas HTTP
 import { Observable, BehaviorSubject } from 'rxjs'; // Para manejar respuestas asíncronas
-
-// ── INTERFACE ────────────────────────────────
-// Define la forma de un Usuario
-export interface Usuario {
-  _id?: string;       // ← MongoDB usa _id
-  id?: string;         // ← compatibilidad
-  nombre: string;    // Nombre completo
-  usuario: string;   // Nombre de usuario para login
-  password: string;  // Contraseña
-  rol: string;       // 'admin', 'empleado', 'cajero', 'repositor'
-  activo: boolean;   // Si el usuario está activo
-}
+import { environment } from '../../../environments/environment'; // URL base de la API
+import { Usuario } from '../models/usuario.model';
+export type { Usuario } from '../models/usuario.model'; // Se re-exporta para los componentes
 
 // ── DECORADOR ────────────────────────────────
 // Servicio que maneja la autenticación y sesión.
@@ -26,7 +17,7 @@ export class AuthService {
 
   // ── CONFIGURACIÓN ─────────────────────────
   private http = inject(HttpClient);   // Inyectamos HttpClient
-  private apiUrl = 'https://storehub-api-t6br.onrender.com/api/usuarios'; // URL base
+  private apiUrl = `${environment.apiUrl}/usuarios`; // URL base
   private claveStorage = 'storehub_usuario'; // Clave en LocalStorage
   
   // ── ESTADO REACTIVO DE SESIÓN ─────────────
@@ -39,10 +30,19 @@ export class AuthService {
   // Observable público — los componentes se suscriben a esto, nunca al Subject directo
   usuarioActual$ = this.usuarioActualSubject.asObservable();
 
-  // Lee el usuario del LocalStorage (uso interno, para inicializar el Subject)
+  // Lee el usuario del LocalStorage (uso interno, para inicializar el Subject).
+  // Si el dato está corrupto o incompleto se descarta: mejor pedir login
+  // que dejar la app sin arrancar.
   private leerUsuarioDeStorage(): Usuario | null {
-    const datos = localStorage.getItem(this.claveStorage);
-    return datos ? JSON.parse(datos) : null;
+    try {
+      const datos = localStorage.getItem(this.claveStorage);
+      const usuario = datos ? JSON.parse(datos) : null;
+      if (usuario && typeof usuario.rol === 'string' && typeof usuario.nombre === 'string') {
+        return usuario;
+      }
+    } catch { /* JSON inválido */ }
+    localStorage.removeItem(this.claveStorage);
+    return null;
   }
 
   // ── MÉTODOS DE SESIÓN ─────────────────────
@@ -55,8 +55,7 @@ export class AuthService {
 
   // Recupera el usuario guardado en LocalStorage
   obtenerUsuario(): Usuario | null {
-    const datos = localStorage.getItem(this.claveStorage);
-    return datos ? JSON.parse(datos) : null;
+    return this.leerUsuarioDeStorage();
   }
 
   // Verifica si hay una sesión activa

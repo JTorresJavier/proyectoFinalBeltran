@@ -118,6 +118,8 @@
     }
     </section>
 
+    <!-- Solo el admin puede abrir estadísticas (adminGuard) -->
+    @if (usuarioLogueado?.rol === 'admin') {
     <a class="estadisticas-link" routerLink="/admin/estadisticas" aria-label="Abrir dashboard estadístico">
       <mat-card class="estadisticas-card pm-neon">
         <mat-card-content>
@@ -131,6 +133,7 @@
         </mat-card-content>
       </mat-card>
     </a>
+    }
   </div>
 
   <!-- ── ACCESOS RÁPIDOS ───────────────────
