@@ -1,0 +1,162 @@
+<!-- ── PORTAL INTERNO DE PREMIUM MARKET ────────
+     1. Saludo y resumen del día
+     2. Carrusel de promociones vigentes
+     3. Qué aplicar hoy en caja + alertas de stock
+     4. Ofertas activas en góndola (con fotos)
+     5. Accesos rápidos según el rol               -->
+
+<div class="contenedor portal">
+
+  <!-- ── 1. SALUDO ───────────────────────────── -->
+  <section class="saludo">
+    <div>
+      <p class="saludo-fecha">{{ hoy | date:"EEEE d 'de' MMMM" | titlecase }}</p>
+      <h1>{{ saludo }}, {{ primerNombre }}</h1>
+    </div>
+    <div class="saludo-chips">
+      <a class="chip pm-neon" href="#promos-hoy" (click)="irAPromos($event)"><mat-icon>campaign</mat-icon> {{ promosHoy.length }} promos aplican hoy</a>
+      <a class="chip pm-neon" routerLink="/catalogo"><mat-icon>inventory_2</mat-icon> {{ totalProductos }} productos</a>
+    </div>
+  </section>
+
+  <!-- ── 2. CARRUSEL DE PROMOCIONES ──────────────
+       Banners tipo cartel de supermercado con las fotos
+       de los productos incluidos en cada promo.      -->
+  <section class="carrusel" aria-roledescription="carrusel" aria-label="Promociones vigentes">
+    <div class="carrusel-track" [style.transform]="'translateX(-' + (slideActivo * 100) + '%)'">
+      @for (promo of promociones; track promo.id; let i = $index) {
+        <article class="cartel pm-cartel" [class.tinta-oscura]="promo.tinta === 'oscura'"
+                 [style.background]="promo.fondo"
+                 [attr.aria-hidden]="i !== slideActivo">
+          <div class="cartel-texto">
+            <span class="cartel-etiqueta">
+              {{ promo.etiqueta }}
+              @if (esHoy(promo)) { <b class="cartel-hoy">Hoy</b> }
+            </span>
+            <p class="cartel-destacado">{{ promo.destacado }}</p>
+            <p class="cartel-titulo">{{ promo.titulo }}</p>
+            <p class="cartel-detalle">{{ promo.detalle }}</p>
+            <span class="cartel-dias"><mat-icon>event</mat-icon> {{ textoDias(promo.dias) }}</span>
+          </div>
+          <div class="cartel-productos">
+            @for (nombre of promo.productos; track nombre) {
+              <span class="cartel-producto">
+                <app-producto-imagen [nombre]="nombre" icono="shopping_bag" />
+              </span>
+            }
+          </div>
+        </article>
+      }
+    </div>
+
+    <button class="carrusel-flecha izq" (click)="mover(-1)" aria-label="Promoción anterior">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <button class="carrusel-flecha der" (click)="mover(1)" aria-label="Promoción siguiente">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+
+    <div class="carrusel-dots">
+      @for (promo of promociones; track promo.id; let i = $index) {
+        <button [class.activo]="i === slideActivo" (click)="irA(i)" [attr.aria-label]="'Ver ' + promo.etiqueta"></button>
+      }
+    </div>
+  </section>
+
+  <!-- ── 3. HOY EN CAJA + ALERTAS ──────────────── -->
+  <div class="fila-dos">
+    <section class="panel" id="promos-hoy">
+      <h2><mat-icon>point_of_sale</mat-icon> Promociones de hoy</h2>
+      @if (promosHoy.length === 0) {
+        <p class="nota">Hoy no hay promociones especiales. Rigen las ofertas de góndola.</p>
+      } @else {
+        <p class="nota">Las ofertas de góndola ya se descuentan solas. Estas promos no: fijate cómo se aplica cada una.</p>
+      }
+      <ul class="promos-hoy">
+        @for (promo of promosHoy; track promo.id) {
+          <li>
+            <span class="promo-valor" [style.background]="promo.tinta === 'clara' ? promo.fondo : '#6B2D8C'">{{ promo.destacado }}</span>
+            <div>
+              <strong>{{ promo.destacado }} {{ promo.titulo }}</strong>
+              <p>{{ promo.detalle }}</p>
+              <span class="como-aplica" [class.en-caja]="comoSeAplica(promo).enCaja">
+                <mat-icon>{{ comoSeAplica(promo).icono }}</mat-icon> {{ comoSeAplica(promo).texto }}
+              </span>
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="panel alertas">
+      <h2><mat-icon>notifications_active</mat-icon> Alertas de stock</h2>
+      <a class="alerta rojo" routerLink="/catalogo" [queryParams]="{ stock: 'agotado' }">
+        <span class="alerta-numero">{{ sinStock }}</span>
+        <span>productos sin stock</span>
+        <mat-icon>chevron_right</mat-icon>
+      </a>
+      <a class="alerta ambar" routerLink="/catalogo" [queryParams]="{ stock: 'bajo' }">
+        <span class="alerta-numero">{{ stockBajo }}</span>
+        <span>con menos de 5 unidades</span>
+        <mat-icon>chevron_right</mat-icon>
+      </a>
+      @if (puedePedir) {
+        <a mat-stroked-button routerLink="/admin/pedidos" class="btn-pedido">
+          <mat-icon>assignment</mat-icon> Armar pedido de reposición
+        </a>
+      }
+    </section>
+  </div>
+
+  <!-- ── 4. OFERTAS ACTIVAS ─────────────────────── -->
+  <section class="seccion">
+    <div class="seccion-titulo">
+      <h2>Ofertas activas en góndola</h2>
+      <a routerLink="/catalogo" [queryParams]="{ ofertas: 1 }">Ver todas <mat-icon>arrow_forward</mat-icon></a>
+    </div>
+
+    @if (cargando) {
+      <div class="ofertas-fila">
+        @for (n of [1, 2, 3, 4, 5, 6]; track n) { <div class="tarjeta esqueleto"></div> }
+      </div>
+    } @else {
+      <div class="ofertas-fila">
+        @for (p of ofertas; track p._id ?? p.nombre) {
+          <article class="tarjeta">
+            <span class="tarjeta-descuento">-{{ p.descuento }}%</span>
+            <div class="tarjeta-foto">
+              <app-producto-imagen [nombre]="p.nombre" [icono]="p.icono" />
+            </div>
+            <span class="tarjeta-categoria">{{ p.categoria }}</span>
+            <h3>{{ p.nombre }}</h3>
+            <div class="tarjeta-precios">
+              <span class="precio-anterior">{{ p.precio | currency:'ARS':'symbol-narrow':'1.0-0' }}</span>
+              <span class="precio-final">{{ precioFinal(p.precio, p.descuento) | currency:'ARS':'symbol-narrow':'1.0-0' }}</span>
+            </div>
+            <span class="tarjeta-stock" [class.bajo]="p.stock < 5">
+              {{ p.stock === 0 ? 'Sin stock' : p.stock + ' u. en stock' }}
+            </span>
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- ── 5. ACCESOS RÁPIDOS ─────────────────────── -->
+  <section class="seccion">
+    <div class="seccion-titulo">
+      <h2>Accesos rápidos</h2>
+    </div>
+    <div class="accesos">
+      @for (acceso of accesosDelRol; track acceso.ruta) {
+        <a class="acceso" [routerLink]="acceso.ruta">
+          <span class="acceso-icono"><mat-icon>{{ acceso.icono }}</mat-icon></span>
+          <span class="acceso-texto">
+            <strong>{{ acceso.label }}</strong>
+            <span>{{ acceso.descripcion }}</span>
+          </span>
+        </a>
+      }
+    </div>
+  </section>
+</div>

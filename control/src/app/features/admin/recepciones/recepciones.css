@@ -60,7 +60,7 @@ table {
 .vacio {
   text-align: center;
   padding: 32px;
-  color: #666;
+  color: var(--pm-texto-suave);
 }
 
 .encabezado-acciones {

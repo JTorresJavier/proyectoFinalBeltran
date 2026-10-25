@@ -15,14 +15,13 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
+import { ProductoImagenComponent } from '../../../shared/components/producto-imagen/producto-imagen';
 import { MatChipsModule } from '@angular/material/chips';
 
 // ── SERVICIOS ─────────────────────────────────
 import { ProductosService, Producto } from '../../../core/services/productos.service';
-import { RouterLink } from '@angular/router';
 import { formAnimation } from '../../../form-animations';
 import { ConfirmacionDialogComponent } from '../../../shared/components/confirmacion-dialog/confirmacion-dialog';
-import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 // ── DECORADOR ────────────────────────────────
 // Página de gestión de productos del administrador.
@@ -33,7 +32,6 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -45,8 +43,8 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
     MatSnackBarModule,
     MatProgressSpinnerModule,
     MatTableModule,
+    ProductoImagenComponent,
     MatChipsModule,
-    ThemeToggleComponent,
   ],
   templateUrl: './productos.html',
   styleUrl: './productos.css',

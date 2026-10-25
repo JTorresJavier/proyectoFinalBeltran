@@ -1,16 +1,12 @@
-/* ── HEADER ──────────────────────────────────
-   Barra superior azul con info del cajero     */
+/* ── BARRA DE CAJA ───────────────────────────
+   Va debajo del header global (no es sticky)  */
 .caja-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 1.5rem;
-  background: #1976d2;
+  padding: 0.6rem 1.5rem;
+  background: #43185C;
   color: white;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   flex-wrap: wrap;
   gap: 0.5rem;
 }
@@ -84,7 +80,7 @@
 /* ── APERTURA DE CAJA ────────────────────────
    Descripción en la pantalla de apertura      */
 .apertura-desc {
-  color: #666;
+  color: var(--pm-texto-suave);
   margin-bottom: 1rem;
   font-size: 0.95rem;
 }
@@ -106,14 +102,15 @@
 
 .total-label-small {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--pm-texto-suave);
 }
 
 /* ── TOTAL REAL ──────────────────────────────
    Total sin redondear                         */
 .total-real {
   font-size: 1.5rem;
-  color: #666;
+  line-height: 1.2;
+  color: var(--pm-texto-suave);
   text-decoration: line-through; /* Tachado — no es lo que se cobra */
 }
 
@@ -121,8 +118,9 @@
    Total redondeado a $50 — lo que se cobra    */
 .total-grande {
   font-size: 2.8rem;
+  line-height: 1.1;
   font-weight: bold;
-  color: #1976d2;
+  color: var(--pm-acento);
 }
 
 /* ── DIFERENCIA DE VENTA ─────────────────────
@@ -145,15 +143,15 @@
   gap: 0.4rem;
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  background: #f5f5f5;
+  background: var(--pm-bg);
   font-size: 0.9rem;
-  color: #555;
+  color: var(--pm-texto-suave);
 }
 
 /* ── COLORES POSITIVO/NEGATIVO ───────────────
    Verde para positivo, rojo para negativo     */
-.positivo { background: #e8f5e9; color: #388e3c; }
-.negativo { background: #ffebee; color: #e53935; }
+.positivo { background: var(--pm-ok-suave); color: var(--pm-ok); }
+.negativo { background: var(--pm-oferta-suave); color: var(--pm-error); }
 
 /* ── SECCIÓN EFECTIVO ────────────────────────
    Calculadora de efectivo y vuelto            */
@@ -163,7 +161,7 @@
 
 .label-montos {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--pm-texto-suave);
   margin-bottom: 0.5rem;
 }
 
@@ -183,7 +181,7 @@
 
 /* Botón seleccionado en montos rápidos */
 .montos-rapidos button.seleccionado {
-  background: #1976d2;
+  background: #6B2D8C;
   color: white;
 }
 
@@ -202,8 +200,8 @@
   margin-bottom: 0.8rem;
 }
 
-.vuelto-ok    { background: #e8f5e9; }
-.vuelto-error { background: #ffebee; }
+.vuelto-ok    { background: var(--pm-ok-suave); }
+.vuelto-error { background: var(--pm-oferta-suave); }
 
 .vuelto-label { font-weight: bold; font-size: 1rem; }
 
@@ -215,14 +213,14 @@
 /* ── BILLETES SUGERIDOS ──────────────────────
    Muestra los billetes para dar de vuelto    */
 .billetes-sugeridos {
-  background: #f5f5f5;
+  background: var(--pm-bg);
   border-radius: 8px;
   padding: 0.8rem;
 }
 
 .billetes-titulo {
   font-size: 0.85rem;
-  color: #555;
+  color: var(--pm-texto-suave);
   margin-bottom: 0.5rem;
   font-weight: bold;
 }
@@ -234,8 +232,8 @@
 }
 
 .billete-item {
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-linea);
   border-radius: 6px;
   padding: 0.3rem 0.7rem;
   display: flex;
@@ -243,13 +241,13 @@
   align-items: center;
 }
 
-.billete-cantidad { color: #1976d2; font-weight: bold; }
-.billete-monto    { color: #333; font-size: 0.9rem; }
+.billete-cantidad { color: var(--pm-acento); font-weight: bold; }
+.billete-monto    { color: var(--pm-texto); font-size: 0.9rem; }
 
 /* ── RESUMEN DE ITEMS ────────────────────────
    Cantidad de items en el cobro              */
 .resumen-items {
-  color: #888;
+  color: var(--pm-texto-suave);
   font-size: 0.85rem;
   margin-top: 0.5rem;
 }
@@ -279,7 +277,7 @@
 
 .cierre-subtitulo {
   font-weight: bold;
-  color: #555;
+  color: var(--pm-texto-suave);
   font-size: 0.9rem;
   margin-top: 0.5rem;
 }
@@ -310,7 +308,7 @@
   right: 0;
   width: 320px;
   height: calc(100vh - 64px);
-  background: white;
+  background: var(--pm-surface);
   box-shadow: -4px 0 16px rgba(0,0,0,0.15);
   z-index: 150;
   display: flex;
@@ -328,8 +326,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border-bottom: 1px solid #eee;
-  background: #f5f5f5;
+  border-bottom: 1px solid var(--pm-linea);
+  background: var(--pm-bg);
 }
 
 .historial-header h3 { margin: 0; font-size: 1rem; }
@@ -343,7 +341,7 @@
 /* Item de venta en el historial */
 .historial-item {
   padding: 0.7rem;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--pm-linea);
   border-radius: 6px;
   margin-bottom: 0.3rem;
 }
@@ -355,9 +353,9 @@
   margin-bottom: 0.2rem;
 }
 
-.historial-hora    { color: #888; font-size: 0.85rem; }
-.historial-metodo  { color: #555; font-size: 0.85rem; text-transform: capitalize; }
-.historial-total   { font-weight: bold; color: #1976d2; }
+.historial-hora    { color: var(--pm-texto-suave); font-size: 0.85rem; }
+.historial-metodo  { color: var(--pm-texto-suave); font-size: 0.85rem; text-transform: capitalize; }
+.historial-total   { font-weight: bold; color: var(--pm-acento); }
 
 .historial-diferencia {
   font-size: 0.8rem;
@@ -369,7 +367,7 @@
 
 .historial-vacio {
   text-align: center;
-  color: #ccc;
+  color: var(--pm-texto-suave);
   padding: 2rem;
 }
 
@@ -377,12 +375,12 @@
   display: flex;
   justify-content: space-between;
   padding: 1rem;
-  border-top: 2px solid #1976d2;
+  border-top: 2px solid #6B2D8C;
   font-size: 1rem;
-  background: #f5f5f5;
+  background: var(--pm-bg);
 }
 
-.historial-total-dia strong { color: #1976d2; }
+.historial-total-dia strong { color: var(--pm-acento); }
 
 /* ── CONTENIDO PRINCIPAL ─────────────────────
    Grid de dos paneles: productos y carrito    */
@@ -405,11 +403,11 @@
 .panel-productos {
   padding: 1.2rem;
   overflow-y: auto;
-  background: #f5f5f5;
-  border-right: 1px solid #ddd;
+  background: var(--pm-bg);
+  border-right: 1px solid var(--pm-linea);
 }
 
-.panel-productos h2 { font-size: 1.2rem; margin-bottom: 0.8rem; color: #333; }
+.panel-productos h2 { font-size: 1.2rem; margin-bottom: 0.8rem; color: var(--pm-texto); }
 
 .buscador { width: 100%; margin-bottom: 0.8rem; }
 
@@ -422,7 +420,7 @@
 }
 
 .producto-item {
-  background: white;
+  background: var(--pm-surface);
   border-radius: 8px;
   padding: 0.7rem;
   text-align: center;
@@ -433,27 +431,27 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.producto-item:hover  { border-color: #1976d2; transform: translateY(-2px); }
+.producto-item:hover  { border-color: #6B2D8C; transform: translateY(-2px); }
 .producto-item:active { transform: scale(0.97); }
 
-.producto-icono  { font-size: 1.8rem; width: 1.8rem; height: 1.8rem; color: #1976d2; }
-.producto-nombre { font-size: 0.8rem; font-weight: 600; color: #333; margin: 0.2rem 0; line-height: 1.2; }
-.producto-precio { font-size: 0.95rem; font-weight: bold; color: #1976d2; }
-.producto-stock  { font-size: 0.7rem; color: #999; }
+.producto-foto   { display: block; width: 72px; height: 72px; margin: 0 auto 0.3rem; border-radius: 8px; overflow: hidden; }
+.producto-nombre { font-size: 0.8rem; font-weight: 600; color: var(--pm-texto); margin: 0.2rem 0; line-height: 1.2; }
+.producto-precio { font-size: 0.95rem; font-weight: bold; color: var(--pm-acento); }
+.producto-stock  { font-size: 0.7rem; color: var(--pm-texto-suave); }
 
 .oferta-badge {
   position: absolute; top: 4px; right: 4px;
-  background: #e53935; color: white;
+  background: var(--pm-oferta); color: white;
   font-size: 0.65rem; font-weight: bold;
   padding: 2px 5px; border-radius: 8px;
 }
 
-.sin-productos { grid-column: 1/-1; text-align: center; padding: 2rem; color: #bbb; }
+.sin-productos { grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--pm-texto-suave); }
 
 /* ── PANEL CARRITO ───────────────────────────
    Derecha: items y total                     */
 .panel-carrito {
-  background: white;
+  background: var(--pm-surface);
   display: flex;
   flex-direction: column;
   padding: 1.2rem;
@@ -470,14 +468,14 @@
 
 .carrito-header h2 {
   font-size: 1.2rem;
-  color: #333;
+  color: var(--pm-texto);
   display: flex;
   align-items: center;
   gap: 0.4rem;
 }
 
 .carrito-badge {
-  background: #1976d2; color: white;
+  background: #6B2D8C; color: white;
   border-radius: 50%;
   width: 22px; height: 22px;
   display: flex; align-items: center; justify-content: center;
@@ -488,11 +486,11 @@
   flex: 1;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  color: #ccc; gap: 0.4rem;
+  color: var(--pm-texto-suave); gap: 0.4rem;
 }
 
 .carrito-vacio mat-icon { font-size: 3.5rem; width: 3.5rem; height: 3.5rem; }
-.carrito-vacio-sub { font-size: 0.8rem; color: #bbb; }
+.carrito-vacio-sub { font-size: 0.8rem; color: var(--pm-texto-suave); }
 
 .carrito-items { flex: 1; overflow-y: auto; margin-bottom: 0.8rem; }
 
@@ -501,7 +499,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.4rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--pm-linea);
 }
 
 .item-info {
@@ -523,7 +521,7 @@
 }
 
 .item-subtotal {
-  font-weight: bold; color: #1976d2;
+  font-weight: bold; color: var(--pm-acento);
   font-size: 0.85rem; min-width: 65px; text-align: right;
 }
 
@@ -541,12 +539,12 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--pm-texto-suave);
 }
 
 .carrito-total-fila.redondeado {
   font-size: 1rem;
-  color: #333;
+  color: var(--pm-texto);
   font-weight: bold;
 }
 

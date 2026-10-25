@@ -20,8 +20,8 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { ProductosService, Producto } from '../../../core/services/productos.service';
 import { AuthService, Usuario } from '../../../core/services/auth.service';
 import { CajaService, Venta } from '../../../core/services/caja.service';
-import { Router, RouterLink } from '@angular/router';
-import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
+import { Router } from '@angular/router';
+import { ProductoImagenComponent } from '../../../shared/components/producto-imagen/producto-imagen';
 
 // ── INTERFACE ────────────────────────────────
 interface ItemCarrito {
@@ -36,7 +36,7 @@ interface ItemCarrito {
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink,
+    ProductoImagenComponent,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -48,7 +48,6 @@ interface ItemCarrito {
     MatChipsModule,
     MatTableModule,
     MatBadgeModule,
-    ThemeToggleComponent,
   ],
   templateUrl: './caja.html',
   styleUrl: './caja.css'

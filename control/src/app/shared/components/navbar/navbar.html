@@ -1,75 +1,72 @@
-<!-- ── NAVBAR DE STOREHUB ─────────────────────
-     Barra de navegación principal.
-     Se muestra en todas las páginas públicas.
-     Contiene: logo, links del menú y estado de sesión -->
+<!-- ── HEADER INTERNO DE PREMIUM MARKET ────────
+     Fila 1 (violeta): logo, buscador, pedido y usuario.
+     Fila 2 (blanca): módulos habilitados para el rol. -->
+@if (usuarioActual$ | async; as usuario) {
+  <header class="pm-header">
 
-<!-- ── TOOLBAR MATERIAL ───────────────────────
-     mat-toolbar: componente de Angular Material
-     color="primary": usa el color primario del tema -->
-<mat-toolbar color="primary">
+    <div class="barra-principal">
+      <div class="contenedor fila">
 
-  <!-- ── LOGO / NOMBRE ──────────────────────────
-       Click en el logo lleva al inicio           -->
-  <a routerLink="/inicio" class="navbar-logo">
-    <mat-icon>store</mat-icon> <!-- Ícono de tienda -->
-    <span>StoreHub</span>      <!-- Nombre de la app -->
-  </a>
+        <!-- Logo: vuelve al portal de inicio -->
+        <a routerLink="/inicio" class="logo" aria-label="Premium Market — Inicio">
+          <img src="/marca/premium-market-horizontal-negativo.svg" alt="Premium Market" width="168" height="48" />
+        </a>
 
-  <!-- ── SEPARADOR ──────────────────────────────
-       Empuja los links hacia la derecha          -->
-  <span class="spacer"></span>
+        <!-- Buscador: abre la consulta de precios filtrada -->
+        <form class="buscador" role="search" (ngSubmit)="buscar()">
+          <input
+            type="search"
+            name="q"
+            [(ngModel)]="busqueda"
+            placeholder="Buscar producto, marca o categoría"
+            aria-label="Buscar producto" />
+          <button type="submit" aria-label="Buscar">
+            <mat-icon>search</mat-icon>
+          </button>
+        </form>
 
-  <!-- ── LINKS DE NAVEGACIÓN ────────────────────
-       @for: genera un botón por cada link del array "linksCliente"
-       routerLinkActive: agrega clase "activo" al link de la página actual -->
-  @for (link of linksCliente; track link.ruta) {
-    <button
-      mat-button
-      [routerLink]="link.ruta"
-      routerLinkActive="link-activo">
-      {{ link.label }} <!-- Interpolación: muestra el nombre del link -->
-    </button>
-  }
+        <div class="acciones">
+          <span class="fecha">{{ hoy | date:'EEEE d MMM':'':'es-AR' | titlecase }}</span>
 
-  <!-- ── BOTÓN CARRITO ──────────────────────────
-       Badge reactivo con la cantidad de items.
-       Se oculta cuando el carrito está vacío.    -->
-  <button mat-icon-button
-          routerLink="/carrito"
-          aria-label="Carrito de compras"
-          [matBadge]="(cantidadCarrito$ | async) ?? 0"
-          matBadgeColor="warn"
-          matBadgeSize="small"
-          [matBadgeHidden]="(cantidadCarrito$ | async) === 0">
-    <mat-icon>shopping_cart</mat-icon>
-  </button>
+          @if (puedePedir(usuario.rol)) {
+            <a mat-icon-button routerLink="/admin/pedidos" class="accion"
+               title="Pedido a proveedor"
+               aria-label="Pedido a proveedor"
+               [matBadge]="(cantidadPedido$ | async) ?? 0"
+               matBadgeSize="small"
+               [matBadgeHidden]="(cantidadPedido$ | async) === 0">
+              <mat-icon>assignment</mat-icon>
+            </a>
+          }
 
-  <!-- ── ESTADO DE SESIÓN ────────────────────────
-       async pipe: se suscribe solo al observable y
-       se desuscribe solo al destruir el componente.
-       "usuario" queda disponible dentro del bloque @if -->
-  @if (usuarioActual$ | async; as usuario) {
+          <app-theme-toggle class="tema" aria-label="Tema de la página"></app-theme-toggle>
 
-    <!-- Hay sesión activa: nombre + acceso al panel + logout -->
-    <span class="navbar-usuario">{{ usuario.nombre }}</span>
+          <div class="usuario">
+            <span class="avatar" aria-hidden="true">{{ iniciales(usuario.nombre) }}</span>
+            <span class="usuario-datos">
+              <span class="usuario-nombre">{{ usuario.nombre }}</span>
+              <span class="usuario-rol">{{ usuario.rol | titlecase }}</span>
+            </span>
+          </div>
 
-    <a mat-icon-button routerLink="/admin/dashboard" title="Ir al panel">
-      <mat-icon>dashboard</mat-icon>
-    </a>
+          <button mat-icon-button class="accion" (click)="logout()" title="Cerrar sesión" aria-label="Cerrar sesión">
+            <mat-icon>logout</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
 
-    <button mat-icon-button (click)="logout()" title="Cerrar sesión">
-      <mat-icon>logout</mat-icon>
-    </button>
-
-  } @else {
-
-    <!-- No hay sesión: botón para ir al login -->
-    <a mat-icon-button routerLink="/login" title="Administrador">
-      <mat-icon>admin_panel_settings</mat-icon>
-    </a>
-
-  }
-
-  <app-theme-toggle aria-label="Tema de la página"></app-theme-toggle>
-
-</mat-toolbar>
+    <!-- ── MÓDULOS ─────────────────────────────
+         routerLinkActive marca el módulo de la pantalla actual -->
+    <nav class="barra-modulos" aria-label="Módulos">
+      <div class="contenedor modulos">
+        @for (modulo of modulosDe(usuario.rol); track modulo.ruta) {
+          <a [routerLink]="modulo.ruta" routerLinkActive="activo" class="modulo">
+            <mat-icon>{{ modulo.icono }}</mat-icon>
+            <span>{{ modulo.label }}</span>
+          </a>
+        }
+      </div>
+    </nav>
+  </header>
+}

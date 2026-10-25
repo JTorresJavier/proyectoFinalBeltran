@@ -16,7 +16,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; /
 import { AuthService, Usuario } from '../../../core/services/auth.service';
 import { ProductosService } from '../../../core/services/productos.service';
 import { DolarService, Cotizacion } from '../../../core/services/dolar.service';
-import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
 
 type ClaveEstadistica = 'totalProductos' | 'stockBajo' | 'enOferta' | 'sinStock';
 
@@ -36,7 +35,6 @@ type ClaveEstadistica = 'totalProductos' | 'stockBajo' | 'enOferta' | 'sinStock'
     MatListModule,
     MatChipsModule,
     MatProgressSpinnerModule,
-    ThemeToggleComponent,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'

@@ -1,98 +1,203 @@
 /* ── CONTENEDOR PRINCIPAL ────────────────────
-   Centra la card en toda la pantalla          */
+   Dos columnas: marca a la izquierda, formulario a la derecha */
 .login-contenedor {
   position: relative;
-  min-height: 100vh;       /* Ocupa toda la altura de la pantalla */
-  display: flex;           /* Flexbox para centrar */
-  align-items: center;     /* Centrado vertical */
-  justify-content: center; /* Centrado horizontal */
-  background: linear-gradient(135deg, #1976d2, #42a5f5); /* Fondo degradado azul */
-  padding: 1rem;           /* Espaciado en mobile */
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+  background: var(--pm-bg);
+}
+
+/* ── PANEL DE MARCA ──────────────────────────
+   Violeta con el logo, los módulos y una góndola de productos */
+.login-marca {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 3rem clamp(2rem, 6vw, 5rem);
+  background: #6B2D8C;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* Brillo suave detrás del contenido */
+.login-marca::before {
+  content: '';
+  position: absolute;
+  inset: -20% -30% auto auto;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 166, 224, 0.35), transparent 65%);
+  pointer-events: none;
+}
+
+.marca-logo {
+  width: min(280px, 70%);
+  height: auto;
+}
+
+.login-marca h2 {
+  font-family: var(--pm-fuente-titulo);
+  font-weight: 500;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.15;
+  color: #fff !important;
+  max-width: 14ch;
+}
+
+.login-marca p {
+  color: #E4D2F0 !important;
+  max-width: 40ch;
+  font-size: 1rem;
+}
+
+.marca-modulos {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1.25rem;
+  max-width: 460px;
+}
+
+.marca-modulos li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff !important;
+}
+
+.marca-modulos mat-icon {
+  color: #C9A6E0 !important;
+}
+
+/* Fila de productos tipo góndola */
+.marca-gondola {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.6rem;
+  max-width: 520px;
+  margin-top: 0.75rem;
+}
+
+.gondola-item {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  background: #fff;
+  padding: 6px;
+  box-shadow: 0 6px 18px rgba(30, 10, 45, 0.25);
+  overflow: hidden;
 }
 
 /* ── CARD DEL FORMULARIO ─────────────────────
-   Tarjeta blanca que contiene el formulario   */
+   Tarjeta blanca centrada en la columna derecha */
 .login-card {
-  width: 100%;        /* Ancho completo */
-  max-width: 420px;   /* Ancho máximo */
-  padding: 1rem;      /* Espaciado interno */
-  border-radius: 12px !important; /* Bordes redondeados */
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2) !important; /* Sombra */
+  align-self: center;
+  justify-self: center;
+  width: calc(100% - 2rem);
+  max-width: 420px;
+  padding: 1.5rem 1rem 0.5rem;
+  border-radius: 16px !important;
+  border: 1px solid var(--pm-linea);
+  background: var(--pm-surface) !important;
+  box-shadow: var(--pm-sombra-hover) !important;
 }
 
 /* ── HEADER DEL LOGIN ────────────────────────
-   Logo, título y subtítulo centrados          */
+   Ícono, título y subtítulo centrados          */
 .login-header {
-  text-align: center;  /* Centrado */
-  width: 100%;         /* Ancho completo */
-  padding: 1rem 0;     /* Espaciado vertical */
+  text-align: center;
+  width: 100%;
+  padding: 0.5rem 0 1.25rem;
 }
 
-/* ── ÍCONO DEL LOGIN ─────────────────────────
-   Ícono de tienda grande y azul               */
 .login-icono {
-  font-size: 4rem;   /* Tamaño grande */
-  width: 4rem;       /* Ancho */
-  height: 4rem;      /* Alto */
-  color: #1976d2;    /* Color primario */
+  width: 56px;
+  height: 56px;
 }
 
-/* ── TÍTULO ──────────────────────────────────
-   Nombre de la app en el login                */
 .login-header h1 {
-  font-size: 2rem;     /* Grande */
-  color: #1976d2;      /* Color primario */
-  margin: 0.5rem 0;   /* Espaciado vertical */
+  font-family: var(--pm-fuente-titulo);
+  font-weight: 500;
+  font-size: 1.7rem;
+  color: var(--pm-violeta-oscuro);
+  margin: 0.75rem 0 0.25rem;
 }
 
-/* ── SUBTÍTULO ───────────────────────────────
-   "Panel de Administración"                   */
 .login-header p {
-  color: #666;        /* Gris */
-  font-size: 0.9rem;  /* Pequeño */
+  color: var(--pm-texto-suave);
+  font-size: 0.88rem;
 }
 
 /* ── CAMPOS DEL FORMULARIO ───────────────────
    Inputs que ocupan todo el ancho             */
 .campo-completo {
-  width: 100%;         /* Ancho completo */
-  margin-bottom: 0.5rem; /* Espacio entre campos */
+  width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 /* ── BOTÓN DE LOGIN ──────────────────────────
    Botón que ocupa todo el ancho               */
 .btn-login {
-  width: 100%;       /* Ancho completo */
-  padding: 0.8rem;   /* Espaciado interno */
-  font-size: 1rem;   /* Tamaño de texto */
-  margin-top: 0.5rem; /* Espacio arriba */
-  display: flex;      /* Ícono y texto en línea */
-  align-items: center; /* Centrado vertical */
-  justify-content: center; /* Centrado horizontal */
-  gap: 0.5rem;        /* Espacio entre ícono y texto */
+  width: 100%;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  border-radius: 999px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 /* ── FOOTER DEL LOGIN ────────────────────────
-   Link para volver al inicio                  */
+   Aviso de uso interno                        */
 .login-footer {
-  text-align: center; /* Centrado */
-  padding: 1rem;      /* Espaciado interno */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1rem;
+  font-size: 0.78rem;
+  color: var(--pm-texto-suave);
 }
 
-.login-footer a {
-  color: #1976d2;     /* Color primario */
-  text-decoration: none; /* Sin subrayado */
-  font-size: 0.9rem;  /* Pequeño */
-}
-
-.login-footer a:hover {
-  text-decoration: underline; /* Subrayado al hover */
+.login-footer mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--pm-violeta-medio);
 }
 
 .login-theme-toggle {
   position: absolute;
   top: 1rem;
   right: 1.25rem;
-  color: #fff;
   z-index: 2;
+}
+
+/* ── RESPONSIVE ──────────────────────────────
+   En pantallas chicas el panel de marca queda arriba y compacto */
+@media (max-width: 900px) {
+  .login-contenedor {
+    grid-template-columns: 1fr;
+  }
+
+  .login-marca {
+    padding: 2rem 1.5rem 2.5rem;
+  }
+
+  .marca-modulos,
+  .marca-gondola {
+    display: none;
+  }
+
+  .login-card {
+    margin: -1.5rem auto 2rem;
+  }
 }

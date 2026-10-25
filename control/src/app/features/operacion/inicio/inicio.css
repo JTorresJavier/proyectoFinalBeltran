@@ -1,0 +1,606 @@
+/* ── PORTAL INTERNO ─────────────────────────── */
+.portal {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding-top: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+/* ── 1. SALUDO ──────────────────────────────── */
+.saludo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.saludo-fecha {
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pm-violeta-medio);
+}
+
+.saludo h1 {
+  font-family: var(--pm-fuente-titulo);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.15;
+  color: var(--pm-violeta-oscuro);
+}
+
+.saludo-chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-linea);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+/* Los chips del saludo son links: neón al pasar el cursor (clase .pm-neon) */
+.chip {
+  border-radius: 999px;
+  color: var(--pm-texto) !important;
+  cursor: pointer;
+}
+
+.chip:hover {
+  background: var(--pm-violeta-suave);
+}
+
+/* El header fijo tapa el panel al llegar: dejamos margen arriba */
+#promos-hoy {
+  scroll-margin-top: 140px;
+}
+
+.chip mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--pm-violeta);
+}
+
+/* ── 2. CARRUSEL DE PROMOS ────────────────────
+   Las piezas se llaman "cartel" y no "banner": los bloqueadores
+   de anuncios ocultan cualquier elemento con la clase "banner". */
+.carrusel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: var(--pm-sombra);
+}
+
+.carrusel-track {
+  display: flex;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cartel {
+  flex: 0 0 100%;
+  min-height: 300px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 2rem;
+  padding: 2.25rem clamp(1.5rem, 6vw, 5rem);
+  color: #fff;
+}
+
+.cartel :is(p, span, b) {
+  color: inherit !important;
+}
+
+.cartel.tinta-oscura {
+  color: #43185C;
+  border: 1px solid var(--pm-borde);
+}
+
+.cartel-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cartel-etiqueta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.cartel .cartel-hoy {
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #6B2D8C !important;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+
+.cartel.tinta-oscura .cartel-hoy {
+  background: #6B2D8C;
+  color: #fff !important;
+}
+
+.cartel-destacado {
+  font-family: var(--pm-fuente-titulo);
+  font-size: clamp(3.2rem, 8vw, 5.8rem);
+  font-weight: 600;
+  line-height: 0.95;
+}
+
+.cartel-titulo {
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  line-height: 1.25;
+  font-weight: 600;
+  max-width: 22ch;
+}
+
+.cartel-detalle {
+  font-size: 0.85rem;
+  max-width: 46ch;
+  opacity: 0.85;
+}
+
+.cartel-dias {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.cartel-dias mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: inherit !important;
+}
+
+/* Productos en círculos blancos, como en los carteles de supermercado */
+.cartel-productos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cartel-producto {
+  width: clamp(110px, 13vw, 170px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff;
+  padding: clamp(14px, 1.8vw, 26px);
+  box-shadow: 0 10px 30px rgba(20, 5, 30, 0.25);
+  margin-left: -18px;
+  overflow: hidden;
+}
+
+.cartel-producto:nth-child(2) {
+  transform: translateY(-14px) scale(1.12);
+  z-index: 1;
+}
+
+.carrusel-flecha {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #6B2D8C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.carrusel-flecha mat-icon {
+  color: #6B2D8C !important;
+}
+
+.carrusel-flecha.izq { left: 0.75rem; }
+.carrusel-flecha.der { right: 0.75rem; }
+
+.carrusel-dots {
+  position: absolute;
+  bottom: 0.85rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.4rem;
+}
+
+.carrusel-dots button {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  transition: width 200ms ease, background-color 200ms ease;
+}
+
+.carrusel-dots button.activo {
+  width: 24px;
+  background: #fff;
+}
+
+/* ── 3. HOY EN CAJA + ALERTAS ──────────────── */
+.fila-dos {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+  gap: 1.25rem;
+}
+
+.panel {
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-linea);
+  border-radius: var(--pm-radio);
+  box-shadow: var(--pm-sombra);
+  padding: 1.25rem;
+}
+
+.panel h2,
+.seccion-titulo h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.panel h2 mat-icon {
+  color: var(--pm-violeta);
+}
+
+.nota {
+  font-size: 0.88rem;
+  color: var(--pm-texto-suave);
+}
+
+.promos-hoy {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.promos-hoy li {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.promo-valor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  border-radius: 10px;
+  font-family: var(--pm-fuente-titulo);
+  font-weight: 600;
+  font-size: 1.15rem;
+  text-align: center;
+  line-height: 1.1;
+  color: #fff !important;
+}
+
+.promos-hoy strong {
+  font-size: 0.92rem;
+}
+
+.promos-hoy p {
+  font-size: 0.8rem;
+  color: var(--pm-texto-suave);
+  margin-top: 0.15rem;
+}
+
+/* Cómo se aplica cada promo: reintegro bancario (neutro) o a mano en caja (ámbar) */
+.como-aplica {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  background: var(--pm-violeta-suave);
+  color: var(--pm-acento) !important;
+}
+
+.como-aplica.en-caja {
+  background: var(--pm-alerta-suave);
+  color: var(--pm-alerta) !important;
+}
+
+.como-aplica mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: inherit !important;
+}
+
+.alertas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.alerta {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: transform 150ms ease;
+}
+
+.alerta:hover {
+  transform: translateX(3px);
+}
+
+.alerta-numero {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.alerta.rojo {
+  background: var(--pm-oferta-suave);
+  color: var(--pm-oferta) !important;
+}
+
+.alerta.ambar {
+  background: var(--pm-alerta-suave);
+  color: var(--pm-alerta) !important;
+}
+
+.alerta :is(span, mat-icon) {
+  color: inherit !important;
+}
+
+.btn-pedido {
+  margin-top: auto;
+}
+
+/* ── 4. OFERTAS ACTIVAS ─────────────────────── */
+.seccion-titulo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.seccion-titulo a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--pm-violeta);
+}
+
+.seccion-titulo a mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.ofertas-fila {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(180px, 1fr);
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scroll-snap-type: x mandatory;
+}
+
+.tarjeta {
+  position: relative;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 180px;
+  padding: 0.85rem;
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-linea);
+  border-radius: var(--pm-radio);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+.tarjeta:hover {
+  box-shadow: var(--pm-sombra-hover);
+  transform: translateY(-2px);
+}
+
+.tarjeta.esqueleto {
+  height: 300px;
+  background: linear-gradient(90deg, var(--pm-surface) 0%, var(--pm-violeta-suave) 50%, var(--pm-surface) 100%);
+  background-size: 200% 100%;
+  animation: brillo 1.2s ease-in-out infinite;
+}
+
+@keyframes brillo {
+  to { background-position: -200% 0; }
+}
+
+.tarjeta-descuento {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  z-index: 1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: var(--pm-oferta);
+  color: #fff !important;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.tarjeta-foto {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0.35rem;
+}
+
+.tarjeta-categoria {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pm-violeta-medio) !important;
+}
+
+.tarjeta h3 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.3;
+  min-height: 2.6em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tarjeta-precios {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.precio-anterior {
+  font-size: 0.8rem;
+  text-decoration: line-through;
+  color: var(--pm-texto-suave) !important;
+}
+
+.precio-final {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pm-violeta-oscuro) !important;
+}
+
+.tarjeta-stock {
+  font-size: 0.75rem;
+  color: var(--pm-ok) !important;
+  font-weight: 500;
+}
+
+.tarjeta-stock.bajo {
+  color: var(--pm-oferta) !important;
+}
+
+/* ── 5. ACCESOS RÁPIDOS ─────────────────────── */
+.accesos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.85rem;
+}
+
+.acceso {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem;
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-linea);
+  border-radius: var(--pm-radio);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.acceso:hover {
+  border-color: var(--pm-violeta-claro);
+  box-shadow: var(--pm-sombra-hover);
+}
+
+.acceso-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--pm-violeta-suave);
+}
+
+.acceso-icono mat-icon {
+  color: var(--pm-violeta) !important;
+}
+
+.acceso-texto {
+  display: flex;
+  flex-direction: column;
+}
+
+.acceso-texto strong {
+  font-size: 0.92rem;
+}
+
+.acceso-texto span {
+  font-size: 0.78rem;
+  color: var(--pm-texto-suave) !important;
+}
+
+/* ── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 860px) {
+  .cartel {
+    grid-template-columns: 1fr;
+    padding-bottom: 3rem;
+  }
+
+  .cartel-productos {
+    justify-content: flex-start;
+    padding-left: 18px;
+  }
+
+  .fila-dos {
+    grid-template-columns: 1fr;
+  }
+
+  /* En pantallas chicas las flechas tapan el texto: alcanzan los puntos */
+  .carrusel-flecha {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carrusel-track,
+  .tarjeta,
+  .alerta {
+    transition: none;
+  }
+
+  .tarjeta.esqueleto {
+    animation: none;
+  }
+}

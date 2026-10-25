@@ -2,7 +2,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 // ── ANGULAR MATERIAL ──────────────────────────
 import { MatCardModule } from '@angular/material/card';
@@ -16,9 +16,10 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 // ── SERVICIOS ─────────────────────────────────
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle';
+import { ProductoImagenComponent } from '../../../shared/components/producto-imagen/producto-imagen';
 
 // ── DECORADOR ────────────────────────────────
-// Página de login del administrador.
+// Página de login del personal de Premium Market.
 // Verifica credenciales contra la API y guarda sesión en LocalStorage.
 @Component({
   selector: 'app-login',
@@ -26,7 +27,7 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
+    ProductoImagenComponent,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -51,6 +52,16 @@ export class LoginComponent {
   // ── ESTADO ────────────────────────────────
   cargando: boolean = false;
   mostrarPassword: boolean = false;
+
+  // Productos del panel de marca (fotos de góndola)
+  productosGondola = [
+    'Coca-Cola Original 2.25L',
+    'Leche La Serenísima Entera 1L',
+    'Yerba Mate Taragüí 500g',
+    'Fideos Tallarín Matarazzo 500g',
+    'Dulce de Leche La Serenísima 400g',
+    'Café Molido La Virginia 500g',
+  ];
 
   // ── FORMULARIO REACTIVO ───────────────────
   formulario = new FormGroup({
@@ -107,8 +118,8 @@ export class LoginComponent {
               { duration: 3000, panelClass: 'snackbar--success' }
             );
 
-            // Redirigimos al dashboard
-            this.router.navigate(['/admin/dashboard']);
+            // Redirigimos al portal de inicio
+            this.router.navigate(['/inicio']);
 
           } else {
             // Credenciales incorrectas o usuario inactivo

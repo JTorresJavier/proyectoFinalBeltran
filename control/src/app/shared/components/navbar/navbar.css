@@ -1,38 +1,254 @@
-/* ── TOOLBAR ─────────────────────────────────
-   Estilos del contenedor principal del navbar  */
-mat-toolbar {
-  position: sticky;  /* Se queda fijo arriba al hacer scroll */
-  top: 0;            /* Pegado al tope de la pantalla */
-  z-index: 100;      /* Por encima de todo el contenido */
+/* ── HEADER ──────────────────────────────────
+   Queda fijo arriba mientras se navega          */
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-/* ── LOGO ────────────────────────────────────
-   Contenedor del ícono y nombre de la app     */
-.navbar-logo {
-  display: flex;       /* Ícono y texto en línea */
-  align-items: center; /* Centrado vertical */
-  gap: 0.5rem;         /* Espacio entre ícono y texto */
-  color: white;        /* Color blanco */
-  text-decoration: none; /* Sin subrayado */
-  font-size: 1.2rem;   /* Tamaño del texto */
-  font-weight: bold;   /* Negrita */
+.pm-header {
+  box-shadow: 0 2px 10px rgba(67, 24, 92, 0.18);
 }
 
-/* ── SPACER ──────────────────────────────────
-   Empuja los links hacia la derecha           */
-.spacer {
-  flex: 1; /* Ocupa todo el espacio disponible */
+/* ── FILA 1: VIOLETA ──────────────────────── */
+.barra-principal {
+  background: #6B2D8C;
+  color: #fff;
 }
 
-/* ── LINK ACTIVO ─────────────────────────────
-   Estilo del link de la página actual         */
-.link-activo {
-  background: rgba(255, 255, 255, 0.2); /* Fondo semitransparente */
-  border-radius: 4px;                   /* Bordes redondeados */
+.fila {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  height: 72px;
 }
 
-.navbar-usuario {
-  margin-right: 8px;
-  font-size: 0.9rem;
+.logo {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.logo img {
+  display: block;
+  height: 46px;
+  width: auto;
+}
+
+/* Buscador ancho, como en un supermercado online */
+.buscador {
+  flex: 1;
+  display: flex;
+  max-width: 640px;
+  height: 44px;
+  background: #fff;
+  border-radius: 999px;
+  overflow: hidden;
+  transition: box-shadow 150ms ease;
+}
+
+.buscador:focus-within {
+  box-shadow: 0 0 0 3px rgba(201, 166, 224, 0.6);
+}
+
+.buscador input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  padding: 0 1.25rem;
+  font: inherit;
+  font-size: 0.95rem;
+  color: #2A1A35 !important;
+  background: transparent !important;
+}
+
+.buscador input::placeholder {
+  color: #8B7A98 !important;
+}
+
+.buscador button {
+  width: 36px;
+  height: 36px;
+  margin: 4px;
+  border: none;
+  border-radius: 50%;
+  background: #6B2D8C;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.buscador button mat-icon {
+  color: #fff !important;
+}
+
+.buscador button:hover {
+  background: #43185C;
+}
+
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.fecha {
+  font-size: 0.8rem;
+  color: #E4D2F0 !important;
+  white-space: nowrap;
+  margin-right: 0.25rem;
+}
+
+.accion,
+.accion mat-icon {
+  color: #fff !important;
+}
+
+/* Badge del pedido: blanco sobre la barra violeta.
+   ::ng-deep porque el badge lo crea la directiva fuera de este template */
+:host ::ng-deep .accion .mat-badge-content {
+  background: #FBF9F7;
+  color: #6B2D8C;
+  font-weight: 700;
+}
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #FBF9F7;
+  color: #6B2D8C !important;
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.usuario-datos {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.usuario-nombre {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #fff !important;
+}
+
+.usuario-rol {
+  font-size: 0.72rem;
+  color: #E4D2F0 !important;
+}
+
+/* ── FILA 2: MÓDULOS ──────────────────────── */
+.barra-modulos {
+  background: var(--pm-surface);
+  border-bottom: 1px solid var(--pm-linea);
+}
+
+.modulos {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.modulos::-webkit-scrollbar {
+  display: none;
+}
+
+.modulo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.85rem;
   font-weight: 500;
+  white-space: nowrap;
+  color: var(--pm-texto-suave) !important;
+  border-bottom: 3px solid transparent;
+  transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
+
+.modulo mat-icon {
+  font-size: 19px;
+  width: 19px;
+  height: 19px;
+  color: inherit !important;
+}
+
+.modulo span {
+  color: inherit !important;
+}
+
+.modulo:hover {
+  color: var(--pm-violeta) !important;
+  background: var(--pm-violeta-suave);
+}
+
+.modulo.activo {
+  color: var(--pm-violeta) !important;
+  border-bottom-color: var(--pm-violeta);
+  font-weight: 600;
+}
+
+:host-context(html.theme-dark) .barra-principal {
+  background: #2c1b3d;
+}
+
+:host-context(html.theme-dark) .modulo:hover,
+:host-context(html.theme-dark) .modulo.activo {
+  color: #D3B4EE !important;
+  border-bottom-color: #D3B4EE;
+}
+
+/* ── RESPONSIVE ───────────────────────────── */
+@media (max-width: 1100px) {
+  .fecha,
+  .usuario-datos {
+    display: none;
+  }
+
+  .usuario {
+    padding: 0.25rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .fila {
+    flex-wrap: wrap;
+    height: auto;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    row-gap: 0.6rem;
+  }
+
+  .logo img {
+    height: 38px;
+  }
+
+  .buscador {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+  }
+
+  .tema {
+    display: none;
+  }
 }

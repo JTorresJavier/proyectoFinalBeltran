@@ -1,68 +1,103 @@
 // ── IMPORTS ──────────────────────────────────
 import { Component, inject } from '@angular/core'; // Component e inject para DI
 import { Router, RouterLink, RouterLinkActive } from '@angular/router'; // Navegación entre rutas
-import { CommonModule } from '@angular/common'; // Directivas ngIf, ngFor, etc.
+import { CommonModule } from '@angular/common'; // Pipes async, date, titlecase
+import { FormsModule } from '@angular/forms';   // ngModel del buscador
 
 // ── ANGULAR MATERIAL ──────────────────────────
-import { MatToolbarModule } from '@angular/material/toolbar'; // Barra de navegación
 import { MatButtonModule } from '@angular/material/button';   // Botones Material
 import { MatIconModule } from '@angular/material/icon';       // Íconos Material
-import { MatBadgeModule } from '@angular/material/badge';     // Badge para el carrito
+import { MatBadgeModule } from '@angular/material/badge';     // Badge del pedido
 
 // ── SERVICIOS ─────────────────────────────────
-import { AuthService, Usuario } from '../../../core/services/auth.service';
-import { CarritoService } from '../../../core/services/carrito.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { PedidoService } from '../../../core/services/pedido.service';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle';
 
+// Un módulo del sistema y los roles que lo ven
+interface Modulo {
+  label: string;
+  icono: string;
+  ruta: string;
+  roles: string[];
+}
+
+const TODOS = ['admin', 'empleado', 'cajero', 'repositor'];
+
 // ── DECORADOR ────────────────────────────────
-// Componente compartido — se usa en todas las páginas.
-// Muestra el logo, links de navegación y botón de admin.
-// Se suscribe a usuarioActual$ para reflejar la sesión en tiempo real.
+// Header interno de Premium Market, presente en todas las
+// pantallas con sesión. Fila 1: logo, buscador de productos,
+// pedido en curso y usuario. Fila 2: módulos según el rol.
 @Component({
-  selector: 'app-navbar',        // Se usa como <app-navbar> en cada página
+  selector: 'app-navbar',        // Se usa una sola vez en app.html
   standalone: true,
   imports: [
-    CommonModule,       // Para @if, @for
-    RouterLink,         // Para navegar entre rutas
-    RouterLinkActive,   // Para marcar el link activo
-    MatToolbarModule,   // Toolbar de Material
-    MatButtonModule,    // Botones de Material
-    MatIconModule,      // Íconos de Material
-    MatBadgeModule,     // Badge del carrito
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    RouterLinkActive,
+    MatButtonModule,
+    MatIconModule,
+    MatBadgeModule,
     ThemeToggleComponent,
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
-
-// ── CLASE ────────────────────────────────────
-// Lógica del navbar — links públicos y acceso al admin
 export class NavbarComponent {
 
   // ── SERVICIOS INYECTADOS ──────────────────
-  private authService    = inject(AuthService);    // Para logout y estado de sesión
-  private carritoService = inject(CarritoService); // Para el badge del carrito
-  private router         = inject(Router);         // Para redirigir tras logout
+  private authService   = inject(AuthService);   // Sesión y rol
+  private pedidoService = inject(PedidoService); // Badge del pedido
+  private router        = inject(Router);        // Navegación del buscador y logout
 
-  // ── LINKS DEL MENÚ ────────────────────────
-  // Array de links que se muestran en el navbar con @for
-  linksCliente = [
-    { label: 'Inicio',    ruta: '/inicio'   }, // Link a la página principal
-    { label: 'Catálogo',  ruta: '/catalogo' }, // Link al catálogo de productos
+  // ── MÓDULOS DEL MENÚ ──────────────────────
+  // Se muestran con @for, filtrados por el rol del usuario
+  modulos: Modulo[] = [
+    { label: 'Inicio',              icono: 'home',            ruta: '/inicio',             roles: TODOS },
+    { label: 'Consulta de precios', icono: 'sell',            ruta: '/catalogo',           roles: TODOS },
+    { label: 'Caja',                icono: 'point_of_sale',   ruta: '/admin/caja',         roles: ['admin', 'cajero'] },
+    { label: 'Productos',           icono: 'inventory_2',     ruta: '/admin/productos',    roles: TODOS },
+    { label: 'Recepciones',         icono: 'local_shipping',  ruta: '/admin/recepciones',  roles: ['admin', 'empleado', 'repositor'] },
+    { label: 'Pedidos',             icono: 'assignment',      ruta: '/admin/pedidos',      roles: ['admin', 'empleado', 'repositor'] },
+    { label: 'Panel',               icono: 'dashboard',       ruta: '/admin/dashboard',    roles: TODOS },
+    { label: 'Estadísticas',        icono: 'query_stats',     ruta: '/admin/estadisticas', roles: ['admin'] },
+    { label: 'Usuarios',            icono: 'manage_accounts', ruta: '/admin/usuarios',     roles: ['admin'] },
+    { label: 'Movimientos',         icono: 'manage_search',   ruta: '/admin/movimientos',  roles: ['admin'] },
   ];
 
   // ── SESIÓN REACTIVA ────────────────────────
-  // Observable al que el template se suscribe con el pipe "async".
-  // Cada vez que el AuthService avisa un cambio, esto se actualiza solo.
   usuarioActual$ = this.authService.usuarioActual$;
 
-  // ── BADGE DEL CARRITO ─────────────────────
-  // Cantidad total de unidades en el carrito (para el badge)
-  cantidadCarrito$ = this.carritoService.cantidadTotal$;
+  // ── BADGE DEL PEDIDO ──────────────────────
+  cantidadPedido$ = this.pedidoService.cantidadTotal$;
+
+  // ── BUSCADOR ──────────────────────────────
+  busqueda = '';
+  hoy = new Date();
+
+  modulosDe(rol: string): Modulo[] {
+    return this.modulos.filter(m => m.roles.includes(rol));
+  }
+
+  puedePedir(rol: string): boolean {
+    return ['admin', 'empleado', 'repositor'].includes(rol);
+  }
+
+  // Iniciales para el avatar: "Juan Pérez" → "JP"
+  iniciales(nombre: string): string {
+    return nombre.split(' ').filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join('');
+  }
+
+  // Lleva la búsqueda a la consulta de precios
+  buscar(): void {
+    const q = this.busqueda.trim();
+    this.router.navigate(['/catalogo'], { queryParams: q ? { q } : {} });
+  }
 
   // ── MÉTODO: LOGOUT ─────────────────────────
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/inicio']);
+    this.router.navigate(['/login']);
   }
 }

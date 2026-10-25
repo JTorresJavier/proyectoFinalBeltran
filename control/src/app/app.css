@@ -3,3 +3,9 @@
   position: relative;
   min-height: 100vh;
 }
+
+/* Las páginas se superponen durante la transición: el main las contiene */
+.pantalla {
+  display: block;
+  position: relative;
+}

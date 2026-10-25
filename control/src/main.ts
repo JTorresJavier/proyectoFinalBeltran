@@ -4,6 +4,6 @@ import { AppComponent } from './app/app';                         // Componente 
 import { appConfig } from './app/app.config';                     // Configuración principal
 
 // ── INICIO DE LA APLICACIÓN ───────────────────
-// Arranca StoreHub con el componente raíz y la configuración
+// Arranca Premium Market con el componente raíz y la configuración
 bootstrapApplication(AppComponent, appConfig)
   .catch((err) => console.error(err)); // Muestra errores en consola si falla

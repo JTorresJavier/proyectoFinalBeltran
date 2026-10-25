@@ -1,8 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
-/* ── IMPORTACIÓN DE MATERIAL THEME ───────────────
-   Tema base de Angular Material (se instaló con ng add)
-   Define colores primarios, secundarios y de advertencia */
-@import '@angular/material/prebuilt-themes/azure-blue.css';
+/* ── ESTILOS GLOBALES DE PREMIUM MARKET ──────────
+   El tema de Angular Material se define en material-theme.scss.
+   Acá van los tokens de marca, el reset y los ajustes globales. */
+
+/* ── TOKENS DE MARCA ─────────────────────────────
+   Paleta violeta cálido + blanco formal del logo.
+   Los componentes usan estas variables en lugar de colores sueltos. */
+:root {
+  --pm-violeta: #6B2D8C;
+  --pm-violeta-oscuro: #43185C;
+  --pm-violeta-medio: #A46FCB;
+  --pm-violeta-claro: #C9A6E0;
+  --pm-violeta-suave: #F3EAF8;
+  --pm-borde: #E4D2F0;
+  --pm-acento: #6B2D8C;          /* Texto destacado (precios, números) */
+  --pm-blanco: #FBF9F7;
+
+  --pm-bg: #F6F2F8;
+  --pm-surface: #FFFFFF;
+  --pm-surface-alt: #FBF9F7;
+  --pm-texto: #2A1A35;
+  --pm-texto-suave: #6E5E7B;
+  --pm-linea: #E9E0EF;
+
+  --pm-oferta: #C42A44;
+  --pm-oferta-suave: #FDECEF;
+  --pm-error: #B3261E;           /* Texto de error o diferencia negativa */
+  --pm-ok: #1E8E5A;
+  --pm-ok-suave: #E6F5EC;
+  --pm-alerta: #B86E00;
+  --pm-alerta-suave: #FFF3DF;
+
+  --pm-radio: 12px;
+  --pm-radio-chico: 8px;
+  --pm-sombra: 0 1px 2px rgba(67, 24, 92, 0.06), 0 4px 14px rgba(67, 24, 92, 0.06);
+  --pm-sombra-hover: 0 2px 6px rgba(67, 24, 92, 0.10), 0 10px 24px rgba(67, 24, 92, 0.12);
+
+  --pm-fuente: 'Montserrat', 'Roboto', sans-serif;
+  --pm-fuente-titulo: 'Playfair Display', Georgia, serif;
+}
 
 /* ── RESET GENERAL ───────────────────────────────
    Elimina estilos por defecto del navegador
@@ -14,11 +49,33 @@
 }
 
 /* ── ESTILOS BASE ────────────────────────────────
-   Fuente y color de fondo global de StoreHub      */
+   Fuente y color de fondo global de Premium Market */
 body {
-  font-family: 'Roboto', sans-serif; /* Fuente de Material Design */
-  background-color: #f5f5f5;         /* Fondo gris claro */
-  color: #333;                       /* Color de texto principal */
+  font-family: var(--pm-fuente);
+  line-height: 1.45;  /* Proporcional: el tema de Material fija 20px y los textos grandes se pisan */
+  background-color: var(--pm-bg);
+  color: var(--pm-texto);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* El tema de Material fija line-height: 20px en el body; los títulos
+   y números grandes necesitan un interlineado proporcional */
+h1, h2, h3 {
+  line-height: 1.2;
+}
+
+/* Material toma la tipografía del tema; la alineamos a la marca */
+html {
+  --mat-sys-body-large-font: var(--pm-fuente);
+  --mat-sys-body-medium-font: var(--pm-fuente);
+  --mat-sys-body-small-font: var(--pm-fuente);
+  --mat-sys-label-large-font: var(--pm-fuente);
+  --mat-sys-label-medium-font: var(--pm-fuente);
+  --mat-sys-label-small-font: var(--pm-fuente);
+  --mat-sys-title-large-font: var(--pm-fuente);
+  --mat-sys-title-medium-font: var(--pm-fuente);
+  --mat-sys-title-small-font: var(--pm-fuente);
+  --mat-sys-headline-small-font: var(--pm-fuente);
 }
 
 /* ── UTILIDADES GLOBALES ─────────────────────────
@@ -29,7 +86,7 @@ a {
 }
 
 .contenedor {
-  max-width: 1200px;  /* Ancho máximo del contenido */
+  max-width: 1280px;  /* Ancho máximo del contenido */
   margin: 0 auto;     /* Centrado horizontal */
   padding: 0 1rem;    /* Padding lateral */
 }
@@ -38,6 +95,15 @@ a {
 .mt-2 { margin-top: 2rem; }   /* Margen superior mediano */
 .mb-1 { margin-bottom: 1rem; } /* Margen inferior pequeño */
 .mb-2 { margin-bottom: 2rem; } /* Margen inferior mediano */
+
+/* Título de página interno: mismo formato en todos los módulos */
+.pm-titulo-pagina {
+  font-family: var(--pm-fuente-titulo);
+  font-weight: 500;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  color: var(--pm-violeta-oscuro);
+}
 
 /* ── COLORES DE NOTIFICACIONES ──────────────────
    Las clases se aplican al contenedor global de Material. */
@@ -64,7 +130,7 @@ html {
 }
 
 .mat-mdc-snack-bar-container.snackbar--info {
-  --mat-snack-bar-container-color: #0d47a1;
+  --mat-snack-bar-container-color: var(--pm-violeta-oscuro);
   --mat-snack-bar-supporting-text-color: #ffffff;
   --mat-snack-bar-button-color: #ffffff;
 }
@@ -74,13 +140,44 @@ html {
    mientras el usuario navega entre secciones.    */
 html.theme-dark {
   color-scheme: dark;
-  --app-bg: #0b1220;
-  --app-surface: #111c2e;
-  --app-surface-raised: #18263b;
-  --app-text: #e7edf6;
-  --app-muted: #a5b4c8;
-  --app-border: #293b52;
-  --app-accent: #91bdff;
+  --app-bg: #140d1b;
+  --app-surface: #1e1428;
+  --app-surface-raised: #281b35;
+  --app-text: #efe9f4;
+  --app-muted: #b9a9c7;
+  --app-border: #3a2a4a;
+  --app-accent: #d3b4ee;
+
+  --pm-bg: var(--app-bg);
+  --pm-surface: var(--app-surface);
+  --pm-surface-alt: var(--app-surface-raised);
+  --pm-texto: var(--app-text);
+  --pm-texto-suave: var(--app-muted);
+  --pm-linea: var(--app-border);
+  --pm-borde: var(--app-border);
+  --pm-violeta-suave: #2c1b3d;
+  --pm-violeta-oscuro: #ecdff6;
+  --pm-acento: #D3B4EE;
+  --pm-ok: #6FD39A;
+  --pm-alerta: #F0B45A;
+  --pm-oferta-suave: #3a1820;
+  --pm-error: #FF9A9A;
+  --pm-ok-suave: #14301f;
+  --pm-alerta-suave: #33260f;
+  --pm-sombra: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --pm-sombra-hover: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+/* Botones rellenos y chips de Material en modo oscuro:
+   violeta medio con texto blanco en lugar de lila claro que encandila */
+html.theme-dark {
+  --mat-button-filled-container-color: #7E3FA8;
+  --mat-button-filled-label-text-color: #FFFFFF;
+  --mat-button-protected-container-color: #33243F;
+  --mat-button-protected-label-text-color: #ECDFF6;
+  --mat-chip-elevated-container-color: #33243F;
+  --mat-chip-label-text-color: #ECDFF6;
+  --mat-chip-outline-color: #4A3560;
 }
 
 html.theme-dark body {
@@ -93,7 +190,7 @@ html.theme-dark body :is(
   h1, h2, h3, h4, h5, p, span, label, td, th, li, strong, small, legend,
   .mat-mdc-card-title, .mat-mdc-card-subtitle, .mat-mdc-cell, .mat-mdc-header-cell,
   .mat-mdc-paginator, .mdc-list-item__primary-text, .mdc-form-field, .mdc-label
-) {
+):not(.pm-header *):not(.pm-cartel *):not(.pm-badge):not(.mat-mdc-unelevated-button *):not(.mat-mdc-raised-button *) {
   color: var(--app-text) !important;
 }
 
@@ -101,7 +198,7 @@ html.theme-dark body :is(
   .dashboard-header, .productos-header, .caja-header, mat-toolbar
 ) {
   color: var(--app-text) !important;
-  background: #111d30 !important;
+  background: #1e1428 !important;
   border-color: var(--app-border) !important;
 }
 
@@ -117,6 +214,7 @@ html.theme-dark body :is(
   background: var(--app-surface) !important;
   border-color: var(--app-border) !important;
 }
+
 
 html.theme-dark body :is(
   .dashboard-contenido, .productos-contenido, .estadisticas-pagina,
@@ -146,11 +244,11 @@ html.theme-dark body mat-toolbar a {
 }
 
 html.theme-dark body :is(.catalogo-hero, .login-contenedor) {
-  background: linear-gradient(135deg, #101b2d 0%, #172b45 58%, #203c5e 100%) !important;
+  background: linear-gradient(135deg, #170f20 0%, #2a1840 58%, #43185c 100%) !important;
 }
 
 html.theme-dark body .banner-cta {
-  background: linear-gradient(135deg, #14233a, #202a43) !important;
+  background: linear-gradient(135deg, #1e1428, #2c1b3d) !important;
   border-color: var(--app-border) !important;
 }
 
@@ -179,7 +277,7 @@ html.theme-dark body :is(.mat-mdc-form-field, .mat-mdc-select-arrow, .mat-mdc-fo
 }
 
 html.theme-dark body .buscador .mat-mdc-text-field-wrapper {
-  background: rgba(17, 28, 46, 0.82) !important;
+  background: rgba(30, 20, 40, 0.82) !important;
 }
 
 html.theme-dark body .buscador .mat-mdc-input-element {
@@ -193,7 +291,7 @@ html.theme-dark body .catalogo-hero::after {
 html.theme-dark body .buscador .mdc-notched-outline__leading,
 html.theme-dark body .buscador .mdc-notched-outline__notch,
 html.theme-dark body .buscador .mdc-notched-outline__trailing {
-  border-color: #8293aa !important;
+  border-color: #8d7a9e !important;
 }
 
 html.theme-dark body .buscador .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
@@ -203,14 +301,14 @@ html.theme-dark body .buscador .mat-mdc-form-field.mat-focused .mdc-notched-outl
 }
 
 html.theme-dark body .btn-filtro-oferta {
-  background: rgba(9, 17, 30, 0.46) !important;
-  border-color: rgba(195, 211, 234, 0.64) !important;
-  color: #f3f6fc !important;
+  background: rgba(20, 13, 27, 0.46) !important;
+  border-color: rgba(211, 195, 234, 0.64) !important;
+  color: #f6f1fa !important;
 }
 
 html.theme-dark body .btn-filtro-oferta:hover {
-  background: rgba(145, 189, 255, 0.16) !important;
-  border-color: #d5e3f8 !important;
+  background: rgba(211, 180, 238, 0.16) !important;
+  border-color: #e6d5f3 !important;
 }
 
 html.theme-dark body .btn-filtro-oferta.activo {
@@ -220,8 +318,8 @@ html.theme-dark body .btn-filtro-oferta.activo {
 }
 
 html.theme-dark body .login-card .btn-login:disabled {
-  color: #9aabc1 !important;
-  background: #24354c !important;
+  color: #ab9bbb !important;
+  background: #33243f !important;
 }
 
 html.theme-dark body :is(.mat-mdc-table, .mat-mdc-row, .mat-mdc-header-row, .mdc-data-table__header-row) {
@@ -238,11 +336,11 @@ html.theme-dark body :is(hr, .mat-divider, .stock-pie, .leyenda-total) {
 }
 
 html.theme-dark body mat-icon {
-  color: #a9c8f2;
+  color: #cdb3e6;
 }
 
 html.theme-dark body :is(.stat-icono.azul, .acceso-icono, .precio, .dolar-monto, .login-icono, .login-header h1) {
-  color: #91bdff !important;
+  color: #d3b4ee !important;
 }
 
 html.theme-dark body :is(.stat-icono.verde, .stock-verde, .positivo, .dolar-icono) {
@@ -257,24 +355,24 @@ html.theme-dark body :is(.stat-icono.rojo, .stock-rojo, .negativo, .estado-error
   color: #ff9292 !important;
 }
 
-html.theme-dark body :is(.rol-admin, .rol-empleado, .rol-repositor, .etiqueta.activo, .etiqueta.inactivo) {
-  background: #24364e !important;
-  color: #dce9fa !important;
+html.theme-dark body :is(.rol-admin, .rol-empleado, .rol-cajero, .rol-repositor, .etiqueta.activo, .etiqueta.inactivo) {
+  background: #33243f !important;
+  color: #ecdff6 !important;
 }
 
 html.theme-dark body .acumulado-proyectado,
 html.theme-dark body .acumulado-chip {
-  color: #e3edf9 !important;
-  background-color: #1a2a40 !important;
-  border-color: #405873;
+  color: #efe6f6 !important;
+  background-color: #261a31 !important;
+  border-color: #5a4470;
 }
 
 html.theme-dark body .sin-oferta {
-  color: #9aaac0 !important;
+  color: #ab9bbb !important;
 }
 
 html.theme-dark body ::placeholder {
-  color: #93a4ba !important;
+  color: #a493b5 !important;
 }
 
 html.theme-dark body a:not(.navbar-logo):not(.estadisticas-link) {
@@ -284,27 +382,201 @@ html.theme-dark body a:not(.navbar-logo):not(.estadisticas-link) {
 html.theme-dark body .navbar-logo,
 html.theme-dark body .footer,
 html.theme-dark body .footer :is(span, p, a, mat-icon) {
-  color: #e7edf6 !important;
+  color: #efe9f4 !important;
 }
 
 html.theme-dark body .footer {
-  background: #080e18 !important;
+  background: #0f0a14 !important;
 }
 
 html.theme-dark body .estadisticas-card {
-  background: linear-gradient(135deg, #142238, #1b2d47) !important;
+  background: linear-gradient(135deg, #1e1428, #2c1b3d) !important;
 }
 
 html.theme-dark body .barra-fondo {
-  background: #293a50 !important;
+  background: #3a2a4a !important;
 }
 
 html.theme-dark body .donut-centro {
-  background: #111c2e !important;
+  background: #1e1428 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html.theme-dark body {
     transition: none;
   }
+}
+
+/* ── EFECTO NEÓN AL PASAR EL CURSOR ─────────────
+   Clase reutilizable para tarjetas: una luz violeta recorre
+   el borde despacio y la tarjeta se eleva apenas.
+   Sin movimiento si el sistema pide reducir animaciones. */
+@property --pm-angulo {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.pm-neon {
+  position: relative;
+  transition: transform 260ms ease, box-shadow 260ms ease !important;
+}
+
+.pm-neon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--pm-angulo),
+    transparent 0deg,
+    rgba(201, 166, 224, 0.9) 70deg,
+    #A46FCB 110deg,
+    transparent 180deg,
+    transparent 250deg,
+    rgba(164, 111, 203, 0.55) 300deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+}
+
+.pm-neon:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(164, 111, 203, 0.28),
+    0 6px 22px rgba(107, 45, 140, 0.20),
+    0 0 18px rgba(164, 111, 203, 0.18) !important;
+}
+
+.pm-neon:hover::before {
+  opacity: 1;
+  animation: pm-giro-neon 3.2s linear infinite;
+}
+
+html.theme-dark .pm-neon:hover {
+  box-shadow:
+    0 0 0 1px rgba(211, 180, 238, 0.35),
+    0 8px 26px rgba(0, 0, 0, 0.45),
+    0 0 22px rgba(164, 111, 203, 0.30) !important;
+}
+
+@keyframes pm-giro-neon {
+  to { --pm-angulo: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pm-neon,
+  .pm-neon:hover {
+    transform: none;
+  }
+
+  .pm-neon:hover::before {
+    animation: none;
+  }
+}
+
+/* ── ANIMACIONES DISCRETAS ──────────────────────
+   Entradas cortas (≤ 400 ms) y movimientos de pocos píxeles.
+   Todo se desactiva si el sistema pide reducir movimiento. */
+@keyframes pm-aparecer {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes pm-aparecer-escala {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Tarjetas en grilla: aparecen en cascada (máximo ~0,35 s de demora total) */
+:is(.grilla > .producto, .ofertas-fila > .tarjeta, .accesos > .acceso,
+    .stats-grid > *, .accesos-grid > mat-card, .promos-hoy > li,
+    .items > .item, .marca-gondola > .gondola-item, .alertas > .alerta) {
+  animation: pm-aparecer 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+:is(.grilla, .ofertas-fila, .accesos, .stats-grid, .accesos-grid, .promos-hoy, .items, .marca-gondola, .alertas) > :nth-child(2) { animation-delay: 40ms; }
+:is(.grilla, .ofertas-fila, .accesos, .stats-grid, .accesos-grid, .promos-hoy, .items, .marca-gondola, .alertas) > :nth-child(3) { animation-delay: 80ms; }
+:is(.grilla, .ofertas-fila, .accesos, .stats-grid, .accesos-grid, .promos-hoy, .items, .marca-gondola, .alertas) > :nth-child(4) { animation-delay: 120ms; }
+:is(.grilla, .ofertas-fila, .accesos, .stats-grid, .accesos-grid, .promos-hoy, .items, .marca-gondola, .alertas) > :nth-child(5) { animation-delay: 160ms; }
+:is(.grilla, .ofertas-fila, .accesos, .stats-grid, .accesos-grid, .promos-hoy, .items, .marca-gondola, .alertas) > :nth-child(6) { animation-delay: 200ms; }
+:is(.grilla, .ofertas-fila, .accesos, .stats-grid, .accesos-grid, .promos-hoy, .items, .marca-gondola, .alertas) > :nth-child(n + 7) { animation-delay: 240ms; }
+
+/* Paneles y tarjeta de login: entrada suave (el carrusel queda sin animación de entrada) */
+:is(.panel, .login-card, .categorias) {
+  animation: pm-aparecer-escala 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Botones: respuesta leve al presionar */
+.mat-mdc-button-base {
+  transition: transform 120ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+
+.mat-mdc-button-base:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Foco visible y consistente con la marca para navegar con teclado */
+:is(a, button, input, select, [tabindex]):focus-visible {
+  outline: 2px solid #A46FCB;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Cambio de tema: superficies y textos cambian de color sin parpadeo */
+:is(mat-card, .mat-mdc-card, .panel, .tarjeta, .producto, .acceso, .categorias, .barra-modulos, .barra-principal) {
+  transition-property: background-color, border-color, color, box-shadow, transform;
+  transition-duration: 240ms;
+  transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Chips con neón: además del borde, el fondo pasa a violeta suave */
+.pm-neon.mat-mdc-standard-chip {
+  transition: transform 260ms ease, box-shadow 260ms ease, background-color 260ms ease !important;
+}
+
+.pm-neon.mat-mdc-standard-chip:hover {
+  --mat-chip-elevated-container-color: #F3EAF8;
+  --mat-chip-label-text-color: #6B2D8C;
+  --mat-chip-outline-color: transparent;
+  cursor: default;
+}
+
+html.theme-dark .pm-neon.mat-mdc-standard-chip:hover {
+  --mat-chip-elevated-container-color: #4A2463;
+  --mat-chip-label-text-color: #F3EAF8;
+}
+
+/* Chips de categoría (Gestión de productos), modo claro:
+   violeta cálido con texto blanco (contraste 6,3:1); al pasar el cursor
+   se aclara un tono (5:1) y mantiene el neón.
+   En modo oscuro siguen las reglas generales de chips. */
+html:not(.theme-dark) .chip-categoria.mat-mdc-standard-chip {
+  --mat-chip-elevated-container-color: #8A3FA6;
+  --mat-chip-label-text-color: #FFFFFF;
+  --mat-chip-outline-color: transparent;
+  font-weight: 500;
+}
+
+html:not(.theme-dark) .chip-categoria.mat-mdc-standard-chip:hover {
+  --mat-chip-elevated-container-color: #9B4FB8;
+  --mat-chip-label-text-color: #FFFFFF;
 }

@@ -1,24 +1,8 @@
-<!-- ── GESTIÓN DE PRODUCTOS DE STOREHUB ───────
+<!-- ── GESTIÓN DE PRODUCTOS DE PREMIUM MARKET ──
      Panel de administración de productos.
      Implementa CRUD completo contra la API REST.
-     Solo accesible con login (authGuard)         -->
-
-<!-- ── HEADER ────────────────────────────────
-     Barra superior con título y botón nuevo    -->
-<header class="productos-header">
-  <div class="header-izquierda">
-    <mat-icon>store</mat-icon>
-    <span class="header-titulo">StoreHub</span>
-    <span class="header-seccion">/ Productos</span>
-  </div>
-  <div class="header-derecha">
-    <a mat-button routerLink="/admin/dashboard">
-      <mat-icon>dashboard</mat-icon>
-      Dashboard
-    </a>
-    <app-theme-toggle></app-theme-toggle>
-  </div>
-</header>
+     Solo accesible con login (authGuard).
+     El header global (app-navbar) queda arriba.  -->
 
 <!-- ── CONTENIDO PRINCIPAL ───────────────────
      Tabla de productos y formulario           -->
@@ -27,7 +11,7 @@
   <!-- ── TÍTULO Y BOTÓN NUEVO ──────────────
        Encabezado de la sección               -->
   <div class="seccion-header">
-    <h1>📦 Gestión de Productos</h1>
+    <h1 class="pm-titulo-pagina">Gestión de productos</h1>
     <!-- EVENT BINDING: muestra el formulario al hacer click -->
     <button mat-raised-button color="primary" (click)="nuevoProducto()">
       <mat-icon>add</mat-icon>
@@ -169,14 +153,19 @@
           <!-- ── COLUMNA NOMBRE ─────────────────── -->
           <ng-container matColumnDef="nombre">
             <th mat-header-cell *matHeaderCellDef>Nombre</th>
-            <td mat-cell *matCellDef="let p">{{ p.nombre }}</td>
+            <td mat-cell *matCellDef="let p">
+              <span class="celda-producto">
+                <span class="miniatura"><app-producto-imagen [nombre]="p.nombre" [icono]="p.icono" /></span>
+                {{ p.nombre }}
+              </span>
+            </td>
           </ng-container>
 
           <!-- ── COLUMNA CATEGORÍA ──────────────── -->
           <ng-container matColumnDef="categoria">
             <th mat-header-cell *matHeaderCellDef>Categoría</th>
             <td mat-cell *matCellDef="let p">
-              <mat-chip>{{ p.categoria }}</mat-chip>
+              <mat-chip class="pm-neon chip-categoria">{{ p.categoria }}</mat-chip>
             </td>
           </ng-container>
 
@@ -209,7 +198,7 @@
             <th mat-header-cell *matHeaderCellDef>Oferta</th>
             <td mat-cell *matCellDef="let p">
               @if (p.oferta) {
-                <mat-chip color="warn">-{{ p.descuento }}% OFF</mat-chip>
+                <mat-chip color="warn" class="pm-neon">-{{ p.descuento }}% OFF</mat-chip>
               } @else {
                 <span class="sin-oferta">—</span>
               }

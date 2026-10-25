@@ -1,7 +1,9 @@
 // ── IMPORTS ──────────────────────────────────
 import { Routes } from '@angular/router';
-import { authGuard, adminGuard, noEsCajeroGuard, cajaGuard } from './core/guards/auth.guard';
+import { authGuard, adminGuard, noEsCajeroGuard, cajaGuard, invitadoGuard } from './core/guards/auth.guard';
 
+// Premium Market es una herramienta interna: todas las pantallas
+// piden sesión y la URL raíz lleva al login (o al inicio si ya hay sesión).
 export const routes: Routes = [
 
   // ── RUTA RAÍZ ────────────────────────────────
@@ -11,33 +13,42 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  // ── RUTAS PÚBLICAS (vista cliente) ───────────
-  {
-    path: 'inicio',
-    loadComponent: () =>
-      import('./features/cliente/inicio/inicio')
-        .then(m => m.InicioComponent)
-  },
-  {
-    path: 'catalogo',
-    loadComponent: () =>
-      import('./features/cliente/catalogo/catalogo')
-        .then(m => m.CatalogoComponent)
-  },
-  {
-    path: 'carrito',
-    loadComponent: () =>
-      import('./features/cliente/carrito/carrito')
-        .then(m => m.CarritoComponent)
-  },
-
   // ── RUTA LOGIN ────────────────────────────────
+  // Única pantalla sin sesión; con sesión activa redirige al inicio
   {
     path: 'login',
     loadComponent: () =>
       import('./features/admin/login/login')
-        .then(m => m.LoginComponent)
+        .then(m => m.LoginComponent),
+    canActivate: [invitadoGuard]
   },
+
+  // ── OPERACIÓN DIARIA — todos los roles ───────
+  // Portal con promos vigentes y consulta de precios y stock
+  {
+    path: 'inicio',
+    loadComponent: () =>
+      import('./features/operacion/inicio/inicio')
+        .then(m => m.InicioComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'catalogo',
+    loadComponent: () =>
+      import('./features/operacion/catalogo/catalogo')
+        .then(m => m.CatalogoComponent),
+    canActivate: [authGuard]
+  },
+
+  // ── PEDIDOS A PROVEEDOR — admin, empleado, repositor ──
+  {
+    path: 'admin/pedidos',
+    loadComponent: () =>
+      import('./features/admin/pedidos/pedidos')
+        .then(m => m.PedidosComponent),
+    canActivate: [authGuard, noEsCajeroGuard]
+  },
+  { path: 'carrito', redirectTo: 'admin/pedidos' },
 
   // ── DASHBOARD — todos los roles ───────────────
   {

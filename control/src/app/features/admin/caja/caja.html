@@ -1,15 +1,15 @@
-<!-- ── HEADER ──────────────────────────────── -->
+<!-- ── BARRA DE CAJA ───────────────────────────
+     Debajo del header global: cajero, acumulado del
+     turno, historial y cierre de caja.            -->
 <header class="caja-header">
   <div class="header-izquierda">
-    <mat-icon>store</mat-icon>
-    <span class="header-titulo">StoreHub</span>
-    <span class="header-seccion">/ Caja</span>
+    <mat-icon>point_of_sale</mat-icon>
+    <span class="header-titulo">Caja</span>
+    @if (usuarioLogueado) {
+      <span class="header-seccion">· {{ usuarioLogueado.nombre }}</span>
+    }
   </div>
   <div class="header-derecha">
-    @if (usuarioLogueado) {
-      <mat-icon>account_circle</mat-icon>
-      <span>{{ usuarioLogueado.nombre }}</span>
-    }
     @if (cajaAbierta) {
       <div class="acumulado-chip" [class]="'acumulado-' + estadoAcumulado">
         <mat-icon>balance</mat-icon>
@@ -24,10 +24,6 @@
         Cerrar Caja
       </button>
     }
-    <a mat-button routerLink="/admin/dashboard">
-      <mat-icon>dashboard</mat-icon>
-    </a>
-    <app-theme-toggle></app-theme-toggle>
   </div>
 </header>
 
@@ -36,7 +32,7 @@
   <div class="pantalla-overlay">
     <mat-card class="apertura-card">
       <mat-card-header>
-        <mat-card-title>🏪 Apertura de Caja</mat-card-title>
+        <mat-card-title>Apertura de caja</mat-card-title>
         <mat-card-subtitle>
           {{ usuarioLogueado?.nombre }} — {{ usuarioLogueado?.rol }}
         </mat-card-subtitle>
@@ -327,9 +323,9 @@
       </mat-form-field>
 
       <div class="productos-grid">
-        @for (producto of productosFiltrados; track producto.id) {
+        @for (producto of productosFiltrados; track producto._id ?? producto.nombre) {
           <div class="producto-item" (click)="agregarAlCarrito(producto)">
-            <mat-icon class="producto-icono">{{ producto.icono || 'shopping_bag' }}</mat-icon>
+            <span class="producto-foto"><app-producto-imagen [nombre]="producto.nombre" [icono]="producto.icono" /></span>
             <p class="producto-nombre">{{ producto.nombre }}</p>
             @if (producto.oferta && producto.descuento) {
               <p class="producto-precio-tachado"><s>{{ producto.precio | currency:'ARS':'symbol':'1.0-0' }}</s></p>
@@ -375,7 +371,7 @@
 
       @if (carrito.length > 0) {
         <div class="carrito-items">
-          @for (item of carrito; track item.producto.id) {
+          @for (item of carrito; track item.producto._id ?? item.producto.nombre) {
             <div class="carrito-item">
               <div class="item-info">
                 <mat-icon>{{ item.producto.icono || 'shopping_bag' }}</mat-icon>

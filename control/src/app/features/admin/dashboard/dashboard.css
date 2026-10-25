@@ -1,54 +1,3 @@
-/* ── HEADER DEL DASHBOARD ────────────────────
-   Barra superior fija con info del usuario    */
-.dashboard-header {
-  display: flex;            /* En fila */
-  justify-content: space-between; /* Espaciado entre izquierda y derecha */
-  align-items: center;      /* Centrado vertical */
-  padding: 1rem 2rem;       /* Espaciado interno */
-  background: #1976d2;      /* Color primario azul */
-  color: white;             /* Texto blanco */
-  position: sticky;         /* Fijo arriba */
-  top: 0;                   /* Pegado al tope */
-  z-index: 100;             /* Por encima del contenido */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Sombra */
-}
-
-/* ── LADO IZQUIERDO DEL HEADER ───────────────
-   Logo y título                               */
-.header-izquierda {
-  display: flex;       /* En fila */
-  align-items: center; /* Centrado vertical */
-  gap: 0.5rem;         /* Espacio entre elementos */
-  font-size: 1.1rem;   /* Tamaño de texto */
-}
-
-/* ── TÍTULO DEL HEADER ───────────────────────
-   Nombre de la app en negrita                 */
-.header-titulo {
-  font-weight: bold; /* Negrita */
-  font-size: 1.2rem; /* Grande */
-}
-
-/* ── SECCIÓN ACTUAL ──────────────────────────
-   "/ Dashboard" en gris claro                 */
-.header-seccion {
-  opacity: 0.7; /* Semitransparente */
-}
-
-/* ── LADO DERECHO DEL HEADER ─────────────────
-   Info del usuario y botón logout             */
-.header-derecha {
-  display: flex;       /* En fila */
-  align-items: center; /* Centrado vertical */
-  gap: 0.8rem;         /* Espacio entre elementos */
-}
-
-/* ── NOMBRE DEL USUARIO ──────────────────────
-   Nombre del usuario logueado                 */
-.usuario-nombre {
-  font-weight: 500; /* Semi negrita */
-}
-
 /* ── CONTENIDO PRINCIPAL ─────────────────────
    Área principal del dashboard                */
 .dashboard-contenido {
@@ -63,13 +12,14 @@
 }
 
 .bienvenida h1 {
-  font-size: 1.8rem;   /* Grande */
-  color: #1976d2;      /* Color primario */
+  display: flex;         /* Título y chip de rol en línea */
+  align-items: center;
+  gap: 0.75rem;
   margin-bottom: 0.3rem; /* Espacio abajo */
 }
 
 .bienvenida p {
-  color: #666; /* Gris */
+  color: var(--pm-texto-suave); /* Gris */
 }
 
 /* ── SECCIONES ───────────────────────────────
@@ -83,7 +33,7 @@
 .accesos h2 {
   font-size: 1.3rem;    /* Tamaño del título */
   margin-bottom: 1rem;  /* Espacio abajo */
-  color: #333;          /* Gris oscuro */
+  color: var(--pm-texto);          /* Gris oscuro */
 }
 
 /* ── ANIMACIÓN DE ENTRADA EN CASCADA ─────────
@@ -141,24 +91,24 @@
 
 /* ── COLORES DE ÍCONOS ───────────────────────
    Cada stat tiene su color                    */
-.azul    { color: #1976d2; } /* Azul — total productos */
-.naranja { color: #f57c00; } /* Naranja — stock bajo */
-.verde   { color: #388e3c; } /* Verde — en oferta */
-.rojo    { color: #e53935; } /* Rojo — sin stock */
+.azul    { color: var(--pm-acento); } /* Azul — total productos */
+.naranja { color: var(--pm-alerta); } /* Naranja — stock bajo */
+.verde   { color: var(--pm-ok); } /* Verde — en oferta */
+.rojo    { color: var(--pm-error); } /* Rojo — sin stock */
 
 /* ── NÚMERO DE ESTADÍSTICA ───────────────────
    Número grande y en negrita                  */
 .stat-numero {
   font-size: 2rem;   /* Grande */
   font-weight: bold; /* Negrita */
-  color: #333;       /* Gris oscuro */
+  color: var(--pm-texto);       /* Gris oscuro */
   font-variant-numeric: tabular-nums; /* Evita que los dígitos cambien el ancho mientras cuentan */
 }
 
 /* ── LABEL DE ESTADÍSTICA ────────────────────
    Descripción debajo del número               */
 .stat-label {
-  color: #666;       /* Gris */
+  color: var(--pm-texto-suave);       /* Gris */
   font-size: 0.85rem; /* Pequeño */
 }
 
@@ -199,7 +149,7 @@
 
 .acceso-card:hover {
   transform: translateY(-4px); /* Sube al hover */
-  box-shadow: 0 4px 20px rgba(25, 118, 210, 0.3); /* Sombra azul */
+  box-shadow: 0 4px 20px rgba(107, 45, 140, 0.3); /* Sombra azul */
 }
 
 /* ── ÍCONO DE ACCESO ─────────────────────────
@@ -208,7 +158,7 @@
   font-size: 3rem;   /* Grande */
   width: 3rem;       /* Ancho */
   height: 3rem;      /* Alto */
-  color: #1976d2;    /* Color primario */
+  color: var(--pm-acento);    /* Color primario */
   margin-bottom: 0.5rem; /* Espacio abajo */
 }
 
@@ -236,8 +186,8 @@
   height: 100%;
   min-height: 166px;
   overflow: hidden;
-  background: linear-gradient(135deg, #ffffff 0%, #eaf3ff 100%);
-  border: 1px solid #d5e5f8;
+  background: linear-gradient(135deg, var(--pm-surface) 0%, var(--pm-violeta-suave) 100%);
+  border: 1px solid #E4D2F0;
   animation: apareceDashboard 0.4s ease backwards;
   animation-delay: 0.25s;
   transition: transform 180ms ease, box-shadow 180ms ease;
@@ -245,7 +195,7 @@
 
 .estadisticas-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(25, 118, 210, 0.16);
+  box-shadow: 0 8px 24px rgba(107, 45, 140, 0.16);
 }
 
 .estadisticas-card mat-card-content {
@@ -263,7 +213,7 @@
   height: 52px;
   place-items: center;
   color: #fff;
-  background: #1976d2;
+  background: #6B2D8C;
   border-radius: 15px;
 }
 
@@ -279,27 +229,27 @@
 }
 
 .estadisticas-card-eyebrow {
-  color: #52739a;
+  color: #765896;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
 
 .estadisticas-card-titulo {
-  color: #15385e;
+  color: #3A1450;
   font-size: 1.15rem;
   font-weight: 700;
 }
 
 .estadisticas-card-descripcion {
-  color: #5f7185;
+  color: #6A5A78;
   font-size: 0.88rem;
   line-height: 1.45;
 }
 
 .estadisticas-card-flecha {
   margin-left: auto;
-  color: #1976d2;
+  color: var(--pm-acento);
   transition: transform 180ms ease;
 }
 
@@ -322,7 +272,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #666;
+  color: var(--pm-texto-suave);
 }
 
 .dolar-encabezado {
@@ -333,7 +283,7 @@
 }
 
 .dolar-icono {
-  color: #2e7d32;
+  color: var(--pm-ok);
 }
 
 .dolar-nombre {
@@ -354,18 +304,18 @@
 
 .dolar-label {
   font-size: 0.8rem;
-  color: #757575;
+  color: var(--pm-texto-suave);
 }
 
 .dolar-monto {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #1565c0;
+  color: #5A2577;
 }
 
 .dolar-fecha {
   font-size: 0.75rem;
-  color: #9e9e9e;
+  color: var(--pm-texto-suave);
   margin: 0;
 }
 
@@ -429,4 +379,17 @@
     animation: none;
     transition: none;
   }
+}
+
+/* ── TARJETAS DEL RESUMEN CLICKEABLES ────────
+   Cada número abre la consulta de precios filtrada */
+.stat-link {
+  display: block;
+  border-radius: 12px;
+  color: inherit;
+}
+
+.stat-link .stat-card {
+  height: 100%;
+  cursor: pointer;
 }

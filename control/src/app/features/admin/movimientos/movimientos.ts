@@ -15,7 +15,6 @@ import { MatChipsModule }            from '@angular/material/chips';
 import { MatTooltipModule }          from '@angular/material/tooltip';
 import { MatDividerModule }          from '@angular/material/divider';
 
-import { NavbarComponent }      from '../../../shared/components/navbar/navbar';
 import {
   MovimientosService,
   Movimiento,
@@ -43,7 +42,6 @@ import {
     MatChipsModule,
     MatTooltipModule,
     MatDividerModule,
-    NavbarComponent,
   ],
   templateUrl: './movimientos.html',
   styleUrl:    './movimientos.css'

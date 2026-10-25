@@ -1,43 +1,3 @@
-/* ── HEADER DE PRODUCTOS ─────────────────────
-   Barra superior con título y navegación      */
-.productos-header {
-  display: flex;                  /* En fila */
-  justify-content: space-between; /* Espaciado entre izquierda y derecha */
-  align-items: center;            /* Centrado vertical */
-  padding: 1rem 2rem;             /* Espaciado interno */
-  background: #1976d2;            /* Color primario azul */
-  color: white;                   /* Texto blanco */
-  position: sticky;               /* Fijo arriba */
-  top: 0;                         /* Pegado al tope */
-  z-index: 100;                   /* Por encima del contenido */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Sombra */
-}
-
-/* ── LADO IZQUIERDO DEL HEADER ───────────────
-   Logo y título                               */
-.header-izquierda {
-  display: flex;       /* En fila */
-  align-items: center; /* Centrado vertical */
-  gap: 0.5rem;         /* Espacio entre elementos */
-}
-
-.header-titulo {
-  font-weight: bold; /* Negrita */
-  font-size: 1.2rem; /* Grande */
-  color: white;      /* Blanco */
-}
-
-.header-seccion {
-  opacity: 0.7;  /* Semitransparente */
-  color: white;  /* Blanco */
-}
-
-/* ── LADO DERECHO DEL HEADER ─────────────────
-   Botón de navegación al dashboard            */
-.header-derecha a {
-  color: white; /* Texto blanco */
-}
-
 /* ── CONTENIDO PRINCIPAL ─────────────────────
    Área principal de la página                 */
 .productos-contenido {
@@ -53,10 +13,6 @@
   margin-bottom: 1.5rem;          /* Espacio abajo */
 }
 
-.seccion-header h1 {
-  font-size: 1.8rem; /* Grande */
-  color: #333;       /* Gris oscuro */
-}
 
 /* ── CARD DEL FORMULARIO ─────────────────────
    Formulario de creación y edición            */
@@ -120,20 +76,20 @@
 /* ── PRECIO EN LA TABLA ──────────────────────
    Precio formateado en azul                   */
 .precio {
-  color: #1976d2;    /* Azul */
+  color: var(--pm-acento);    /* Azul */
   font-weight: bold; /* Negrita */
 }
 
 /* ── COLORES DE STOCK ────────────────────────
    Verde, naranja y rojo según el stock        */
-.stock-verde   { color: #388e3c; font-weight: bold; } /* Stock normal */
-.stock-naranja { color: #f57c00; font-weight: bold; } /* Stock bajo */
-.stock-rojo    { color: #e53935; font-weight: bold; } /* Sin stock */
+.stock-verde   { color: var(--pm-ok); font-weight: bold; } /* Stock normal */
+.stock-naranja { color: var(--pm-alerta); font-weight: bold; } /* Stock bajo */
+.stock-rojo    { color: var(--pm-error); font-weight: bold; } /* Sin stock */
 
 /* ── SIN OFERTA ──────────────────────────────
    Guión cuando no hay oferta                  */
 .sin-oferta {
-  color: #ccc; /* Gris claro */
+  color: var(--pm-texto-suave); /* Gris claro */
 }
 
 /* ── ACCIONES DE LA FILA ─────────────────────
@@ -148,7 +104,7 @@
 .sin-productos {
   text-align: center; /* Centrado */
   padding: 3rem;      /* Espaciado */
-  color: #666;        /* Gris */
+  color: var(--pm-texto-suave);        /* Gris */
 }
 
 .sin-productos mat-icon {
@@ -156,4 +112,20 @@
   width: 3rem;
   height: 3rem;
   margin-bottom: 1rem;
+}
+/* ── MINIATURA EN LA TABLA ───────────────────
+   Foto del producto al lado del nombre        */
+.celda-producto {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.miniatura {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid var(--pm-linea);
+  overflow: hidden;
 }

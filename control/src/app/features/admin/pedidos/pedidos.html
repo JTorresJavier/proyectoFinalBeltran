@@ -1,0 +1,184 @@
+<!-- ── PEDIDO A PROVEEDOR ─────────────────────
+     Lista de reposición en curso + sugerencias de
+     stock bajo + historial de pedidos registrados -->
+<div class="pagina contenedor">
+
+  <div class="pagina-encabezado">
+    <div>
+      <p class="eyebrow">Reposición</p>
+      <h1 class="pm-titulo-pagina">Pedido a proveedor</h1>
+      <p class="bajada">Armá la lista desde la consulta de precios o con los productos que se están quedando sin stock.</p>
+    </div>
+    <a mat-stroked-button routerLink="/catalogo">
+      <mat-icon>search</mat-icon> Buscar productos
+    </a>
+  </div>
+
+  <div class="columnas">
+
+    <!-- ── PEDIDO EN CURSO ─────────────────── -->
+    <section class="panel">
+      <div class="panel-titulo">
+        <h2><mat-icon>assignment</mat-icon> Pedido en curso</h2>
+        @if ((pedido$ | async)?.length) {
+          <button mat-button class="btn-vaciar" (click)="vaciar()">
+            <mat-icon>delete_sweep</mat-icon> Vaciar
+          </button>
+        }
+      </div>
+
+      @if (pedido$ | async; as items) {
+        @if (items.length === 0) {
+          <div class="vacio">
+            <mat-icon>playlist_add</mat-icon>
+            <p>Todavía no agregaste productos.</p>
+            <span>Usá “Agregar al pedido” en la consulta de precios o los sugeridos de la derecha.</span>
+          </div>
+        } @else {
+          <ul class="items">
+            @for (item of items; track getId(item)) {
+              <li class="item">
+                <div class="item-foto">
+                  <app-producto-imagen [nombre]="item.producto.nombre" [icono]="item.producto.icono" />
+                </div>
+                <div class="item-info">
+                  <span class="item-nombre">{{ item.producto.nombre }}</span>
+                  <span class="item-meta">
+                    {{ item.producto.categoria }} ·
+                    <span [class.stock-bajo]="item.producto.stock < 5">Stock actual: {{ item.producto.stock }}</span>
+                  </span>
+                </div>
+                <div class="item-cantidad">
+                  <button mat-icon-button (click)="disminuir(item)" aria-label="Restar una unidad">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <input type="number" min="1" max="999" [value]="item.cantidad"
+                         (change)="fijarCantidad(item, $any($event.target).value)"
+                         aria-label="Cantidad a pedir" />
+                  <button mat-icon-button (click)="aumentar(item)" aria-label="Sumar una unidad">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+                <span class="item-subtotal">{{ item.producto.precio * item.cantidad | currency:'ARS':'symbol-narrow':'1.0-0':'es-AR' }}</span>
+                <button mat-icon-button class="btn-quitar" (click)="eliminar(item)" aria-label="Quitar del pedido">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </li>
+            }
+          </ul>
+
+          <div class="resumen">
+            <div><span>Unidades</span><strong>{{ cantidadTotal$ | async }}</strong></div>
+            <div><span>Costo estimado (precio de lista)</span><strong>{{ totalEstimado$ | async | currency:'ARS':'symbol-narrow':'1.0-0':'es-AR' }}</strong></div>
+          </div>
+
+          <!-- Formulario reactivo para registrar el pedido -->
+          <form class="form-registro" [formGroup]="formulario" (ngSubmit)="registrar()">
+            <mat-form-field appearance="outline">
+              <mat-label>Proveedor</mat-label>
+              <input matInput formControlName="proveedor" placeholder="Ej: Distribuidora Norte" />
+              @if (proveedor.touched && proveedor.hasError('required')) {
+                <mat-error>El proveedor es obligatorio.</mat-error>
+              }
+              @if (proveedor.touched && proveedor.hasError('pattern')) {
+                <mat-error>Mínimo 2 caracteres, sin contar espacios.</mat-error>
+              }
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Observaciones (opcional)</mat-label>
+              <input matInput formControlName="observaciones" placeholder="Ej: entregar antes del jueves" />
+            </mat-form-field>
+            <button mat-flat-button type="submit">
+              <mat-icon>send</mat-icon> Registrar pedido
+            </button>
+          </form>
+        }
+      }
+    </section>
+
+    <!-- ── SUGERIDOS POR STOCK BAJO ─────────── -->
+    <aside class="panel sugeridos">
+      <div class="panel-titulo">
+        <h2><mat-icon>warning_amber</mat-icon> Stock bajo</h2>
+      </div>
+      @if (sugeridos.length === 0) {
+        <p class="nota">No hay productos con menos de 5 unidades.</p>
+      }
+      <ul>
+        @for (p of sugeridos; track p._id ?? p.nombre) {
+          <li>
+            <div class="sug-foto">
+              <app-producto-imagen [nombre]="p.nombre" [icono]="p.icono" />
+            </div>
+            <div class="sug-info">
+              <span class="sug-nombre">{{ p.nombre }}</span>
+              <span class="sug-stock" [class.agotado]="p.stock === 0">
+                {{ p.stock === 0 ? 'Sin stock' : p.stock + ' u. en stock' }}
+              </span>
+            </div>
+            <button mat-icon-button (click)="agregarSugerido(p)" [attr.aria-label]="'Agregar ' + p.nombre + ' al pedido'">
+              <mat-icon>{{ yaPedido(p) ? 'check_circle' : 'add_circle' }}</mat-icon>
+            </button>
+          </li>
+        }
+      </ul>
+    </aside>
+  </div>
+
+  <!-- ── HISTORIAL ─────────────────────────── -->
+  @if (historial.length) {
+    <section class="panel historial">
+      <div class="panel-titulo">
+        <h2><mat-icon>history</mat-icon> Pedidos registrados</h2>
+      </div>
+      <table>
+        <thead>
+          <tr><th></th><th>Fecha</th><th>Proveedor</th><th>Productos</th><th>Unidades</th><th>Costo estimado</th><th>Registrado por</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (p of historial; track p.id) {
+            <tr class="fila-pedido" [class.abierta]="expandido === p.id">
+              <td>
+                <button mat-icon-button (click)="alternarDetalle(p.id)"
+                        [attr.aria-expanded]="expandido === p.id"
+                        [attr.aria-label]="'Ver detalle del pedido a ' + p.proveedor">
+                  <mat-icon>{{ expandido === p.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+                </button>
+              </td>
+              <td>{{ p.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ p.proveedor }}</td>
+              <td>{{ p.items.length }}</td>
+              <td>{{ p.totalUnidades }}</td>
+              <td>{{ p.totalEstimado | currency:'ARS':'symbol-narrow':'1.0-0':'es-AR' }}</td>
+              <td>{{ p.usuario }}</td>
+              <td>
+                <button mat-icon-button (click)="copiar(p)" [attr.aria-label]="'Copiar pedido a ' + p.proveedor" title="Copiar para enviar al proveedor">
+                  <mat-icon>content_copy</mat-icon>
+                </button>
+              </td>
+            </tr>
+            @if (expandido === p.id) {
+              <tr class="fila-detalle">
+                <td colspan="8">
+                  @if (p.observaciones) {
+                    <p class="detalle-obs"><mat-icon>notes</mat-icon> {{ p.observaciones }}</p>
+                  }
+                  <ul class="detalle-items">
+                    @for (item of p.items; track item.nombre) {
+                      <li>
+                        <span class="detalle-cantidad">{{ item.cantidad }} u.</span>
+                        <span>{{ item.nombre }}</span>
+                        <span class="detalle-categoria">{{ item.categoria }}</span>
+                        <span class="detalle-costo">{{ item.costoEstimado | currency:'ARS':'symbol-narrow':'1.0-0':'es-AR' }}</span>
+                      </li>
+                    }
+                  </ul>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </section>
+  }
+</div>

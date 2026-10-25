@@ -67,7 +67,7 @@ table {
 .vacio {
   text-align: center;
   padding: 32px;
-  color: #666;
+  color: var(--pm-texto-suave);
 }
 
 .etiqueta {
@@ -78,9 +78,9 @@ table {
   background: #e0e0e0;
 }
 
-.rol-admin     { background: #ffe0e0; color: #b71c1c; }
-.rol-empleado  { background: #e0f0ff; color: #0d47a1; }
-.rol-repositor { background: #fff3d6; color: #8a5a00; }
+.rol-admin     { background: var(--pm-oferta-suave); color: var(--pm-error); }
+.rol-empleado  { background: #EFE3F6; color: var(--pm-violeta-oscuro); }
+.rol-repositor { background: var(--pm-alerta-suave); color: #8a5a00; }
 
-.etiqueta.activo   { background: #dcf5e0; color: #1b5e20; }
-.etiqueta.inactivo { background: #eee;    color: #757575; }
+.etiqueta.activo   { background: var(--pm-ok-suave); color: var(--pm-ok); }
+.etiqueta.inactivo { background: #eee;    color: var(--pm-texto-suave); }

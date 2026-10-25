@@ -1,52 +1,21 @@
-<!-- ── DASHBOARD DE STOREHUB ──────────────────
-     Panel principal del administrador.
-     Muestra: header con usuario, estadísticas
-     y accesos rápidos según el rol            -->
-
-<!-- ── HEADER DEL DASHBOARD ─────────────────
-     Barra superior con info del usuario       -->
-<header class="dashboard-header">
-
-  <!-- ── LOGO Y TÍTULO ──────────────────────
-       Nombre de la app y sección actual       -->
-  <div class="header-izquierda">
-    <mat-icon>store</mat-icon>
-    <span class="header-titulo">StoreHub</span>
-    <span class="header-seccion">/ Dashboard</span>
-  </div>
-
-  <!-- ── INFO DEL USUARIO ───────────────────
-       Nombre, rol y botón de logout           -->
-  <div class="header-derecha">
-
-    <!-- @if: muestra info solo si hay usuario logueado -->
-    @if (usuarioLogueado) {
-      <mat-icon>account_circle</mat-icon>
-      <!-- INTERPOLACIÓN: nombre del usuario logueado -->
-      <span class="usuario-nombre">{{ usuarioLogueado.nombre }}</span>
-      <!-- Chip con el rol del usuario -->
-      <mat-chip>{{ usuarioLogueado.rol | uppercase }}</mat-chip>
-    }
-
-    <app-theme-toggle></app-theme-toggle>
-
-    <!-- Botón de logout con EVENT BINDING -->
-    <button mat-icon-button (click)="logout()" title="Cerrar sesión">
-      <mat-icon>logout</mat-icon>
-    </button>
-
-  </div>
-</header>
+<!-- ── PANEL DE PREMIUM MARKET ────────────────
+     Resumen del negocio para el personal.
+     Muestra: estadísticas, cotización del dólar
+     y accesos rápidos según el rol.
+     El usuario y el logout están en el header global. -->
 
 <!-- ── CONTENIDO PRINCIPAL ───────────────────
      Estadísticas y accesos rápidos            -->
 <main class="dashboard-contenido contenedor">
 
   <!-- ── BIENVENIDA ────────────────────────
-       Saludo personalizado con el nombre     -->
+       Título del panel con el rol del usuario -->
   <div class="bienvenida">
-    <h1>
-      ¡Bienvenido, {{ usuarioLogueado?.nombre }}! 👋
+    <h1 class="pm-titulo-pagina">
+      Panel del negocio
+      @if (usuarioLogueado) {
+        <mat-chip class="pm-neon">{{ usuarioLogueado.rol | titlecase }}</mat-chip>
+      }
     </h1>
     <p>Aquí tenés un resumen del estado del negocio.</p>
   </div>
@@ -54,44 +23,52 @@
   <!-- ── ESTADÍSTICAS ──────────────────────
        Cards con números clave del negocio   -->
   <section class="estadisticas">
-    <h2>📊 Resumen</h2>
+    <h2>Resumen</h2>
     <div class="stats-grid">
 
-      <!-- Card: Total productos -->
-      <mat-card class="stat-card">
+      <!-- Card: Total productos — abre la consulta de precios filtrada -->
+      <a class="stat-link" routerLink="/catalogo" [queryParams]="{}" aria-label="Ver todos los productos en la consulta de precios">
+      <mat-card class="stat-card pm-neon">
         <mat-card-content>
           <mat-icon class="stat-icono azul">inventory_2</mat-icon>
           <p class="stat-numero">{{ estadisticasAnimadas.totalProductos }}</p>
           <p class="stat-label">Productos totales</p>
         </mat-card-content>
       </mat-card>
+      </a>
 
-      <!-- Card: Stock bajo -->
-      <mat-card class="stat-card">
+      <!-- Card: Stock bajo — abre la consulta de precios filtrada -->
+      <a class="stat-link" routerLink="/catalogo" [queryParams]="{ stock: 'bajo' }" aria-label="Ver productos con stock bajo">
+      <mat-card class="stat-card pm-neon">
         <mat-card-content>
           <mat-icon class="stat-icono naranja">warning</mat-icon>
           <p class="stat-numero">{{ estadisticasAnimadas.stockBajo }}</p>
           <p class="stat-label">Stock bajo</p>
         </mat-card-content>
       </mat-card>
+      </a>
 
-      <!-- Card: En oferta -->
-      <mat-card class="stat-card">
+      <!-- Card: En oferta — abre la consulta de precios filtrada -->
+      <a class="stat-link" routerLink="/catalogo" [queryParams]="{ ofertas: 1 }" aria-label="Ver productos en oferta">
+      <mat-card class="stat-card pm-neon">
         <mat-card-content>
           <mat-icon class="stat-icono verde">local_offer</mat-icon>
           <p class="stat-numero">{{ estadisticasAnimadas.enOferta }}</p>
           <p class="stat-label">En oferta</p>
         </mat-card-content>
       </mat-card>
+      </a>
 
-      <!-- Card: Sin stock -->
-      <mat-card class="stat-card">
+      <!-- Card: Sin stock — abre la consulta de precios filtrada -->
+      <a class="stat-link" routerLink="/catalogo" [queryParams]="{ stock: 'agotado' }" aria-label="Ver productos sin stock">
+      <mat-card class="stat-card pm-neon">
         <mat-card-content>
           <mat-icon class="stat-icono rojo">remove_shopping_cart</mat-icon>
           <p class="stat-numero">{{ estadisticasAnimadas.sinStock }}</p>
           <p class="stat-label">Sin stock</p>
         </mat-card-content>
       </mat-card>
+      </a>
 
     </div>
   </section>
@@ -100,24 +77,24 @@
        Fuente de datos externa (DolarAPI)    -->
   <div class="paneles-inferiores">
     <section class="dolar">
-      <h2>💵 Cotización del Dólar</h2>
+      <h2>Cotización del dólar</h2>
 
     @if (cargandoDolar) {
-      <mat-card class="dolar-card">
+      <mat-card class="dolar-card pm-neon">
         <mat-card-content class="dolar-cargando">
           <mat-spinner diameter="32"></mat-spinner>
           <span>Consultando cotización...</span>
         </mat-card-content>
       </mat-card>
     } @else if (errorDolar) {
-      <mat-card class="dolar-card">
+      <mat-card class="dolar-card pm-neon">
         <mat-card-content class="dolar-error">
           <mat-icon>error_outline</mat-icon>
           <span>No se pudo obtener la cotización del dólar.</span>
         </mat-card-content>
       </mat-card>
     } @else if (dolarOficial) {
-      <mat-card class="dolar-card">
+      <mat-card class="dolar-card pm-neon">
         <mat-card-content>
           <div class="dolar-encabezado">
             <mat-icon class="dolar-icono">attach_money</mat-icon>
@@ -142,7 +119,7 @@
     </section>
 
     <a class="estadisticas-link" routerLink="/admin/estadisticas" aria-label="Abrir dashboard estadístico">
-      <mat-card class="estadisticas-card">
+      <mat-card class="estadisticas-card pm-neon">
         <mat-card-content>
           <span class="estadisticas-card-icono"><mat-icon>query_stats</mat-icon></span>
           <span class="estadisticas-card-contenido">
@@ -159,7 +136,7 @@
   <!-- ── ACCESOS RÁPIDOS ───────────────────
        Cards de navegación según el rol      -->
   <section class="accesos">
-    <h2>⚡ Accesos rápidos</h2>
+    <h2>Accesos rápidos</h2>
     <div class="accesos-grid">
 
       <!-- @for: genera una card por cada acceso -->
@@ -168,7 +145,7 @@
         <!-- @if: solo muestra el acceso si el usuario tiene el rol -->
         @if (puedeAcceder(acceso.roles)) {
           <mat-card
-            class="acceso-card"
+            class="acceso-card pm-neon"
             [routerLink]="acceso.ruta">
             <mat-card-content>
               <mat-icon class="acceso-icono">{{ acceso.icono }}</mat-icon>

@@ -1,12 +1,31 @@
-<!-- ── PÁGINA DE LOGIN DE STOREHUB ────────────
-     Vista de acceso al panel de administración.
-     Contiene formulario reactivo con validaciones
+<!-- ── LOGIN DE PREMIUM MARKET ────────────────
+     Puerta de entrada al sistema interno.
+     Izquierda: marca y módulos del sistema.
+     Derecha: formulario reactivo con validaciones
      y verificación de credenciales contra la API  -->
 
-<!-- ── CONTENEDOR PRINCIPAL ──────────────────
-     Centra el formulario en la pantalla        -->
 <div class="login-contenedor">
   <app-theme-toggle class="login-theme-toggle"></app-theme-toggle>
+
+  <!-- ── PANEL DE MARCA ────────────────────── -->
+  <section class="login-marca" aria-hidden="true">
+    <img class="marca-logo" src="/marca/premium-market-horizontal-negativo.svg" alt="" width="260" height="74" />
+    <h2>Sistema de gestión interna</h2>
+    <p>Caja, stock, recepciones y pedidos de la sucursal en un solo lugar.</p>
+
+    <ul class="marca-modulos">
+      <li><mat-icon>point_of_sale</mat-icon> Caja y cobros</li>
+      <li><mat-icon>inventory_2</mat-icon> Productos y precios</li>
+      <li><mat-icon>local_shipping</mat-icon> Recepción de mercadería</li>
+      <li><mat-icon>assignment</mat-icon> Pedidos a proveedores</li>
+    </ul>
+
+    <div class="marca-gondola">
+      @for (producto of productosGondola; track producto) {
+        <span class="gondola-item"><app-producto-imagen [nombre]="producto" /></span>
+      }
+    </div>
+  </section>
 
   <!-- ── CARD DEL FORMULARIO ─────────────────
        Card de Angular Material que contiene
@@ -17,9 +36,9 @@
          Logo y título del sistema             -->
     <mat-card-header>
       <div class="login-header">
-        <mat-icon class="login-icono">store</mat-icon>
-        <h1>StoreHub</h1>
-        <p>Panel de Administración</p>
+        <img class="login-icono" src="/marca/premium-market-icono.svg" alt="" width="64" height="64" />
+        <h1>Ingresá a tu turno</h1>
+        <p>Usá el usuario que te asignó la administración.</p>
       </div>
     </mat-card-header>
 
@@ -107,10 +126,11 @@
     </mat-card-content>
 
     <!-- ── FOOTER DE LA CARD ──────────────────
-         Link para volver al inicio            -->
+         Aviso de uso interno                  -->
     <mat-card-footer>
       <div class="login-footer">
-        <a routerLink="/inicio">← Volver al inicio</a>
+        <mat-icon>lock</mat-icon>
+        <span>Acceso exclusivo para personal de Premium Market.</span>
       </div>
     </mat-card-footer>
 

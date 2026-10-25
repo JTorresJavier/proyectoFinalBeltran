@@ -1,9 +1,13 @@
-<!-- ── ROUTER OUTLET ───────────────────────────
-     Contenedor principal de StoreHub.
-     Angular inserta aquí el componente según la URL activa.
+<!-- ── ESTRUCTURA PRINCIPAL ────────────────────
+     Con sesión: header interno + pantalla activa.
+     Sin sesión: solo la pantalla de login.
      [@routeAnimations]: dispara la transición al cambiar de página,
      usando la URL como dato que identifica cada estado.           -->
 
-<div [@routeAnimations]="outlet.isActivated ? outlet.activatedRouteData['animation'] ?? outlet.activatedRoute : ''">
+@if (usuarioActual$ | async) {
+  <app-navbar></app-navbar>
+}
+
+<main class="pantalla" [@routeAnimations]="outlet.isActivated ? outlet.activatedRouteData['animation'] ?? outlet.activatedRoute : ''">
   <router-outlet #outlet="outlet"></router-outlet>
-</div>
+</main>

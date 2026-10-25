@@ -18,6 +18,20 @@ export const authGuard: CanActivateFn = () => {
   return false;
 };
 
+// ── GUARD: SOLO SIN SESIÓN ────────────────────
+// Ruta: login. Si ya hay sesión, no tiene sentido volver
+// a loguearse → redirige al portal de inicio.
+export const invitadoGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router      = inject(Router);
+
+  if (!authService.estaLogueado()) {
+    return true;
+  }
+
+  return router.createUrlTree(['/inicio']);
+};
+
 // ── GUARD: SOLO ADMIN ─────────────────────────
 // Rutas: estadisticas, usuarios, movimientos
 export const adminGuard: CanActivateFn = () => {
